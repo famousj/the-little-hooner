@@ -301,7 +301,6 @@ and what are they?
 
 - JL: TLS calls this `car`.  You could do the same with tree addresses, but
   I think using `head` and `tail` is way easier to understand conceptually.
-  asdf
 
 **A:** `'a'`
 
