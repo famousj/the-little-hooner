@@ -279,17 +279,17 @@ and what are they?
 
 and what are they?
 
-**A:** Three,
+**A:** Four,
 
-> `[['how' ~] 'are' ~]`, `[['you' ~] ['doing' 'so' ~] ~]`, and `'far'`
-> because it is a collection of nouns enclosed by square brackets,
+> `[['how' ~] 'are' ~]`, `[['you' ~] ['doing' 'so' ~] ~]`, `'far'`, and
+> `~`, because it is a collection of nouns enclosed by square brackets,
 > ending in null.
 
 **Q:** Is it true that this is an atom? 
 
 > `~`
 
-- JL: TLS talks about the empty list here, but Hoon doesn't allow empty lists.  This might be a good spot to talk about how lists can't really be empty.
+- JL: TLS talks about the empty lists in this section, but Hoon doesn't allow empty lists.  This might be a good spot to talk about how lists can't really be empty.
 
 **A:** Yes,
 
