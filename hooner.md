@@ -23,11 +23,10 @@ list or null.  The result is a list.
 ### The Law of Dottis</center>
 > The rune `.=` takes two arguments.  Each must be an atom.
 
+
 ## 0. Preface and Setup
 
-
 ### Introductory Notes
-
 
 - I've tried to stick with how things are presented in The Little
   Schemer, but Hoon and Scheme are different languages and they just do
@@ -80,7 +79,7 @@ I would like to introduce the shorter version at some point, but haven't found a
   instead of `.=(a b)` or `[a b] instead of `[a b]`, but I want to
   introduce the concept of the two-character rune.
 
-- I am accepting pull requests!
+- If you see any egregious errors, pull requests are welcome!
 
 ### How to Read This Book - JL
 
@@ -843,5 +842,528 @@ This space reserved for
 **JELLY STAINS!**
 </center>
 
+<br>
+<br>
+<br>
+<br>
+
+
+## 2. Do It, Do It Again, and Again, and Again ...
+
+
+- JL: `is-lat` is right now specified as a generator.  I would prefer for
+  it to be a regular function that just runs in the dojo like `head`,
+  but I'm not sure how to make that happen.
+
+
+**Q:** True or false: `+is-lat l`
+
+where
+
+> `l` is `['Jack' 'Sprat' 'could' 'eat' 'no' 'chicken' 'fat' ~]`
+
+- JL: TLS calls this function `lat?`, but Hoon doesn't allow `wut`'s
+  (i.e. question marks) in function names.
+
+
+**A:** True,
+
+> because each noun in `l` is an atom.
+
+**Q:** True or false: `+is-lat l`
+
+where
+
+> `l` is `[['Jack' ~] 'Sprat' 'could' 'eat' 'no' 'chicken' 'fat' ~]`
+
+**A:** False,
+
+> since `(head l)` is a list.
+
+**Q:** True or false: `+is-lat l`
+
+where
+
+> `l` is `['Jack' ['Sprat' 'could' ~] 'eat' 'no' 'chicken' 'fat' ~]`
+
+**A:** False,
+
+> since one of the nouns in `l` is a list.
+
+**Q:** True or false: `+is-lat l`
+
+where
+
+> `l` is `[~]`
+
+**A:** True,
+
+> because the null value is an atom.
+
+- JL: `[~]` evaluates to `~`.  However, 
+- KM: Possibly revise Chap 1, and replace instances of `()` with `[~]`
+
+**Q:** True or false: a lat is a list of atoms.
+
+**A:** True!
+
+> Every lat is a list of atoms!
+
+**Q:** Write the function `is-lat` using some, but not necessarily all
+of the following:
+
+> `head`, `tail`, `:-`, `.?`, `.=`
+
+**A:** You were not expected to be able to do this yet, because you are
+still missing some ingredients.  Go on to the next question.  
+Good luck.
+
+<br>
+<br>
+<br>
+<br>
+<center>**Are you rested?**</center>
+<br>
+<br>
+<br>
+<br>
+
+**Q:** 
+
+Here are the contents of the generator `is-lat.hoon`<sup>1</sup>
+
+```
+|=  l=*
+|-
+?:  .=(~ l)
+  %.y
+?:  .?((head l))
+  %.n
+$(l (tail l))
+```
+
+What is the value of `+is-lat l`
+
+where
+
+> `l` is the argument `['bacon' 'and' 'eggs' ~]`
+
+<sup>1</sup> Add this code to a file called `gen/is-lat.hoon` inside your
+`home` directory.  Then run the following in the dojo:
+```
+|commit %home
+```
+
+KM: Add a section in the intro about `|mount`ing home and the necessity
+of `|commit`ing.
+
+**A:** `%.y`
+
+> The application of `+is-lat l`  
+> where  
+> > `l` is `['bacon' 'and' 'eggs' ~]`
+> has the value `%.y` &mdash; true &mdash; because `l` is a lat.
+
+**Q:** How do we determine the answer `%.y` for the function 
+
+> `+is-lat l`
+
+**A:** You were not expected to know this one either.  The answer is
+determined by answering the questions asked by `+is-lat`
+
+> Hint: Write down the contents of `is-lat.hoon` and refer to
+> it for the next group of questions.
+
+**Q:** What is the first question asked by `+is-lat l`
+
+**A:** `?:  .=(~ l)`
+
+> Note:
+> `?:` (or 'wutdot') asks questions;
+> `|=` (or 'bartis') creates a function; and
+> `|-` (or 'barhep') sets a restart point (more on this shortly)
+
+**Q:** What is the meaning of
+
+> `?:  .=(~ l)`
+
+where
+
+> `l` is `['bacon' 'and' 'eggs' ~]`
+
+**A:** `.=(~ l)` asks if the argument `l` is equal to null.  If this is true, we evaluate the next line, which is
+
+> `%.y`
+
+This means the value for the function will be "true".  If `l` is not null, we
+keep going.  
+
+In this case, `l` is not the null value, so we keep going and ask the next question.
+
+**Q:** What is the next question?
+
+**A:** `?:  .?((head l))`
+
+**Q:** What is the meaning of
+
+> `?:  .?((head l))`
+
+where
+
+> `l` is `['bacon' 'and' 'eggs' ~]`
+
+**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+If this is true, we evaluate the next line, which is
+
+> `%.n`
+
+This means the value for the function will be "false".  If `(head l)` is an 
+atom, we keep going.
+
+In this case, `(head l)` is an atom, so we keep going.
+
+**Q:** What is the meaning of 
+
+>  `$(l (tail l))`
+
+**A:** `$(l (tail l))` finds out if the rest of the list `l` is composed
+only of atoms, by returning to our restart point `|-` (or 'barhep') with
+a new value for `l`.
+
+**Q:** What is the new value for `l`?
+
+**A:** The new value for `l` is `(tail l)`, which is 
+
+> `['and' 'eggs' ~]`
+
+**Q:** What is the next question after `|-`?
+
+**A:** `?:  .=(~ l)`
+
+**Q:** What is the meaning of 
+
+> `?:  .=(~ l)`
+
+where
+
+> `l` is now `['and' 'eggs' ~]`
+
+**A:** `.=(~ l)` asks if the argument `l` is null.  If this is true, we
+evaluate the next line, which is 
+
+> `%.y`
+
+This means the value for the function will be "true".  If `l` is not null, we keep going.  
+
+In this case, `l` is not the null value, so we keep going and ask the next question.
+
+**Q:** What is the next question?
+
+**A:** `?:  .?((head l))`
+
+**Q:** What is the meaning of
+
+> `?:  .?((head l))`
+
+where
+
+> `l` is now `['and' 'eggs' ~]`
+
+**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+If this is true, we evaluate the next line, which is
+
+> `%.n`
+
+This means the value for the function will be "false".  If `(head
+l)` is an atom, we keep going.
+
+In this case, `(head l)` is an atom.  So we keep going.
+
+**Q:** What is the meaning of 
+
+>  `$(l (tail l))`
+
+**A:** `$(l (tail l))` finds out if the rest of the list `l` is composed
+only of atoms, by returning to our restart point `|-` with a new value for 
+`l`.  This new value is `(tail l)` or `['eggs' ~]`.
+
+**Q:** What is the next question after `|-`?
+
+**A:** `?:  .=(~ l)`
+
+**Q:** What is the meaning of 
+
+> `?:  .=(~ l)`
+
+where
+> `l` is now `['eggs' ~]`
+
+**A:** `.=(~ l)` asks if the argument `l` is null.  If this is true, we
+evaluate the next line, which is
+
+> `%.y`
+
+which means the value for the function will be "true".  If `l` is not null, we keep going.  
+
+In this case, `l` is not the null value, so we keep going and ask the next question.
+
+**Q:** What is the next question?
+
+**A:** `?:  .?((head l))`
+
+**Q:** What is the meaning of
+
+> `?:  .?((head l))`
+
+where
+
+> `l` is now `['eggs' ~]`
+
+**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+If this is true, we evaluate the next line, which is
+
+> `%.n`
+
+Which means the value for the function will be "false".  If `(head l)` is an 
+atom, we keep going.
+
+In this case, `(head l)` is an atom.  So we keep going.
+
+KM: In TLS (in the next section) they clarify that if something isn't an
+empty list or an atom, it must be a list.
+
+**Q:** What is the meaning of 
+
+>  `$(l (tail l))`
+
+**A:** `$(l (tail l))` finds out if the rest of the list `l` is composed
+only of atoms, by returning to our restart point `|-`, with l becoming the value of `(tail l)`.
+
+**Q:** Now, what is the new value for `l`?
+
+**A:** `[~]`
+
+**Q:** What is the next question after `|-`?
+
+**A:** `?:  .=(~ l)`
+
+**Q:** What is the meaning of 
+
+> `?:  .=(~ l)`
+
+where
+
+> `l` is now `[~]`
+
+**A:** `.=(~ l)` asks if the argument `l` is null.  If it is null, we
+evaluate the next line, which is
+
+> `%.y`
+
+which means the value for the function will be "true".  If `l` is not null, we keep going.  
+
+In this case, `l` is equal to the null value.  So, the value of the
+function
+
+> `+is-lat l`
+
+where `l` is `['bacon' 'and' 'eggs' ~]` is `%.y`&mdash;true.
+
+**Q:** Do you remember the question about
+
+> `+is-lat l`
+
+**A:** Probably not.  The function `+is-lat l` has the value of `%.y`
+if the list `l` is a list of atoms where 
+
+> `l` is `['bacon' 'and' 'eggs' ~]`
+
+**Q:** Can you describe what the function `+is-lat` does in your own
+words?
+
+**A:** Here are our words:
+
+> "`+is-lat` looks at each noun in a list, in turn, and asks if each
+> noun is an atom, until it gets to the null value.  If it runs out
+> without encountering a list, the value is `%.y`.  If it finds a list,
+> the value is `%.n`&mdash;false."
+
+To see how we could arrive at a value of "false", consider the next few
+questions.
+
+**Q:** Here are the contents of `+is-lat` again.
+```
+|=  l=*
+|-
+?:  .=(~ l)
+  %.y
+?:  .?((head l))
+  %.n
+$(l (tail l))
+```
+
+What is the value of `+is-lat l`
+
+where
+
+> `l` is now `['bacon' ['and' 'eggs' ~] ~]`
+
+**A:** `%.n`
+
+> since the list `l` contains a noun that is a list.
+
+**Q:** What is the first question?
+
+**A:** `?:  .=(~ l)`
+
+**Q:** What is the meaning of
+
+> `?:  .=(~ l)`
+
+where
+
+> `l` is `['bacon' ['and' 'eggs' ~] ~]`
+
+**A:** `.=(~ l)` asks if the argument `l` is equal to null.  If this is true, we return the value on the next line, `%.y`.  If not, we keep going.  In this case, it is not null, so we ask the next question.
+
+**Q:** What is the next question?
+
+**A:** `?:  .?((head l))`
+
+**Q:** What is the meaning of
+
+> `?:  .?((head l))`
+
+where
+
+> `l` is `['bacon' ['and' 'eggs' ~] ~]`
+
+**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+If it is, the return the value on the next line, `%.n`.  If not, we keep
+n this case, `(head l)` is an atom, so we keep going. 
+
+**Q:** What is the meaning of 
+
+>  `$(l (tail l))`
+
+**A:** `$(l (tail l))` checks to see if the rest of the list `l` is composed
+only of atoms, by returning to our restart point `|-` with l replaced by
+`(tail l)`.
+
+**Q:** What is the meaning of 
+
+> `?:  .=(~ l)`
+
+where
+
+> `l` is now `[['and' 'eggs' ~] ~]`
+
+**A:** `.=(~ l)` asks if the argument `l` is null.  If this is true, we
+return `%.y`.  If not, we keep going.  In this case, `l` is not null, so
+we move to the next question.
+
+**Q:** What is the next question?
+
+**A:** `?:  .?((head l))`
+
+**Q:** What is the meaning of
+
+> `?:  .?((head l))`
+
+where
+
+> `l` is now `[['and' 'eggs' ~] ~]`
+
+**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+If this is true, we evaluate the next line, which is
+
+> `%.n`
+
+If `(head l)` is an atom, we keep going.
+
+In this case, `(head l)` is a a list.  So the answer is
+`%.n`&mdash;false.
+
+**Q:** Can you describe how we determined the value `%.n` for
+
+>  `+is-lat l`
+
+where
+
+> `l` is `['bacon' ['and' 'eggs' ~] ~]`
+
+**A:** Here is one way to say it:
+
+> "`+is-lat l` looks at each item in its argument to see if it is an
+> atom.  If it runs out of items before it finds a list, the value of
+> `+is-lat l` is `%.y`.  If it finds a list, as it did in the example
+> `['bacon' ['and' 'eggs' ~] ~]`, the value of `+is-lat l` is `%.n`."
+
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
+
+**Q:** 
+> 
+
+**A:** 
+> 
 
 

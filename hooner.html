@@ -1,0 +1,934 @@
+<h1 id="the-little-hooner">The Little Hooner</h1>
+<h2 id="adapted-from-the-little-schemer-fourth-edition-by-daniel-p.-friedman-and-matthias-felleisen">Adapted from The Little Schemer (Fourth Edition) by Daniel P. Friedman and Matthias Felleisen</h2>
+<h2 id="adaptation-by-ribben-donnyl-aka-j-leblanc">Adaptation by ~ribben-donnyl (AKA J LeBlanc)</h2>
+<h2 id="the-ten-commandments">The Ten Commandments</h2>
+<p>KM</p>
+<h2 id="the-five-four-rules">The <strike>Five</strike> Four Rules</h2>
+<h3 id="the-law-of-head">The Law of Head</h3>
+<blockquote>
+<p>The primitive <code>head</code> is defined only for lists.</p>
+</blockquote>
+<h3 id="the-law-of-tail">The Law of Tail</h3>
+<blockquote>
+<p>The primitive <code>tail</code> is defined only for lists. The <code>tail</code> of any list is always another list.</p>
+</blockquote>
+<h3 id="the-law-of-colhep">The Law of Colhep</h3>
+<blockquote>
+<p>The rune <code>:-</code> takes two arguments. The second argument to <code>:-</code> must be a list or null. The result is a list.</p>
+</blockquote>
+### The Law of Dottis
+</center>
+<blockquote>
+<p>The rune <code>.=</code> takes two arguments. Each must be an atom.</p>
+</blockquote>
+<h2 id="preface-and-setup">0. Preface and Setup</h2>
+<h3 id="introductory-notes">Introductory Notes</h3>
+<ul>
+<li><p>I’ve tried to stick with how things are presented in The Little Schemer, but Hoon and Scheme are different languages and they just do things differently.</p></li>
+<li><p>If you see “JL”, this is a translation note, or mentions a section that is original to this document.</p></li>
+<li><p>TLS stands for “The Little Schemer”.</p></li>
+<li><p>“KM” means “TODO”, but it’s two keystrokes shorter.</p></li>
+<li><p>The purpose of the original TLS is to understand how recursion works. This book has two purposes: to understand recursion but also to get your head around how writing code in Hoon works.</p>
+<p>So I occasionally toss in some Hoon concepts on top of the recursion concepts. If it feels like a needless distraction, let me know.</p></li>
+<li><p>I’m on the fence about what style of lists to show. You can either do</p></li>
+</ul>
+<pre><code>[1 2 3 ~]</code></pre>
+<p>Or you can do</p>
+<pre><code>~[1 2 3]</code></pre>
+<p>I went with the former. This is closer to how the data is being stored interally. Also this is also the format the dojo uses, in case you want to check your answers.</p>
+<p>I would like to introduce the shorter version at some point, but haven’t found a place yet.</p>
+<ul>
+<li><p>Scheme has a somewhat muddied distinction between code and data that Hoon doesn’t have.<br />
+So in Scheme you can have a list, like <code>(a b c)</code> and prepend a soq, like <code>'(a b c)</code>, to tell the compiler “everything in these parentheses are data”.</p>
+<p>This isn’t possible in Hoon. Either that or I’m not aware of someway to do it. So I’ve had to make all the words into cords. This is not ideal, but it works.</p></li>
+<li><p>I am completely ignoring the fact that there are many data types other than atoms and lists. Pairs, tuples, trees, these are all ignored for now. This is how TLS works, as well, with the occasional footnote for the “Um, akshually…” crowd.</p></li>
+<li><p>I’m using the <code>.=</code> rune for testing equality and the <code>:-</code> rune for the <em>cons</em> operation. I could see the advantage of doing <code>=(a b)</code> instead of <code>.=(a b)</code> or <code>[a b] instead of</code>[a b]`, but I want to introduce the concept of the two-character rune.</p></li>
+<li><p>If you see any egregious errors, pull requests are welcome!</p></li>
+</ul>
+<h3 id="how-to-read-this-book---jl">How to Read This Book - JL</h3>
+<p>-KM - Pull in content from the TLS preface here</p>
+<p>This book is written in a question-and-answer format. Go slowly! Make sure you really understand a chapter before you go onto the next chapter.</p>
+<p>To get started, you’ll need a <a href="https://urbit.org/using/install/">running ship on Urbit</a>. Developing on your own ship is Considered Harmful, so you might consider setting up a <a href="https://urbit.org/using/develop/#creating-a-development-ship">development ship</a>.</p>
+<p>Once you’re runnning, you’ll have a dojo prompt.</p>
+<p>If you want to assign a variable, you can do that like so:</p>
+<pre><code>&gt; =a 42
+&gt; =l [&#39;ham&#39; &#39;and&#39; &#39;eggs&#39; ~]</code></pre>
+<p>You are highly encouraged to follow along and test things out in the dojo.</p>
+<h3 id="todo">TODO</h3>
+<ul>
+<li><p>Right now this is a Markdown file. It’d be pretty sweet to make some kind of interactive version where it doesn’t give the answer until you hit the spacebar or something.</p></li>
+<li><p>The section to get the tools running is extremely manual. Probably an opportunity to improve that</p></li>
+<li><p>Make a chapter describing the aura type system. We could, in chapter 1, mention that most of the atoms discussed here are “cords”, but I thought we’d save that for a bit.</p></li>
+<li><p>Introduce tree addressing at some point. Possibly a new, original chapter, since Scheme doesn’t have anything like that.</p></li>
+<li><p>At some point (possibly in chapter 1) I should introduce the <code>:~</code> rune and discuss that this is a way to construct a null-terminated list.</p></li>
+<li><p>In re: The Law of Null?, Hoon doesn’t exactly have a function <code>null?</code>. What it does have is <code>?~</code>, but this has a built in if-then-else structure, so I’ll introduce that later.</p></li>
+<li><p>Also need to figure out how to discuss “tall form”.</p></li>
+</ul>
+<h2 id="toys">1. Toys</h2>
+<p><strong>Q:</strong> Is it true that this is an atom?</p>
+<blockquote>
+<p><code>'atom'</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>'atom'</code> is a string of characters beginning with the letter a, surrounded by single quotes or <code>soq</code>s.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is an atom?</p>
+<blockquote>
+<p><code>'turkey'</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>'turkey'</code> is a string of characters beginning with a letter, surrounded by <code>soq</code>s.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is an atom?</p>
+<blockquote>
+<p><code>1492</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>1492</code> is a number</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is an atom?</p>
+<blockquote>
+<p><code>'u'</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>'u'</code> is a string of one character, which is a letter.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is an atom?</p>
+<blockquote>
+<p><code>'*abc$'</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>'*abc$'</code> is a string of characters.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a list?</p>
+<blockquote>
+<p><code>['atom' 'turkey' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>['atom' 'turkey']</code> is two atoms enclosed by a left square bracket (which is called a ‘<code>sel</code>’) and a right square bracket (which is called a ‘<code>ser</code>’), ending in the null value (<code>~</code>, pronounced ‘<code>sig</code>’)</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a list?</p>
+<blockquote>
+<p><code>['atom' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because <code>['atom' ~]</code> is an atom enclosed by ‘[’ and ’]’ (i.e. ‘sel’ and ‘ser’), ending in a null value, i.e. <code>~</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a list?</p>
+<blockquote>
+<p><code>['atom']</code></p>
+</blockquote>
+<p><strong>A:</strong> No,</p>
+<blockquote>
+<p>because <code>['atom']</code> does not end in the null value, <code>~</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a list?</p>
+<blockquote>
+<p><code>['atom' 'turkey' 'or' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because it is a collection of atoms enclosed by square brackets, ending in null.</p>
+</blockquote>
+<p>JL: This might be a good place to introduce list shorthand, i.e. ~[‘atom’ ‘turkey’ ‘or’]</p>
+<p><strong>Q:</strong> Is it true that this is a list?</p>
+<blockquote>
+<p><code>['atom' 'turkey' ~] 'or'</code></p>
+</blockquote>
+<p><strong>A:</strong> No,</p>
+<blockquote>
+<p>because these are actually two nouns not enclosed by square brackets. The first one is a list containing two atoms plus the null value, and the second one is just an atom.</p>
+</blockquote>
+<p>JL: TLS uses the term “S-expression”, but I’m using the Hoon term “noun”</p>
+<p><strong>Q:</strong> Is it true that this is a noun?</p>
+<blockquote>
+<p><code>'xyz'</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because all atoms are nouns.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a noun?</p>
+<blockquote>
+<p><code>['x' 'y' 'z' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because it is a list.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a noun?</p>
+<blockquote>
+<p><code>[['x' 'y' ~] 'z' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because all lists are nouns.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a list</p>
+<blockquote>
+<p><code>['how' 'are' 'you' 'doing' 'so' far' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because it is a collection of nouns enclosed by square brackets, ending in null.</p>
+</blockquote>
+<p><strong>Q:</strong> How many nouns are in the list?</p>
+<blockquote>
+<p><code>['how' 'are' 'you' 'doing' 'so' far' ~]</code></p>
+</blockquote>
+<p>and what are they?</p>
+<p><strong>A:</strong> Seven,</p>
+<blockquote>
+<p><code>'how'</code>, <code>'are'</code>, <code>'you'</code>, <code>'doing'</code>, <code>'so'</code>, <code>'far'</code>, and <code>~</code></p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is a list?</p>
+<blockquote>
+<p><code>[[['how' ~] 'are' ~] [['you' ~] ['doing' 'so' ~] ~] 'far' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>because it is a collection of nouns enclosed by square brackets, ending in null.</p>
+</blockquote>
+<p><strong>Q:</strong> How many nouns are in the list</p>
+<blockquote>
+<p><code>[[['how' ~] 'are' ~] [['you' ~] ['doing' 'so' ~] ~] 'far' ~]</code></p>
+</blockquote>
+<p>and what are they?</p>
+<p><strong>A:</strong> Four,</p>
+<blockquote>
+<p><code>[['how' ~] 'are' ~]</code>, <code>[['you' ~] ['doing' 'so' ~] ~]</code>, <code>'far'</code>, and <code>~</code>, because it is a collection of nouns enclosed by square brackets, ending in null.</p>
+</blockquote>
+<p><strong>Q:</strong> Is it true that this is an atom?</p>
+<blockquote>
+<p><code>~</code></p>
+</blockquote>
+<ul>
+<li>JL: TLS talks about the empty lists in this section, but Hoon doesn’t allow empty lists. This might be a good spot to talk about how lists can’t really be empty.</li>
+</ul>
+<p><strong>A:</strong> Yes,</p>
+<blockquote>
+<p>the null value is an atom</p>
+</blockquote>
+<p><strong>Q:</strong> What is the <code>head</code> of <code>l</code> where <code>l</code> is the argument</p>
+<blockquote>
+<p><code>['a' 'b' 'c' ~]</code></p>
+</blockquote>
+<ul>
+<li>JL: TLS calls this <code>car</code>. You could do the same with tree addresses, but I think using <code>head</code> and <code>tail</code> is way easier to understand conceptually.</li>
+</ul>
+<p><strong>A:</strong> <code>'a'</code></p>
+<blockquote>
+<p>because <code>'a'</code> is the first atom on the list.</p>
+</blockquote>
+<p><strong>Q:</strong> What is the <code>head</code> of <code>l</code> where <code>l</code> is</p>
+<blockquote>
+<p><code>[['a' 'b' 'c' ~] 'x' 'y' 'z' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>['a' 'b' 'c' ~]</code></p>
+<blockquote>
+<p>because <code>['a' 'b' 'c' ~]</code> is the first noun of this list.</p>
+</blockquote>
+<ul>
+<li>TLS - “this non-empty list”</li>
+</ul>
+<p><strong>Q:</strong> What is the <code>head</code> of <code>l</code> where <code>l</code> is <code>hotdog</code></p>
+<p><strong>A:</strong> No answer.</p>
+<blockquote>
+<p>You cannot ask for the <code>head</code> of an atom.</p>
+</blockquote>
+<p><strong>Q:</strong> What is the <code>head</code> of <code>l</code> where <code>l</code> is <code>~</code></p>
+<p><strong>A:</strong> No answer.</p>
+<blockquote>
+<p>The null value is an atom and you cannot ask for the <code>head</code> of an atom.</p>
+</blockquote>
+<ul>
+<li>TLS then asks about <code>car</code> of an empty list. As noted above Hoon doesn’t support empty list.</li>
+</ul>
+<hr />
+<h3 id="the-law-of-head-1">The Law of Head</h3>
+<h4 id="the-primitive-head-is-defined-only-for-lists.">The primitive <code>head</code> is defined only for lists.</h4>
+<hr />
+<p><strong>Q:</strong> What is the <code>head</code> of <code>l</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[[['hotdogs' ~] ~] ['and' ~] ['pickle' ~] 'relish' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>[['hotdogs' ~] ~]</code></p>
+<p>read as:</p>
+<blockquote>
+<p>“The list of the list of ‘hotdogs’.”</p>
+</blockquote>
+<p><code>[['hotdogs' ~] ~]</code> is the first noun of <code>l</code></p>
+<p><strong>Q:</strong> What is <code>(head l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[[['hotdogs' ~] ~] ['and' ~] ['pickle' ~] 'relish' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>[['hotdogs' ~] ~]</code></p>
+<blockquote>
+<p>because <code>(head l)</code> is another way to ask for “the <code>head</code> of the list <code>l</code>”</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>(head (head l))</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[[['hotdogs' ~] ~] ['and' ~] ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>[hotdogs ~]</code></p>
+<p><strong>Q:</strong> What is the <code>tail</code> of <code>l</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['a' b' 'c' ~]</code></p>
+</blockquote>
+<ul>
+<li>TLS uses <code>cdr</code></li>
+</ul>
+<p><strong>A:</strong> <code>['b' 'c' ~]</code></p>
+<blockquote>
+<p>because <code>['b' 'c' ~]</code> is the list <code>l</code> without <code>(head l)</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> What is the <code>tail</code> of <code>l</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[['a' 'b' 'c' ~] 'x' 'y' 'z' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>['x' 'y' 'z' ~]</code></p>
+<p><strong>Q:</strong> What is the <code>tail</code> of <code>l</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['hamburger' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>~</code></p>
+<blockquote>
+<p>the null value</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>(tail l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[['x' ~] 't' 'r' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>['t' 'r' ~]</code></p>
+<blockquote>
+<p>becuase <code>(tail l)</code> is just another way to ask for “the <code>tail</code> of the list <code>l</code>.”</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>(tail a)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>a</code> is <code>hotdogs</code></p>
+</blockquote>
+<p><strong>A:</strong> No answer.</p>
+<blockquote>
+<p>You cannot ask for the <code>tail</code> of an atom.</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>(tail l)</code></p>
+<p>where <code>l</code> is <code>~</code></p>
+<p><strong>A:</strong> No answer.</p>
+<blockquote>
+<p>The null value is an atom and you cannot ask for the <code>tail</code> of an atom.</p>
+</blockquote>
+<hr />
+<h3 id="the-law-of-tail-1">The Law of Tail</h3>
+<h4 id="the-primitive-tail-is-defined-only-for-lists.-the-tail-of-any-list-is-always-another-list.">The primitive <code>tail</code> is defined only for lists. The <code>tail</code> of any list is always another list.</h4>
+<hr />
+<p><strong>Q:</strong> What is <code>(head (tail l))</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[['b' ~] ['x' 'y' ~] [['c' ~] ~] ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>['x' 'y' ~]</code>,</p>
+<blockquote>
+<p>because <code>[['x' 'y' ~] [['c' ~] ~] ~]</code> is <code>(tail l)</code> and <code>['x'  'y' ~]</code> is the <code>head</code> of <code>(tail l)</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>(tail (tail l))</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[['b' ~] ['x' 'y' ~] [['c' ~] ~] ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>[[['c' ~] ~] ~]</code></p>
+<blockquote>
+<p>because <code>[['x' 'y' ~] [['c' ~] ~] ~]</code> is <code>(tail l)</code> and <code>[[['c' ~] ~] ~]</code> is the <code>tail</code> of <code>(tail l)</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>(tail (head l))</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['a' ['b' ['c' ~] ~] 'd' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> No answer,</p>
+<blockquote>
+<p>since <code>(head l)</code> is an atom, and <code>tail</code> does not take an atom as an argument; see The Law of Tail.</p>
+</blockquote>
+<p><strong>Q:</strong> What does <code>head</code> take as an argument?</p>
+<p><strong>A:</strong> It takes any list.</p>
+<p><strong>Q:</strong> What does <code>tail</code> take as an argument?</p>
+<p><strong>A:</strong> It takes any list.</p>
+<p><strong>Q:</strong> What is the <em>cons</em> of the atom <code>a</code> and the list <code>l</code></p>
+<p>where <code>a</code> is <code>'peanut'</code></p>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is <code>['butter' 'and' 'jelly' ~]</code></p>
+</blockquote>
+<p>This can be written as <code>:-(a l)</code></p>
+<blockquote>
+<p>You can read this as: “<em>cons</em> the atom <code>a</code> onto the list <code>l</code>”</p>
+</blockquote>
+<p><strong>A:</strong> <code>['peanut' 'butter' 'and' 'jelly' ~]</code></p>
+<blockquote>
+<p>because the <em>cons</em> operation adds an atom to the front of the list.</p>
+</blockquote>
+<p><strong>Q:</strong> What is the <em>cons</em> of <code>s</code> and <code>l</code></p>
+<p>where <code>s</code> is <code>['banana' 'and' ~]</code></p>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is <code>['peanut' 'butter' 'and' 'jelly' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>[['banana' 'and' ~] 'peanut' 'butter' 'and' 'jelly' ~]</code></p>
+<blockquote>
+<p>because <em>cons</em> adds any noun to the front of a list.</p>
+</blockquote>
+<ul>
+<li>JL: I thought this would be a good spot for a brief digression about runes and ASCII pronunciation.</li>
+</ul>
+<p><strong>Q:</strong> What is <code>:-</code></p>
+<p><strong>A:</strong> <code>:-</code> is a <em>rune</em>, a two-character function.</p>
+<blockquote>
+<p>Specifically it’s the rune to do the <em>cons</em> operation.</p>
+</blockquote>
+<p><strong>Q:</strong> How do you pronounce <code>:-</code></p>
+<p><strong>A:</strong> It’s pronounced ‘colhep’</p>
+<p><strong>Q:</strong> What is <code>:-(s l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>s</code> is <code>[['help' ~] 'this' ~]</code></p>
+</blockquote>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is <code>['is' 'very' [['hard' ~] 'to' 'learn' ~] ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>[[['help' ~] 'this' ~] 'is' 'very' [['hard' ~] 'to' 'learn' ~] ~]</code></p>
+<p><strong>Q:</strong> What does the <code>:-</code> rune take as its arguments?</p>
+<p><strong>A:</strong> <code>:-</code> takes two arguments:</p>
+<blockquote>
+<p>the first one is any noun;<br />
+the second one is either a list or null.</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>:-(s l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>s</code> is <code>['a' 'b' ['c' ~] ~]</code></p>
+</blockquote>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is ~</p>
+</blockquote>
+<ul>
+<li>For this question, TLS has the empty list. In Hoon, the null has more or less the same purpose as the empty list, especially when doing recursion.</li>
+</ul>
+<p><strong>A:</strong> <code>[['a' 'b' ['c' ~] ~] ~]</code></p>
+<p><strong>Q:</strong> What is <code>:-(s l)</code></p>
+<p>where <code>s</code> is <code>'a'</code></p>
+<p>and <code>l</code> is <code>~</code></p>
+<p><strong>A:</strong> <code>['a' ~]</code></p>
+<p><strong>Q:</strong> What is <code>:-(s l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>s</code> is <code>['a' 'b' 'c' ~]</code></p>
+</blockquote>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is <code>'b'</code></p>
+</blockquote>
+<p><strong>A:</strong> No answer,<sup>1</sup></p>
+<blockquote>
+<p>since the second argument <code>l</code> must be a list or null.</p>
+</blockquote>
+<p><sup>1</sup> In practice, <code>:-(a b)</code> works for all values <code>a</code> and <code>b</code>, and</p>
+<pre><code>(head :-(a b)) =&gt; a
+(tail :-(a b)) =&gt; b</code></pre>
+<p><strong>Q:</strong> What is <code>:-(s l)</code></p>
+<p>where <code>s</code> is <code>'a'</code></p>
+<p>and <code>l</code> is <code>'b'</code></p>
+<p><strong>A:</strong> No answer.</p>
+<blockquote>
+<p>Why?</p>
+</blockquote>
+<hr />
+<h3 id="the-law-of-colhep-1">The Law of Colhep</h3>
+<h4 id="the-rune---takes-two-arguments.-the-second-argument-to---must-be-a-list-or-null.-the-result-is-a-list.">The rune <code>:-</code> takes two arguments. The second argument to <code>:-</code> must be a list or null. The result is a list.</h4>
+<hr />
+<p><strong>Q:</strong> What is <code>:-(s (head l))</code></p>
+<p>where <code>s</code> is <code>'a'</code></p>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is <code>[['b' ~] 'c' 'd' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>['a' 'b' ~]</code></p>
+<blockquote>
+<p>Why?</p>
+</blockquote>
+<p><strong>Q:</strong> What is <code>:-(s (tail l))</code></p>
+<p>where <code>s</code> is <code>'a'</code></p>
+<p>and</p>
+<blockquote>
+<p><code>l</code> is <code>[['b' ~] 'c' 'd' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>['a' 'c' 'd' ~]</code></p>
+<blockquote>
+<p>Why?</p>
+</blockquote>
+<ul>
+<li>JL - The next section of TLS is specific to the empty list which, as mentioned above, is not possible in Hoon. So I’m cutting this discussion. At some point before digging into recursion, I’ll discuss <code>?~</code>.</li>
+</ul>
+<p><strong>Q:</strong> Is it true or false that <code>s</code> is an atom</p>
+<p>where <code>s</code> is <code>'Harry'</code></p>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>because <code>'Harry'</code> is a string of characters surrounded by single quotes.</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.?(s)</code> true or false<sup>1</sup></p>
+<p>where</p>
+<blockquote>
+<p><code>s</code> is <code>'Harry'</code></p>
+</blockquote>
+<p><strong>A:</strong> False,</p>
+<blockquote>
+<p>because <code>.?</code> is another way to ask “Is <code>s</code> a list?”</p>
+</blockquote>
+<p><strong>Q:</strong> How do you pronounce <code>.?</code></p>
+<p><strong>A:</strong> <code>.?</code> is pronounced ‘dotwut’</p>
+<p><strong>Q:</strong> Is <code>.?(s)</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>s</code> is <code>['Harry' 'had' 'a' 'heap' 'of' 'apples' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>since <code>s</code> is a list.</p>
+</blockquote>
+<p><strong>Q:</strong> How many arguments does <code>.?</code> take and what are they?</p>
+<p><strong>A:</strong> It takes one argument. The argument can be any noun.</p>
+<p><strong>Q:</strong> Is <code>.?((head l))</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['Harry' 'had' 'a' 'heap' 'of' 'apples' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> False,</p>
+<blockquote>
+<p>because <code>(head l)</code> is ‘Harry’, and ‘Harry’ is an atom.</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.?((tail l))</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['Harry' 'had' 'a' 'heap' 'of' 'apples' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> True</p>
+<p><strong>Q:</strong> Is <code>.?((tail l))</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['Harry' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> False,</p>
+<blockquote>
+<p>because the null value, <code>~</code>, is an atom.</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.?((head (tail l)))</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['swing' 'low' 'sweet' 'cherry' 'oat' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> False</p>
+<blockquote>
+<p>because <code>(tail l)</code> is <code>['low' 'sweet' 'cherry' 'oat' ~]</code> and <code>(head (tail l))</code> is <code>'low'</code>, which is an atom.</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.?((head (tail l)))</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['swing' ['low' 'sweet' ~] 'cherry' 'oat' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>since <code>(tail l)</code> is <code>[['low' 'sweet' ~] 'cherry' 'oat' ~]</code> and <code>(head (tail l))</code> is <code>['low' 'sweet' ~]</code>, which is a list.</p>
+</blockquote>
+<p><strong>Q:</strong> True or false, <code>a1</code> and <code>a2</code> are the same atom</p>
+<p>where <code>a1</code> is <code>'Harry'</code></p>
+<p>and</p>
+<blockquote>
+<p><code>a2</code> is <code>'Harry'</code></p>
+</blockquote>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>because <code>a1</code> is the atom <code>'Harry'</code> and <code>a2</code> is the atom <code>'Harry'</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.=(a1 a2)</code> true or false</p>
+<p>where <code>a1</code> is <code>'Harry'</code></p>
+<p>and</p>
+<blockquote>
+<p><code>a2</code> is <code>'Harry'</code></p>
+</blockquote>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>because <code>.=(a1 a2)</code> is just another way to ask, “Are a1 and a2 the same non-numerica atom?”</p>
+</blockquote>
+<p><strong>Q:</strong> How do you pronounce <code>.=</code></p>
+<p><strong>A:</strong> <code>.=</code> is pronounced ‘dottis’</p>
+<p><strong>Q:</strong> Is <code>.=(a1 a2)</code> true or false</p>
+<p>where <code>a1</code> is <code>'margarine'</code></p>
+<p>and</p>
+<blockquote>
+<p><code>a2</code> is <code>'butter'</code></p>
+</blockquote>
+<p><strong>A:</strong> False,</p>
+<blockquote>
+<p>since <code>a1</code> and <code>a2</code> are different atoms.</p>
+</blockquote>
+<p><strong>Q:</strong> How many argumenst does <code>.=</code> take and what are they?</p>
+<p><strong>A:</strong> It takes two arguments. Both of them must be non-numeric atoms.</p>
+<p><strong>Q:</strong> Is <code>.=(l1 l2)</code> true or false.</p>
+<p>where <code>l1</code> is <code>['raspberry' ~]</code></p>
+<p>and</p>
+<blockquote>
+<p><code>l2</code> is <code>['strawberry' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> No answer<sup>1</sup>,</p>
+<blockquote>
+<p><code>['raspberry' ~]</code> and <code>['strawberry' ~]</code> are lists.</p>
+</blockquote>
+<p><sup>1</sup> In practice, lists may be arguments of <code>.=</code>. <code>.=</code> is true for two lists if they are the same list.</p>
+<p>JL - TLS has <code>()</code> and <code>(strawberry)</code>, but there are no empty lists in Hoon.</p>
+<p>JL - I’m deeply ambivalent about this answer being “No answer”, but I’ll stick with it for now.</p>
+<p>JL - TLS also says that <code>eq?</code> only works with non-numeric atoms. I seem to recall Scheme having some distinction between numeric and non-numeric data which Hoon doesn’t have.</p>
+<hr />
+<h3 id="the-law-of-dottis">The Law of Dottis</h3>
+<h4 id="the-rune-.-takes-two-arguments.-each-must-be-an-atom.">The rune <code>.=</code> takes two arguments. Each must be an atom.</h4>
+<hr />
+<p><strong>Q:</strong> Is <code>.=((head l) a)</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['Mary' 'had' 'a' 'little' 'lamb' 'chop' ~]</code></p>
+</blockquote>
+<p>and</p>
+<blockquote>
+<p><code>a</code> is <code>'Mary'</code></p>
+</blockquote>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>because <code>(head l)</code> is the atom <code>'Mary'</code>, and the argument <code>a</code> is also the atom <code>'Mary'</code>.</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.=((tail l) a)</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['soured' 'milk' ~]</code></p>
+</blockquote>
+<p>and</p>
+<blockquote>
+<p><code>a</code> is <code>'milk'</code>.</p>
+</blockquote>
+<p><strong>A:</strong> No answer.</p>
+<blockquote>
+<p>See The Laws of Dottis and Tail</p>
+</blockquote>
+<p><strong>Q:</strong> Is <code>.=((head l) (head (tail l)))</code> true or false</p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['beans' 'beans' 'we' 'need' 'jelly' 'beans' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> True</p>
+<blockquote>
+<p>because it compares the first and second atoms in the list</p>
+</blockquote>
+<h3 id="now-go-make-yourself-a-peanut-butter-and-jelly-sandwich">=&gt; Now go make yourself a peanut butter and jelly sandwich &lt;=</h3>
+<p><br> <br> <br> <br></p>
+<center>
+This space reserved for<br />
+<strong>JELLY STAINS!</strong>
+</center>
+<h2 id="do-it-do-it-again-and-again-and-again">2. Do It, Do It Again, and Again, and Again …</h2>
+<ul>
+<li>KM: Should is-lat be a generator?</li>
+</ul>
+<p><strong>Q:</strong> True or false: <code>(is-lat l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['Jack' 'Sprat' 'could' 'eat' 'no' 'chicken' 'fat' ~]</code></p>
+</blockquote>
+<ul>
+<li>JL: TLS calls this function <code>lat?</code>, but Hoon doesn’t allow <code>wut</code>’s (i.e. question marks) in function names.</li>
+</ul>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>because each noun in <code>l</code> is an atom.</p>
+</blockquote>
+<ul>
+<li>KM: A brief digression about generators here, if we’re going that direction</li>
+</ul>
+<p><strong>Q:</strong> True or false: <code>(is-lat l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>[['Jack' ~] 'Sprat' 'could' 'eat' 'no' 'chicken' 'fat' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> False,</p>
+<blockquote>
+<p>since <code>(head l)</code> is a list.</p>
+</blockquote>
+<p><strong>Q:</strong> True or false: <code>(is-lat l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['Jack' ['Sprat' 'could' ~] 'eat' 'no' 'chicken' 'fat' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> False,</p>
+<blockquote>
+<p>since one of the nouns in <code>l</code> is a list.</p>
+</blockquote>
+<p><strong>Q:</strong> True or false: <code>(is-lat l)</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>~</code></p>
+</blockquote>
+<p><strong>A:</strong> True,</p>
+<blockquote>
+<p>because it does not contain a list.</p>
+</blockquote>
+<p><strong>Q:</strong> True or false: a lat is a list of atoms.</p>
+<p><strong>A:</strong> True!</p>
+<blockquote>
+<p>Every lat is a list of atoms!</p>
+</blockquote>
+<p><strong>Q:</strong> Write the function <code>is-lat</code> using some, but not necessarily all of the following:</p>
+<blockquote>
+<p><code>head</code>, <code>tail</code>, <code>:-</code>, <code>.?</code>, <code>.=</code></p>
+</blockquote>
+<p><strong>A:</strong> You were not expected to be able to do this yet, because you are still missing some ingredients. Go on to the next question.<br />
+Good luck.</p>
+<br> <br> <br> <br>
+<center>
+<strong>Are you rested?</strong>
+</center>
+<p><br> <br> <br> <br></p>
+<p>KM: describe making a generator, i.e. creating a file in the <code>gen</code> directory and and putting this bit of code into it.</p>
+<p><strong>Q:</strong></p>
+<pre><code>|=  l=*
+|-
+?:  .=(~ l)
+  %.y
+?:  .?((head l))
+  %.n
+$(l (tail l))</code></pre>
+<p>What is the value of <code>+is-lat l</code></p>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is the argument <code>['bacon' 'and' 'eggs' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>%.y</code></p>
+<blockquote>
+<p>The application of <code>+is-lat l</code><br />
+where<br />
+&gt; <code>l</code> is <code>['bacon' 'and' 'eggs' ~]</code> has the value <code>%.y</code> — true — because <code>l</code> is a lat.</p>
+</blockquote>
+<p><strong>Q:</strong> How do we determine the answer <code>%.y</code> for the application</p>
+<blockquote>
+<p><code>+is-lat l</code></p>
+</blockquote>
+<p><strong>A:</strong> You were not expected to know this one either. The answer is determined by answering the questions asked by <code>+is-lat</code></p>
+<blockquote>
+<p>Hint: Write down the definition of the function <code>+is-lat</code> and refer to it for the next group of questions.</p>
+</blockquote>
+<p><strong>Q:</strong> What is the first question asked by <code>+is-lat l</code></p>
+<p><strong>A:</strong> <code>.=(~ l)</code> &gt; Note: &gt; <code>?:</code> asks questions; &gt; <code>|=</code> creates a function; and &gt; <code>|-</code> sets a restart point (more on this shortly)</p>
+<ul>
+<li>TLS: “<strong>define</strong> gives it a name”</li>
+</ul>
+<p><strong>Q:</strong> What is the meaning of the condition</p>
+<blockquote>
+<p><code>.=(~ l)</code></p>
+</blockquote>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['bacon' 'and' 'eggs' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>.=(~ l)</code> asks if the argument <code>l</code> is null. If it is null, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.y</code></p>
+</blockquote>
+<p>This means the value for the application will be “true”. If <code>l</code> is not null, we keep going.</p>
+<p>In this case, <code>l</code> is not the null value, so we keep going and ask the next question.</p>
+<p><strong>Q:</strong> What is the next question?</p>
+<p><strong>A:</strong> <code>.?((head l))</code></p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>.?((head l))</code></p>
+</blockquote>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is <code>['bacon' 'and' 'eggs' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>.?((head l))</code> asks if the first noun of the list <code>l</code> is a list. If <code>(head l)</code> is a list, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.n</code></p>
+</blockquote>
+<p>Which means the value for the application will be “false”. If <code>(head l)</code> is an atom, we keep going.</p>
+<p>In this case, <code>(head l)</code> is <code>'bacon'</code>, an atom. So we keep going.</p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>$(l (tail l))</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>$(l (tail l))</code> finds out if the rest of the list <code>l</code> is composed only of atoms, by returning to our restart point <code>|-</code> (or ‘barhep’) with a new value for <code>l</code>.</p>
+<p><strong>Q:</strong> What is the new value for <code>l</code>?</p>
+<p><strong>A:</strong> The new value for <code>l</code> is <code>(tail l)</code>, which is</p>
+<blockquote>
+<p><code>['and' 'eggs' ~]</code></p>
+</blockquote>
+<p><strong>Q:</strong> What is the next question after <code>|-</code>?</p>
+<p><strong>A:</strong> <code>.=(~ l)</code></p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>.=(~ l)</code></p>
+</blockquote>
+<p>where &gt; <code>l</code> is now <code>['and' 'eggs' ~]</code></p>
+<p><strong>A:</strong> <code>.=(~ l)</code> asks if the argument <code>l</code> is null. If it is null, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.y</code></p>
+</blockquote>
+<p>which means the value for the application will be “true”. If <code>l</code> is not null, we keep going.</p>
+<p>In this case, <code>l</code> is not the null value, so we keep going and ask the next question.</p>
+<p><strong>Q:</strong> What is the next question?</p>
+<p><strong>A:</strong> <code>.?((head l))</code></p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>.?((head l))</code></p>
+</blockquote>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is now <code>['and' 'eggs' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>.?((head l))</code> asks if the first noun of the list <code>l</code> is a list. If <code>(head l)</code> is a list, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.n</code></p>
+</blockquote>
+<p>Which means the value for the application will be “false”. If <code>(head l)</code> is an atom, we keep going.</p>
+<p>In this case, <code>(head l)</code> is an atom. So we keep going.</p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>$(l (tail l))</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>$(l (tail l))</code> finds out if the rest of the list <code>l</code> is composed only of atoms, by returning to our restart point <code>|-</code> with a new value for <code>l</code>. This new value is <code>(tail l)</code> or <code>['eggs' ~]</code>.</p>
+<p><strong>Q:</strong> What is the next question after <code>|-</code>?</p>
+<p><strong>A:</strong> <code>.=(~ l)</code></p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>.=(~ l)</code></p>
+</blockquote>
+<p>where &gt; <code>l</code> is now <code>['eggs' ~]</code></p>
+<p><strong>A:</strong> <code>.=(~ l)</code> asks if the argument <code>l</code> is null. If it is null, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.y</code></p>
+</blockquote>
+<p>which means the value for the application will be “true”. If <code>l</code> is not null, we keep going.</p>
+<p>In this case, <code>l</code> is not the null value, so we keep going and ask the next question.</p>
+<p>KM: Tighten this up for the second/third time through.</p>
+<p><strong>Q:</strong> What is the next question?</p>
+<p><strong>A:</strong> <code>.?((head l))</code></p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>.?((head l))</code></p>
+</blockquote>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is now <code>['eggs' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>.?((head l))</code> asks if the first noun of the list <code>l</code> is a list. If <code>(head l)</code> is a list, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.n</code></p>
+</blockquote>
+<p>Which means the value for the application will be “false”. If <code>(head l)</code> is an atom, we keep going.</p>
+<p>In this case, <code>(head l)</code> is an atom. So we keep going.</p>
+<p>KM: Tighten this up too.</p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>$(l (tail l))</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>$(l (tail l))</code> finds out if the rest of the list <code>l</code> is composed only of atoms, by returning to our restart point <code>|-</code> with a new value for <code>l</code>.</p>
+<p><strong>Q:</strong> Now what is the new value for <code>l</code>?</p>
+<p><strong>A:</strong> <code>~</code></p>
+<p><strong>Q:</strong> What is the next question after <code>|-</code>?</p>
+<p><strong>A:</strong> <code>.=(~ l)</code></p>
+<p><strong>Q:</strong> What is the meaning of</p>
+<blockquote>
+<p><code>.=(~ l)</code></p>
+</blockquote>
+<p>where</p>
+<blockquote>
+<p><code>l</code> is now <code>['eggs' ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>.=(~ l)</code> asks if the argument <code>l</code> is null. If it is null, we evaluate the next line, which is</p>
+<blockquote>
+<p><code>%.y</code></p>
+</blockquote>
+<p>which means the value for the application will be “true”. If <code>l</code> is not null, we keep going.</p>
+<p>In this case, <code>l</code> is the null value. So, the value of the application</p>
+<blockquote>
+<p><code>+is-lat l</code></p>
+</blockquote>
+<p>where <code>l</code> is <code>['bacon' 'and' 'eggs' ~]</code> is <code>%.y</code>—true.</p>
+<p>KM: Tighten this up for the second/third time through.</p>
+<p><strong>Q:</strong> Do you remember the question about</p>
+<blockquote>
+<p><code>+is-lat l</code></p>
+</blockquote>
+<p><strong>A:</strong> Probably not. The application <code>+is-lat l</code> has the value of <code>%.y</code> if the list <code>l</code> is a list of atoms where</p>
+<blockquote>
+<p><code>l</code> is <code>['bacon' 'and' 'eggs' ~]</code></p>
+</blockquote>
+<p><strong>Q:</strong> Can you describe what the function <code>+is-lat</code> does in your own words?</p>
+<p><strong>A:</strong> Here are our words:</p>
+<blockquote>
+<p>“<code>+is-lat</code> looks at each noun in a list, in turn, and asks if each noun is an atom, until it gets to the null value. If it runs out without encountering a list, the value is <code>%.y</code>. If it finds a list, the value is <code>%.n</code>—false.”</p>
+</blockquote>
+<p>To see how we could arrive at a value of “false”, consider the next few questions.</p>
+<p><strong>Q:</strong> Here are the contents of <code>+is-lat</code> again.</p>
+<pre><code>|=  l=*
+|-
+?:  .=(~ l)
+  %.y
+?:  .?((head l))
+  %.n
+$(l (tail l))</code></pre>
+<p>What is the value of <code>+is-lat l</code><br />
+where</p>
+<blockquote>
+<p><code>l</code> is now <code>['bacon' ['and' 'eggs' ~] ~]</code></p>
+</blockquote>
+<p><strong>A:</strong> <code>%.n</code></p>
+<blockquote>
+<p>since the list <code>l</code> contains a noun that is a list.</p>
+</blockquote>
+<p><strong>Q:</strong> What is the first question?</p>
+<p><strong>A:</strong> <code>.=(~ l)</code></p>
+<p><strong>Q:</strong> What is the meaning of &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
+<p><strong>Q:</strong> &gt;</p>
+<p><strong>A:</strong> &gt;</p>
