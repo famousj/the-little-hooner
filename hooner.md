@@ -24,6 +24,10 @@ list or null.  The result is a list.
 > The rune `.=` takes two arguments.  Each must be an atom.
 
 
+## Rune Pronunciation
+
+KM: Paste in here
+
 ## 0. Preface and Setup
 
 ### Introductory Notes
@@ -74,12 +78,27 @@ I would like to introduce the shorter version at some point, but haven't found a
   now.  This is how TLS works, as well, with the occasional footnote for
   the "Um, akshually..." crowd.
 
+
 - I'm using the `.=` rune for testing equality and the `:-` rune for
   the _cons_ operation.  I could see the advantage of doing `=(a b)`
   instead of `.=(a b)` or `[a b] instead of `[a b]`, but I want to
   introduce the concept of the two-character rune.
 
+- I was going to refer to function as "gates", which is what the Hoon
+  docs call them.  But a "gate" is not precisely a function, it's a
+  "core" with one arm named `$`.  I'd rather not get into this, so I'm
+  just going to call them "functions".  I'll try to peel back the covers
+  on this whenver appropriate.
+
 - If you see any egregious errors, pull requests are welcome!
+
+
+### Introduction
+
+KM
+
+I plan to note here that what I'm describing is a superset of Hoon.  For
+what it's worth, 
 
 ### How to Read This Book - JL
 
@@ -124,6 +143,10 @@ You are highly encouraged to follow along and test things out in the dojo.
   structure, so I'll introduce that later.
 
 - Also need to figure out how to discuss "tall form".
+
+- TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
+  thing here with Hoon, but need to be a bit more transparent about what 
+  you can and can't do in Hoon.
 
 
 ## 1. Toys
@@ -933,7 +956,7 @@ Good luck.
 Here are the contents of the generator `is-lat.hoon`<sup>1</sup>
 
 ```
-|=  l=*
+|=  l=(list)
 |-
 ?:  .=(~ l)
   %.y
@@ -973,6 +996,22 @@ determined by answering the questions asked by `+is-lat`
 
 > Hint: Write down the contents of `is-lat.hoon` and refer to
 > it for the next group of questions.
+
+**Q:** What does the first line of `+is-lat` do?
+
+> `|=  l=(list)`
+
+**A:** It declares a function with one parameter.
+
+**Q:** What is the one parameter?
+
+**A:** `l=(list)`
+
+**Q:** What is the meaning of
+
+> `l=(list)`
+
+**A:** The parameter is named `l` and it is of type `list`.
 
 **Q:** What is the first question asked by `+is-lat l`
 
@@ -1193,7 +1232,7 @@ questions.
 
 **Q:** Here are the contents of `+is-lat` again.
 ```
-|=  l=*
+|=  l=(list)
 |-
 ?:  .=(~ l)
   %.y
@@ -1299,71 +1338,803 @@ where
 > `+is-lat l` is `%.y`.  If it finds a list, as it did in the example
 > `['bacon' ['and' 'eggs' ~] ~]`, the value of `+is-lat l` is `%.n`."
 
+JL: A brief digression where we talk about declaring gates in Hoon
 
-**Q:** 
+KM: Introduce the word "gate" at some point before now.
+
+**Q:** What does the first line of `+is-lat` again?
+
+**A:** `|=  l=(list)`
+
+**Q:** What is the meaning of
+
+> `l=(list)`
+
+**A:** The parameter is named `l` and it is of type `list`.
+
+**Q:** What would be the result if you called `+is-lat l`  
+where
+
+> `l` is `'cheeseburger'`
+
+**A:** No answer,
+
+Because the parameter `l` must be a list.
+
+**Q:** What would be the result if you called `+is-lat l`  
+where
+
+> `l` is `~`
+
+**A:** It would return `%.y`
+
+Because `~` is the only atom that is also a list, in this case it is a list of zero nouns. And since an empty list does not contain any lists, it returns true, or `%.y`.
+
+KM: Add this fact (~ is both an atom and a zero-item list) tidbit to chapter 1
+
+KM: This is a deep concept which kind of muddies the waters here.  I'm seeing now why TLS made a function called `atom?`, which explicitly ruled out `~`.  Revisit the decision to exclude `atom?`.
+
+**Q:** Is `?|(.=(~ l1) .=(~ l2))` true or false
+where `l1` is `~`   
+and  
+
+> `l2` is `['d' 'e' 'f' 'g' ~]`
+
+**A:** True,
+
+> because `.=(~ l1)`is true where `l1` is `~`.
+
+**Q:** Is `?|(.=(~ l1) .=(~ l2))` true or false
+where 
+
+> `l1` is `['a' 'b' 'c' ~]`   
+
+and  
+
+> `l2` is `~`
+
+**A:** True,
+
+> because `.=(~ l2)`is true where `l2` is `~`.
+
+**Q:** Is `?|(.=(~ l1) .=(~ l2))` true or false
+where 
+
+> `l1` is `['a' 'b' 'c' ~]`   
+
+and  
+
+> `l2` is `['atom' ~]`
+
+**A:** False,
+
+> because `.=(~ l1)` nor `.=(~ l2)` is true where
+
+> `l1` is `['a' 'b' 'c' ~]`
+
+and 
+
+> `l2` is `['atom' ~]`
+
+**Q:** Is this true or false:
+
+```
+?|
+  .=(~ l1)
+  .=(~ l2)
+==
+```
+
+where 
+
+> `l1` is `['a' 'b' 'c' ~]`   
+
+and  
+
+> `l2` is `['atom' ~]`
+
+
+**A:** False,
+
+because
+
+```
+?|
+  .=(~ l1)
+  .=(~ l2)
+==
+```
+
+is another way of writing
+
+```
+?|(.=(~ l1) .=(~ l2))
+```
+
+**Q:** Does `?|` only work with two questions?
+
+**A:** No,
+
+you can ask as many questions as you want.
+
+**Q:** What does `?|(...)` do?
+
+**A:** `?|` (pronounced 'wutbar') asks questions, one at a time.  If
+the first one is true it stops and answers true.  Otherwise it asks the
+next question.  It continues until it gets to the final question, and
+answers with whatever the last question answers.
+
+This is sometimes called the 'OR' operation.
+
+**Q:** What form of Hoon is this?
+
+```
+?|(.=(~ l1) .=(~ l2))
+```
+
+**A:** This is called "short form".
+
+**Q:** What form of Hoon is this?
+
+```
+?|
+  .=(~ l1)
+  .=(~ l2)
+==
+```
+
+**A:** This is called "tall form".
+
+**Q:** What does the `==` do?
+
+**A:** In tall form, `?|` uses what's called a "running series".  You use `==` to finish asking questions.
+
+**Q:** Is it true or false that `a` is a member of `lat`  
+where `a` is `'tea'`  
+and
+
+> `lat` is `['coffee' 'tea' 'or' 'milk' ~]`
+
+**A:**  True,
+
+> because one of the atoms of the lat,
+> > `['coffee' 'tea' 'or' 'milk' ~]`
+> is the same as the atom `a`&mdash;tea.
+
+**Q:** Is `+is-member [a lat]` true or false  
+where `a` is 'poached'  
+and
+
+> `lat` is `['fried' 'eggs' 'and' 'scrambled' eggs' ~]`
+
+**A:** False,
+
+> since `a` is not one of the atoms of the lat.
+
+**Q:**   
+
+Here are the contents of the generator `is-member.hoon`<sup>1</sup>
+
+```
+|=  [a=@ lat=(list @)]
+|-
+?:  .=(~ lat)
+  %.n
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+What is the value of `+is-member [a lat]`
+
+where `a` is `'meat`   
+and
+
+> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+<sup>1</sup> Add this code to a file called `gen/is-member.hoon` inside your
+`home` directory.  Then run the following in the dojo:
+```
+|commit %home
+```
+
+**A:** `%.y`,
+
+> because the atom `'meat'` is one of the atoms of `lat`,
+> > `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**Q:** How do we determine the value `%.y` for the above application?
+
+**A:** The value is determined by asking the questions about `%is-member
+[a lat]`.
+
+> Hint: Write down the contents of `is-member.hoon` and refer to
+> it while you work on the next group of questions.
+
+**Q:** What does the first line of `+is-member` do?
+
+> `|=  [a=@ lat=(list @)]`
+
+**A:** The `|=` declares a function.  This function has a pair of
+parameters.
+
+**Q:** What are the parameters
+
+**A:** `a=@`
+
+and
+
+> `lat=(list @)`
+
+**Q:** What is the meaning of
+
+> `a=@`
+
+**A:** The first parameter is named `a` and its type is an atom (i.e. `@`).
+
+**Q:** What is the meaning of
+
+> `lat=(list @)`
+
+**A:** The second parameter is named `lat` and its type is a list of atoms (i.e. `(list @)`).
+
+**Q:** What does the second line do?
+
+> `|-`
+
+**A:** It sets the return point 
+
+**Q:** What is the first question?
+
+> `+is-member [a lat]`
+
+**A:** `?:  .=(~ lat)`
+
+> This is also the first question asked by `is-lat`
+
+---
+
+###  The First Commandment
+##### (preliminary)
+#### Always ask if a list is null as the first question in expressing any function.
+
+---
+
+**Q:** What is the meaning of the line
+
+> `?:  .=(~ lat)`
+
+where 
+
+> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** `.=(~ lat)` asks if lat is the null value, `~`.  If it is, we have an empty list, so the atom `'meat'` was not in `lat`.  So we evaluate the next line, which is `$.n`.  If `lat` is not `~`, we keep going.
+
+In this case, it is not null, so we keep going.
+
+**Q:** What is the meaning of:
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+**A:** Now that we know that `lat` is not `~`, we have to find out
+whether the `head` of `lat` is the same atom as `a`, or whether `a` is
+somewhere in the rest of `lat`.  The answer
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+does this
+
+**Q:** True or false
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+where `a` is `'meat'`  
+and
+
+> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** We will find out by looking at each question in turn
+
+**Q:** Is `.=((head lat) a)` true or false  
+where `a` is `'meat'`  
+and
+
+> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** False,
+
+because `'meat'` is not equal to `'mashed'`,  
+the `head` of
+
+> `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**Q:** What is the second question of `?|`
+
+**A:** `$(lat (tail lat))`
+
+> This refers to returing to our restart point with `lat` replaced by
+> `(tail lat)`.
+
+**Q:** Now what are the two parameters?
+
+**A:** `a` is `'meat'`  
+and
+
+> `lat` is now `(tail lat)`, specifically
+> `['potatoes' 'and' 'meat' 'gravy' ~]`
+
+**Q:** What is the next question?
+
+**A:** `.=(~ lat)`
+
+> Remember The First Commandment
+
+**Q:** is `.=(~ lat)` true or false  
+where
+
+> `lat` is `['potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** `%.n`&mdash;false
+
+**Q:** What do we do now?
+
+**A:** Keep going
+
+**Q:** What's the meaning of 
+
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
 > 
 
 **A:** 
-> 
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+finds out if `a` is equal to the `head` of `lat` or if `a` is a member
+of the `tail` of `lat` by returning to the restart point.
+
+
+**Q:** Is `a` equal to the `head` of `lat`?
+
+**A:** No, because `a` is `'meat'` and the `head` of `lat` is
+`'potatoes'`.
+
+**Q:** What do we do next?
+
+**A:** We return to our restart point.
+
+**Q:** Now, what are our parameters?
+
+**A:** `a` is `'meat'`, and  
+`lat` is `['and' 'meat' 'gravy' ~]`
+
+**Q:**  What is the next question?
+
+**A:** `?:  .=(~ lat)`
+
+**Q:** What do we do now?
+
+**A:** Keep going, since `.=(~ lat)` is false.
+
+**Q:** What is the value of
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+**A:** The value of `$(lat (tail lat))`.
+
+**Q:** Why?
+
+**A:** Because `.=((head lat) a)` is false.
+
+**Q:** What do we do now?
+
+**A:** Recur&mdash;return to the restart point with new arguments.
+
+KM: Decide on the terminology: argument or parameter?  And define them
+at some point.
+
+**Q:** What are the new arguments?
+
+**A:** `a` is `'meat'`, and  
+`lat` is `['meat' 'gravy' ~]`
+
+**Q:** What is the next question?
+
+**A:** `?:  .=(~ lat)`
+
+**Q:** What do we do now?
+
+**A:** Since `.=(~ lat)` is false, keep going
+
+**Q:** What is the value of
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+**A:** `%.t`,
+> because `(head lat)`, which is `'meat'`, and `a`, which is `'meat'`,
+> are the same atom.  
+> Therefore, `?|` answers with `%.t`.
+
+**Q:** What is the value of the application
+
+> `+is-member [a lat]`
+
+where `a` is `'meat'`  
+and   
+
+> `lat` is `['meat' 'gravy' ~]`
+
+**A:** `%.t`,
+
+> because we have found that `'meat'` is a member of `['meat' 'gravy' ~]`.
+
+**Q:** What is the value of the application
+
+> `+is-member [a lat]`
+
+where `a` is `'meat'`  
+and   
+
+> `lat` is `['and' 'meat' 'gravy' ~]`
+
+**A:** `%.t`,
+
+> because `'meat'` is also a member of the `lat` `['and' 'meat' 'gravy' ~]`
+
+**Q:** What is the value of the application
+
+> `+is-member [a lat]`
+
+where `a` is `'meat'`  
+and   
+
+> `lat` is `['potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** `%.t`,
+
+> because `'meat'` is also a member of the `lat` `['potatoes' 'and' 'meat' 'gravy' ~]`
+
+**Q:** What is the value of the application
+
+> `+is-member [a lat]`
+
+where `a` is `'meat'`  
+and   
+
+> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** `%.t`,
+
+> because `'meat'` is also a member of the `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**Q:** Just to make sure you have it right, let's quickly run through it
+again.  What is the value of `+is-member [a lat]`  
+where
+
+> `a` is `'meat'`
+
+and
+
+> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** `%.y`.
+
+> Hint: Write down the contents of `is-member.hoon` and its arguments
+> and refer to them as you go through the next group of questions.
+
+**Q:** `.=(~ lat)`
+
+**A:**  No.  Skip the next line and keep going
+
+KM: Instead of "keep going", call out that you should skip a line
 
 **Q:** 
-> 
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
 
-**A:** 
-> 
+**A:** Perhaps
 
-**Q:** 
-> 
+**Q:** `.=((head lat) a)`
 
-**A:** 
-> 
+**A:** No.  Ask the next question.
 
-**Q:** 
-> 
+**Q:** What's next?
 
-**A:** 
-> 
+**A:** Return to the restart point with `a` and `(tail lat)`  
+where `a` is `'meat'`  
+and
 
-**Q:** 
-> 
+> `(tail lat)` is `['potatoes' 'and' 'meat' 'gravy' ~]`
 
-**A:** 
-> 
+**Q:** `.=(~ lat)`
 
-**Q:** 
-> 
-
-**A:** 
-> 
+**A:** No.  Skip the next line and keep going.
 
 **Q:** 
-> 
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
 
-**A:** 
-> 
+**A:** `.=((head lat) a)` is false.
+
+> Return to the restart point  with `a` and `(tail lat)`  
+> where  `a` is `'meat'`  
+> and  
+> > `(tail lat)` is `['and' 'meat' 'gravy' ~]`
+
+**Q:**  `.=(~ lat)`
+
+**A:**  No.  Skip the next line and keep going.
+
+**Q:**
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+**A:** `.=((head lat) a)` is false.
+
+> Return to the restart point  with `a` and `(tail lat)`  
+> where  `a` is `'meat'`  
+> and  
+> > `(tail lat)` is `['meat' 'gravy' ~]`
+
+**Q:**  `.=(~ lat)`
+
+**A:**  No.  Skip the next line and keep going.
+
+KM: Really, explain how `?:` works.
+
+**Q:** `.=((head lat) a)`
+
+**A:** Yes, the value is `%.y`.
+
+**Q:**
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+
+**A:** `%.y`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'meat'`  
+and  
+
+> `lat` is `['meat' 'gravy' ~]`
+
+**A:** `%.y`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'meat'`  
+and  
+
+> `lat` is `['and' 'meat' 'gravy' ~]`
+
+**A:** `%.y`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'meat'`  
+and  
+
+> `lat` is `['potatoes' 'and' 'meat' 'gravy' ~]`
+
+**A:** `%.y`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'meat'`  
+and  
+
+> `lat` is `['mashed' 'potatoes' 'and 'meat' 'gravy' ~]`
+
+**A:** `%.y`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'liver'`  
+and  
+
+> `lat` is `['bagels' 'and' 'lox' ~]`
+
+**A:** `%.n`
+
+**Q:** Let's work out why it is `%.n`.  What's the first question
+`+is-member` asks?
+
+**A:** `.=(~ lat)`
+
+**Q:** `.=(~ lat)`
+
+**A:** No.  Skip the next line and keep going
 
 **Q:** 
-> 
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
 
-**A:** 
-> 
+**A:** `.=((head lat) a) is false.
+
+> Return to the restart point  with `a` and `(tail lat)`  
+> where  `a` is `'liver'`  
+> and  
+> > `(tail lat)` is `['and' 'lox' ~]`
+
+**Q:** `.=(~ lat)`
+
+**A:** No.  Skip the next line and keep going
 
 **Q:** 
-> 
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
 
-**A:** 
-> 
+**A:** `.=((head lat) a) is false.
+
+> Return to the restart point  with `a` and `(tail lat)`  
+> where  `a` is `'liver'`  
+> and  
+> > `(tail lat)` is `['lox' ~]`
+
+**Q:** `.=(~ lat)`
+
+**A:** No.  Skip the next line and keep going
 
 **Q:** 
-> 
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
 
-**A:** 
-> 
+**A:** `.=((head lat) a) is false.
 
-**Q:** 
-> 
+> Return to the restart point  with `a` and `(tail lat)`  
+> where  `a` is `'liver'`  
+> and  
+> > `(tail lat)` is `~`
 
-**A:** 
-> 
 
+**Q:** `.=(~ lat)`
+
+**A:** Yes.
+
+**Q:** What is the value on the next line?
+
+**A:** `%.n`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'liver'`  
+and  
+
+> `lat` is `~`
+
+**A:** `%.n`
+
+**Q:** What is the value of
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+where  
+
+> `a` is `'liver'`
+
+and
+
+> `lat` is `['lox']`
+
+
+**A:** `%.n`
+
+**Q:** What is the value of
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+where  
+
+> `a` is `'liver'`
+
+and
+
+> `lat` is `['and' 'lox']`
+
+
+**A:** `%.n`
+
+**Q:** What is the value of
+```
+?|
+  .=((head lat) a)
+  $(lat (tail lat))
+==
+```
+where  
+
+> `a` is `'liver'`
+
+and
+
+> `lat` is `['bagels' 'and' 'lox']`
+
+
+**A:** `%.n`
+
+**Q:** What is the value of `+is-member [a lat]`  
+where `a` is `'liver'`  
+and  
+
+> `lat` is `['bagels' 'and' 'lox' ~]`
+
+**A:** `%.n`
+
+
+<center>Do you believe all this? Then you may rest!</center>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+### This space for doodling
+
+## 3. Cons the Magnificent
 
