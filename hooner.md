@@ -28,6 +28,12 @@ list or null.  The result is a list.
 
 KM: Paste in here
 
+## Table of Contents
+
+
+**1. [Toys](#chap1)**  
+**2. [Do It, Do It Again, and Again, and Again ...](#chap2)**
+
 ## 0. Preface and Setup
 
 ### Introductory Notes
@@ -148,6 +154,8 @@ You are highly encouraged to follow along and test things out in the dojo.
   thing here with Hoon, but need to be a bit more transparent about what 
   you can and can't do in Hoon.
 
+
+<a name="chap1"></a>
 
 ## 1. Toys
 
@@ -870,6 +878,8 @@ This space reserved for
 <br>
 <br>
 
+
+<a name="chap2"></a>
 
 ## 2. Do It, Do It Again, and Again, and Again ...
 
@@ -2135,6 +2145,8 @@ and
 <br>
 
 ### This space for doodling
+
+<a name="chap3"></a>
 
 ## 3. Cons the Magnificent
 
