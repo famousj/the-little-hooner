@@ -10,11 +10,10 @@ KM
 ## The <strike>Five</strike> Four Rules
 
 ###  The Law of Head
-> The primitive `head` is defined only for lists.
+> The primitive `head` is defined only for non-null lists.
 
 ### The Law of Tail
-> The primitive `tail` is defined only for lists. The `tail` of any
-list is always another list.
+> The primitive `tail` is defined only for non-null lists. The `tail` of any non-null list is always another list.
 
 ### The Law of Colhep
 > The rune `:-` takes two arguments.  The second argument to `:-` must be a 
@@ -154,7 +153,6 @@ You are highly encouraged to follow along and test things out in the dojo.
   thing here with Hoon, but need to be a bit more transparent about what 
   you can and can't do in Hoon.
 
-
 <a name="chap1"></a>
 
 ## 1. Toys
@@ -202,6 +200,15 @@ You are highly encouraged to follow along and test things out in the dojo.
 
 > because `'*abc$'` is a string of characters.
 
+**Q:** Is it true that this is an atom?
+
+> `~`
+
+**A:** Yes,
+
+> `~` is the null value.  It's pronounced 'sig' or sometimes 'null'.  It
+> is an atom with no value.
+
 **Q:** Is it true that this is a list?
 
 > `['atom' 'turkey' ~]`
@@ -210,7 +217,7 @@ You are highly encouraged to follow along and test things out in the dojo.
 
 > because `['atom' 'turkey']` is two atoms enclosed by a left square
 > bracket (which is called a '`sel`') and a right square bracket (which is 
-> called a '`ser`'), ending in the null value (`~`, pronounced '`sig`')
+> called a '`ser`'), ending in the null value (i.e. `~`).
 
 **Q:** Is it true that this is a list?
 
@@ -315,22 +322,32 @@ and what are they?
 > `~`, because it is a collection of nouns enclosed by square brackets,
 > ending in null.
 
-**Q:** Is it true that this is an atom? 
+**Q:** Is it true that this is an atom?
 
 > `~`
 
-- JL: TLS talks about the empty lists in this section, but Hoon doesn't allow empty lists.  This might be a good spot to talk about how lists can't really be empty.
+**A:** Yes,
+
+> the null value is an atom with no value. 
+
+**Q:** Is it true that this is a list?
+
+> `~`
 
 **A:** Yes,
 
-> the null value is an atom
+> the null value is an empty list, a list with no nouns.
+
+**Q:** So the null value is both an atom and a list?
+
+**A:** Yes.
+
+> `~` is special.  It can act like a list when it needs to be a list.
+> Most of the time it's just an atom.
 
 **Q:** What is the `head` of `l` where `l` is the argument
 
 > `['a' 'b' 'c' ~]`
-
-- JL: TLS calls this `car`.  You could do the same with tree addresses, but
-  I think using `head` and `tail` is way easier to understand conceptually.
 
 **A:** `'a'`
 
@@ -355,16 +372,13 @@ and what are they?
 **Q:** What is the `head` of `l` where `l` is `~`
 
 **A:** No answer.
-
-> The null value is an atom and you cannot ask for the `head` of an atom.
-
-- TLS then asks about `car` of an empty list.  As noted above Hoon
-  doesn't support empty list.
+ 
+> You cannot ask for the `head` of `~`, since `~` is the empty list.
 
 ---
 
 ###  The Law of Head
-#### The primitive `head` is defined only for lists.
+#### The primitive `head` is defined only for non-null lists.
 
 ---
 
@@ -429,7 +443,7 @@ where
 
 **A:** `~`
 
-> the null value
+> the null value, in this case acting as an empty list.
 
 **Q:** What is `(tail l)`
 
@@ -458,13 +472,12 @@ where `l` is `~`
 
 **A:** No answer.
 
-> The null value is an atom and you cannot ask for the `tail` of an
-> atom.
+> You cannot ask for the `tail` of `~`, since `~` is an empty list.
 
 ---
 
 ###  The Law of Tail
-#### The primitive `tail` is defined only for lists. The `tail` of any list is always another list.
+#### The primitive `tail` is defined only for non-null lists. The `tail` of any non-null list is always another list.
 
 ---
 
@@ -503,11 +516,11 @@ where
 
 **Q:** What does `head` take as an argument?
 
-**A:** It takes any list.
+**A:** It takes any non-empty list.
 
 **Q:** What does `tail` take as an argument?
 
-**A:**  It takes any list.
+**A:**  It takes any non-empty list.
 
 **Q:** What is the _cons_ of the atom `a` and the list `l` 
 
@@ -579,10 +592,9 @@ and
 
 > `l` is ~
 
-- For this question, TLS has the empty list.  In Hoon, the null has more
-  or less the same purpose as the empty list, especially when doing recursion. 
-
 **A:** `[['a' 'b' ['c' ~] ~] ~]`
+
+> because `~` can act as a list.
 
 **Q:** What is `:-(s l)`
 
@@ -622,6 +634,10 @@ and `l` is `'b'`
 
 > Why?
 
+JL: This is not true.  The answer is `[a b]`.  At some point, TLS
+starts talking about tuples.  When I get to that section, I'll possibly
+come back and revise this.
+
 ---
 
 ### The Law of Colhep
@@ -653,9 +669,11 @@ and
 
 > Why?
 
-- JL - The next section of TLS is specific to the empty list which, as
-  mentioned above, is not possible in Hoon.  So I'm cutting this discussion.
-  At some point before digging into recursion, I'll discuss `?~`.
+- JL - The next section of TLS referst to empty lists and then
+  introduces `null?`.  Hoon doesn't work this way, so I left it out.
+
+- KM: At some point consider introducing `?~` into the disucssion of
+  recursion.
 
 **Q:** Is it true or false that `s` is an atom
 
@@ -720,7 +738,7 @@ where
 
 **A:** False,
 
-> because the null value, `~`, is an atom.
+> because the null value, `~`, acts as an atom here.
 
 **Q:** Is `.?((head (tail l)))` true or false
 
@@ -804,9 +822,6 @@ and
 <sup>1</sup> In practice, lists may be arguments of `.=`.  `.=` is true
 for two lists if they are the same list.
 
-JL - TLS has `()` and `(strawberry)`, but there are no empty lists in
-Hoon.
-
 JL - I'm deeply ambivalent about this answer being "No answer", but I'll
 stick with it for now.
 
@@ -885,19 +900,15 @@ This space reserved for
 
 
 - JL: `is-lat` is right now specified as a generator.  I would prefer for
-  it to be a regular function that just runs in the dojo like `head`,
-  but I'm not sure how to make that happen.
-
+  it to be a regular function that just runs in the dojo like `head`.
+  There's some experimental features that could make this happen, but
+  they're very new.  I'll stick with generators until I can't any more.
 
 **Q:** True or false: `+is-lat l`
 
 where
 
 > `l` is `['Jack' 'Sprat' 'could' 'eat' 'no' 'chicken' 'fat' ~]`
-
-- JL: TLS calls this function `lat?`, but Hoon doesn't allow `wut`'s
-  (i.e. question marks) in function names.
-
 
 **A:** True,
 
