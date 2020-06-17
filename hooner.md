@@ -25,7 +25,20 @@ list or null.  The result is a list.
 
 ## Rune Pronunciation
 
-KM: Paste in here
+```
+ace [1 space]       gap [>1 space, nl]  pat @
+bar |               gar >               sel [
+bas \               hax #               ser ]
+buc $               hep -               sig ~
+cab _               kel {               soq '
+cen %               ker }               tar *
+col :               ket ^               tic `
+com ,               lus +               tis =
+doq "               mic ;               wut ?
+dot .               pal (               zap !
+fas /               pam &
+gal <               par )
+```
 
 ## Table of Contents
 
@@ -102,8 +115,8 @@ I would like to introduce the shorter version at some point, but haven't found a
 
 KM
 
-I plan to note here that what I'm describing is a superset of Hoon.  For
-what it's worth, 
+I plan to note here that what I'm describing is a superset of Hoon, and
+that we'll add to it as we go along.  
 
 ### How to Read This Book - JL
 
