@@ -898,11 +898,10 @@ This space reserved for
 
 ## 2. Do It, Do It Again, and Again, and Again ...
 
-
 - JL: `is-lat` is right now specified as a generator.  I would prefer for
   it to be a regular function that just runs in the dojo like `head`.
   There's some experimental features that could make this happen, but
-  they're very new.  I'll stick with generators until I can't any more.
+  they're very new.  I'll stick with generators for now.
 
 **Q:** True or false: `+is-lat l`
 
@@ -938,14 +937,11 @@ where
 
 where
 
-> `l` is `[~]`
+> `l` is `~`
 
 **A:** True,
 
-> because the null value is an atom.
-
-- JL: `[~]` evaluates to `~`.  However, 
-- KM: Possibly revise Chap 1, and replace instances of `()` with `[~]`
+> because `~` is the empty list, and therefore doesn't contain any lists.
 
 **Q:** True or false: a lat is a list of atoms.
 
