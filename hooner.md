@@ -992,9 +992,7 @@ Good luck.
 <br>
 <br>
 
-**Q:** 
-
-Here are the contents of the generator `is-lat.hoon`<sup>1</sup>
+**Q:** Here are the contents of the generator `is-lat.hoon`<sup>1</sup>
 
 ```
 |=  l=(list)
@@ -1025,7 +1023,9 @@ of `|commit`ing.
 
 > The application of `+is-lat l`  
 > where  
+
 > > `l` is `['bacon' 'and' 'eggs' ~]`
+
 > has the value `%.y` &mdash; true &mdash; because `l` is a lat.
 
 **Q:** How do we determine the answer `%.y` for the function 
@@ -1054,53 +1054,84 @@ determined by answering the questions asked by `+is-lat`
 
 **A:** The parameter is named `l` and it is of type `list`.
 
-**Q:** What is the first question asked by `+is-lat l`
+**Q:** What does the next line do?
+
+> `|-`
+
+**A:** `|-` (pronounced 'barhep') sets a restart point.  More on this in
+a bit.
+
+**Q:** What is the next line?
 
 **A:** `?:  .=(~ l)`
 
-> Note:
-> `?:` (or 'wutdot') asks questions;
-> `|=` (or 'bartis') creates a function; and
-> `|-` (or 'barhep') sets a restart point (more on this shortly)
+**Q:** What does `?:` do?
+
+**A:** `?:` (pronounced 'wutcol') asks a question.  If the answer is
+"true", it performs the next action.  If the answer is "false", it skips
+the next action, and keep going.
+
+**Q:** What the question that `?:` is asking?
+
+**A:** `=(~ l)`
 
 **Q:** What is the meaning of
 
-> `?:  .=(~ l)`
+> `.=(~ l)`
 
 where
 
 > `l` is `['bacon' 'and' 'eggs' ~]`
 
-**A:** `.=(~ l)` asks if the argument `l` is equal to null.  If this is true, we evaluate the next line, which is
+**A:** `.=(~ l)` asks if the argument `l` is equal to null.  In this
+case, `l` is not the null value, so the answer is false.
+
+**Q:** So what do we do?
+
+**A:** Per the rules of `?:`, if the answer to the question is true, we 
+evaluate the next action, which is
 
 > `%.y`
 
-This means the value for the function will be "true".  If `l` is not null, we
-keep going.  
+on the next line, and the value of the application is true.  If the answer 
+to the question is false, we keep going.
 
-In this case, `l` is not the null value, so we keep going and ask the next question.
+Since the answer is false, we skip the `%.y` and keep going.
 
-**Q:** What is the next question?
+**Q:** What comes next?
 
 **A:** `?:  .?((head l))`
 
+**Q:** What is the question for `?:`
+
+**A:** `.?((head l))`
+
 **Q:** What is the meaning of
 
-> `?:  .?((head l))`
+> `?((head l))`
 
 where
 
 > `l` is `['bacon' 'and' 'eggs' ~]`
 
 **A:** `.?((head l))` asks if the first noun of the list `l` is a list.
-If this is true, we evaluate the next line, which is
+In this case, `(head l)` is an atom, so the answer if false.
+
+**Q:** So what do we do?
+
+**A:** Per the rules of `?:`, if the answer to the question is true, we 
+evaluate the next action, which is 
 
 > `%.n`
 
-This means the value for the function will be "false".  If `(head l)` is an 
-atom, we keep going.
+on the next line, and the value of the application is false.  If the answer 
+to the question is false, we keep going.
 
-In this case, `(head l)` is an atom, so we keep going.
+Since the answer is false, we skip the `%.n` and keep going.
+
+**Q:** What is after that?
+
+**A:** `$(l (tail l))`
 
 **Q:** What is the meaning of 
 
@@ -1116,7 +1147,7 @@ a new value for `l`.
 
 > `['and' 'eggs' ~]`
 
-**Q:** What is the next question after `|-`?
+**Q:** What is after our restart point, `|-`?
 
 **A:** `?:  .=(~ l)`
 
@@ -1128,16 +1159,18 @@ where
 
 > `l` is now `['and' 'eggs' ~]`
 
-**A:** `.=(~ l)` asks if the argument `l` is null.  If this is true, we
-evaluate the next line, which is 
+**A:** `.=(~ l)` asks if the argument `l` is null.  
+Per the rules of `?:`, if the answer to the question is true, we 
+evaluate the next action, which is 
 
 > `%.y`
 
-This means the value for the function will be "true".  If `l` is not null, we keep going.  
+on the next line, and the value of the application is true.  If the answer 
+to the question is false, we keep going.
 
-In this case, `l` is not the null value, so we keep going and ask the next question.
+In this case, l is not the null value, so we skip the `%.y` and keep going.
 
-**Q:** What is the next question?
+**Q:** What is next?
 
 **A:** `?:  .?((head l))`
 
@@ -1149,15 +1182,16 @@ where
 
 > `l` is now `['and' 'eggs' ~]`
 
-**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
-If this is true, we evaluate the next line, which is
+**A:** `.?((head l))` asks if `(head l)` is a list.
+Per the rules of `?:`, if the answer to the question is true, we 
+evaluate the next action, which is 
 
 > `%.n`
 
-This means the value for the function will be "false".  If `(head
-l)` is an atom, we keep going.
+on the next line, and the value of the application is false.  If the answer 
+to the question is false, we keep going.
 
-In this case, `(head l)` is an atom.  So we keep going.
+In this case, `(head l)` is not a list, so we skip the `%.n` and keep going.
 
 **Q:** What is the meaning of 
 
@@ -1167,7 +1201,7 @@ In this case, `(head l)` is an atom.  So we keep going.
 only of atoms, by returning to our restart point `|-` with a new value for 
 `l`.  This new value is `(tail l)` or `['eggs' ~]`.
 
-**Q:** What is the next question after `|-`?
+**Q:** What is the after `|-`
 
 **A:** `?:  .=(~ l)`
 
@@ -1176,16 +1210,12 @@ only of atoms, by returning to our restart point `|-` with a new value for
 > `?:  .=(~ l)`
 
 where
+
 > `l` is now `['eggs' ~]`
 
-**A:** `.=(~ l)` asks if the argument `l` is null.  If this is true, we
-evaluate the next line, which is
-
-> `%.y`
-
-which means the value for the function will be "true".  If `l` is not null, we keep going.  
-
-In this case, `l` is not the null value, so we keep going and ask the next question.
+**A:** `.=(~ l)` asks if the argument `l` is null.  
+Per the rules of `?:`, since l is not the null value, so we skip the `%.y` 
+and keep going.
 
 **Q:** What is the next question?
 
@@ -1199,15 +1229,8 @@ where
 
 > `l` is now `['eggs' ~]`
 
-**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
-If this is true, we evaluate the next line, which is
-
-> `%.n`
-
-Which means the value for the function will be "false".  If `(head l)` is an 
-atom, we keep going.
-
-In this case, `(head l)` is an atom.  So we keep going.
+**A:** `.?((head l))` asks if the argument `l` is null.  
+Per the rules of `?:`, since `(head l)` is not a list, we skip the `%.n` and keep going.
 
 KM: In TLS (in the next section) they clarify that if something isn't an
 empty list or an atom, it must be a list.
@@ -1221,7 +1244,7 @@ only of atoms, by returning to our restart point `|-`, with l becoming the value
 
 **Q:** Now, what is the new value for `l`?
 
-**A:** `[~]`
+**A:** `~`
 
 **Q:** What is the next question after `|-`?
 
@@ -1233,21 +1256,16 @@ only of atoms, by returning to our restart point `|-`, with l becoming the value
 
 where
 
-> `l` is now `[~]`
+> `l` is now `~`
 
-**A:** `.=(~ l)` asks if the argument `l` is null.  If it is null, we
-evaluate the next line, which is
+**A:** `.=(~ l)` asks if the argument `l` is null.  
+Per the rules of `?:`, since l is the null value, we evaluate the next action, which is the value `%.y`, or true.  Therefore, tthe value of the application 
 
-> `%.y`
+> `+is-lat l`  
 
-which means the value for the function will be "true".  If `l` is not null, we keep going.  
+where
 
-In this case, `l` is equal to the null value.  So, the value of the
-function
-
-> `+is-lat l`
-
-where `l` is `['bacon' 'and' 'eggs' ~]` is `%.y`&mdash;true.
+> `l` is `['bacon' 'and' 'eggs' ~]` is `%.y`&mdash;true
 
 **Q:** Do you remember the question about
 
