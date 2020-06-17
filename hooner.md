@@ -137,6 +137,17 @@ If you want to assign a variable, you can do that like so:
 
 You are highly encouraged to follow along and test things out in the dojo.  
 
+When you get to chapter 2, you'll make something called a "generator",
+which is a kind of program you can run on your Urbit ship.  
+
+To do this, you'll need to run this command in the dojo
+```
+> |mount /=home=
+```
+
+You'll only have to do this once.  Once you do that, you'll get a folder
+called "home" inside your ship's directory.  If you created a developer
+ship, this will be `zod/home`.
 
 ### TODO
 
