@@ -703,8 +703,8 @@ and
 - JL - The next section of TLS referst to empty lists and then
   introduces `null?`.  Hoon doesn't work this way, so I left it out.
 
-- KM: At some point consider introducing `?~` into the disucssion of
-  recursion.
+- KM: At some point consider introducing `?~` (i.e. "if this thing is
+  null") into the discussion of recursion.
 
 **Q:** Is it true or false that `s` is an atom
 
@@ -1050,8 +1050,6 @@ determined by answering the questions asked by `+is-lat`
 According to the rules of `|=` the next thing should be the arguments
 for the function.
 
-KM: Let's go with "arguments" instead of "parameters"
-
 **Q:** What are the arguments?
 
 **A:** `l=(list)`
@@ -1105,8 +1103,6 @@ on the next line, and the value of the function is true.  If the answer
 to the question is false, we keep going.
 
 Since the answer is false, we skip the `%.y` and keep going.
-
-KM: Let's go with "generator" instead of "application" or "function"
 
 **Q:** What comes next?
 
@@ -1177,7 +1173,7 @@ evaluate the next action, which is
 
 > `%.y`
 
-on the next line, and the value of the application is true.  If the answer 
+on the next line, and the value of the function is true.  If the answer 
 to the question is false, we keep going.
 
 In this case, l is not the null value, so we skip the `%.y` and keep going.
@@ -1200,7 +1196,7 @@ evaluate the next action, which is
 
 > `%.n`
 
-on the next line, and the value of the application is false.  If the answer 
+on the next line, and the value of the function is false.  If the answer 
 to the question is false, we keep going.
 
 In this case, `(head l)` is not a list, so we skip the `%.n` and keep going.
@@ -1268,7 +1264,7 @@ where
 > `l` is now `~`
 
 **A:** `.=(~ l)` asks if the argument `l` is null.  
-Per the rules of `?:`, since l is the null value, we evaluate the next action, which is the value `%.y`, or true.  Therefore, the value of the application 
+Per the rules of `?:`, since l is the null value, we evaluate the next action, which is the value `%.y`, or true.  Therefore, the value of
 
 > `+is-lat l`  
 
@@ -1280,7 +1276,7 @@ where
 
 > `+is-lat l`
 
-**A:** Probably not.  The generator `+is-lat l` has the value of `%.y`
+**A:** Probably not.  `+is-lat l` has the value of `%.y`
 if the list `l` is a list of atoms where 
 
 > `l` is `['bacon' 'and' 'eggs' ~]`
@@ -1605,9 +1601,10 @@ and
 > because the atom `'meat'` is one of the atoms of `lat`,
 > > `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
 
-**Q:** How do we determine the value `%.y` for the above application?
+**Q:** How do we determine the value `%.y` for the calling
+`+is-member [a lat]`?
 
-**A:** The value is determined by asking the questions about `%is-member
+**A:** The value is determined by asking the questions in `+is-member
 [a lat]`.
 
 > Hint: Write down the contents of `is-member.hoon` and refer to
@@ -1832,7 +1829,7 @@ of the `tail` of `lat` by returning to the restart point.
 > are the same atom.  
 > Therefore, `?|` answers with `%.t`.
 
-**Q:** What is the value of the generator.
+**Q:** What is the value of
 
 > `+is-member [a lat]`
 
@@ -1845,7 +1842,7 @@ and
 
 > because we have found that `'meat'` is a member of `['meat' 'gravy' ~]`.
 
-**Q:** What is the value of the generator
+**Q:** What is the value of
 
 > `+is-member [a lat]`
 
@@ -1858,7 +1855,7 @@ and
 
 > because `'meat'` is also a member of the `lat` `['and' 'meat' 'gravy' ~]`
 
-**Q:** What is the value of the application
+**Q:** What is the value of
 
 > `+is-member [a lat]`
 
@@ -1871,7 +1868,7 @@ and
 
 > because `'meat'` is also a member of the `lat` `['potatoes' 'and' 'meat' 'gravy' ~]`
 
-**Q:** What is the value of the application
+**Q:** What is the value of
 
 > `+is-member [a lat]`
 
@@ -1926,7 +1923,14 @@ and
 
 > `(tail lat)` is `['potatoes' 'and' 'meat' 'gravy' ~]`
 
-KM: Verify terminology on `|-`
+
+KM:  Technically, `|-` creates a 'trap' (core with one arm, named `$`) and then 
+executes it.  This is actually the thing that is recursing.  
+
+I think my description is pretty close to what's happening, but verify
+that my description isn't more misleading than necessary.  We aren't
+calling the 'gate' (defined by `|=`) we are calling the trap (defined by
+`|-`).
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2060,7 +2064,7 @@ and
 ==
 ```
 
-**A:** `.=((head lat) a) is false.
+**A:** `.=((head lat) a)` is false.
 
 > Return to the `|-`  with `a` and `(tail lat)`  
 > where  `a` is `'liver'`  
