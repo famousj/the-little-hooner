@@ -1635,7 +1635,7 @@ and
 
 > `lat=(list @)`
 
-**A:** The second argument is named `lat`. The `(list @)` means its type is a list of atoms.
+**A:** The second argument is named `lat`. The `(list @)` means its type is a lat or list of atoms.
 
 **Q:** What does the second line do?
 
@@ -2169,6 +2169,7 @@ and
 
 **A:** `%.n`
 
+KM: Add a section about calling this with a list of lists.
 
 <center>Do you believe all this? Then you may rest!</center>
 
@@ -2191,3 +2192,170 @@ and
 
 ## 3. Cons the Magnificent
 
+JL: TLS calls this "Cons the Magnificent".  I'm trying to decide if this
+is the right term, or if I should call it "Kethep the Magnficent"
+
+
+**Q:** What is `+rember [a lat]`  
+where `a` is `'mint'`  
+and  
+
+>`lat` is `['lamb' 'chops' 'and' 'mint' 'jelly' ~]`
+
+**A:** `['lamb' 'chops' 'and' 'jelly' ~]`
+
+> `rember` stands for `rem`ove  mem`ber`.
+
+**Q:** `+rember [a lat]`  
+where `a` is `'mint'`  
+and
+
+> `lat` is `['lamb' 'chops' 'and' 'mint' 'flavored' 'mint' 'jelly' ~]`
+
+**A:** `['lamb' 'chops' 'and' 'flavored' 'mint' 'jelly' ~]`
+
+**Q:** `+rember [a lat]`  
+where `a` is `'cup'`  
+and  
+
+> `lat` is `['coffee' 'cup' 'tea' 'cup' 'and' 'hick' 'cup' ~]`
+
+**A:** `['coffee' 'tea' 'cup' 'and' 'hick' 'cup' ~]`
+
+**Q:** What does `+rember [a lat]` do?
+
+**A:** It takes an atom and a lat as its arguments, and makes a new lat
+with the first occurrence of the atom in the old lat removed.
+
+**Q:** What steps should we use to do this?
+
+**A:** First we need to declare a function with two arguments, `a`,
+which is an atom, and `lat`, which is a list of atoms.
+
+**Q:** How would we do that?
+
+**A:** `|=  [a=@ lat=(list @)]`
+
+**Q:** What is the first question?
+
+**A:** First we will test `.=(~ lat)`&mdash;The First Commandment.
+
+**Q:** And if `.=(~ lat)` is true?
+
+**A:** Return `~`, the empty list.
+
+**Q:** What do we know if `.=(~ lat)` is not true?
+
+**A:** We know that there must be at least one atom in the lat.
+
+**Q:** Is there any other question we should ask about the lat?
+
+**A:** No.  Either a lat is empty or it contains at least one atom.
+
+KM: Introduce `?~` here?
+
+**Q:** What do we do if we know that the lat contains at least one atom?
+
+**A:** We ask whether `a` is equal to `(head lat)`.
+
+**Q:** How do we ask questions?
+
+**A:** By using `?:`, i.e. 'wutcol'
+
+**Q:** How do we ask if `a` is the same as `(head lat)`?
+
+**A:** `.=((head lat) a)`
+
+KM: Use dottis in chapter 1 to introduce tall form
+
+**Q:** What would be the value of `+rember [a lat]` if a were the same
+as `(head lat)`?
+
+**A:** `(tail lat)`
+
+**Q:** What do we do if the `a` is not the same as `(head lat)`
+
+**A:** We want to keep `(head lat)`, but also find out if `a` is
+somewhere in the rest of the lat.
+
+**Q:** How do we remove the first occurrance of `a` in the rest of `lat`
+
+**A:** `+rember [a (tail lat)]`
+
+**Q:** Is there any other question we should ask?
+
+**A:** No.
+
+**Q:** Since we are going to call the function again with different
+arguments, what do we need to add?
+
+**A:** We need `|-`, our restart point, right before we start asking
+questions.
+
+**Q:** Now, let's write down what we have so far<sup>1</sup>:
+
+```
+|=  [a=@ lat=(list @)]
+|-
+?:  =(~ lat)
+  ~
+?:  .=((head lat) a)
+  (tail lat)
+$(lat (tail lat))
+```
+
+What is the value of `+rember [a lat]` where  
+
+> `a` is `'bacon'`
+
+and
+
+> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+
+<sup>1</sup> You can put this code in a file `gen/rember.hoon` in your home
+directory to try it out (don't forget to `|commit %home`).  
+
+KM: Add questions about the first line
+KM: Note that we are going to recurse, so you need a `|-`
+
+**A:** `['lettuce' 'and' 'tomato' ~]`
+
+> Hint: write down the code for `+rember` and its arguments, and refer
+> to them as you go through the next sequence of questions.
+
+**Q:** Now, let's see if this function works.  What is the first
+question?
+
+**A:** `?:  =(~ lat)`
+
+KM: Either we should do `?~` here or we should wait until we revisit the
+First Commandment
+
+**Q:**  What do we do now?
+
+**A:** Skip the `~` and ask the next question.
+
+**Q:** What is the next question?
+
+**A:** `?:  .=((head lat) a)`
+
+**Q:** So what do we do?
+
+**A:** `.=((head lat) a)` is true, so the value is `(tail lat)`  In this
+case, it is the list
+
+> `['lettuce' 'and' 'tomato' ~]`
+
+**Q:**  Is this the correct value?
+
+**A:** Yes, because it is the original list without the atom `'bacon'`
+
+**Q:** But did we really use a good example?
+
+**A:** Who knows?  But the proof of the pudding is in the eating, so
+let's try another example.
+
+**Q:** What does `+rember` do?
+
+**A:** It takes an atom and a lat as its arguments and makes a new lat
+with the first occurrence of the atom in the old lat removed.
