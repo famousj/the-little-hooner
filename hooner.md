@@ -1106,7 +1106,7 @@ to the question is false, we keep going.
 
 Since the answer is false, we skip the `%.y` and keep going.
 
-KM: Let's go with "function" instead of "application"
+KM: Let's go with "generator" instead of "application" or "function"
 
 **Q:** What comes next?
 
@@ -1280,12 +1280,12 @@ where
 
 > `+is-lat l`
 
-**A:** Probably not.  The function `+is-lat l` has the value of `%.y`
+**A:** Probably not.  The generator `+is-lat l` has the value of `%.y`
 if the list `l` is a list of atoms where 
 
 > `l` is `['bacon' 'and' 'eggs' ~]`
 
-**Q:** Can you describe what the function `+is-lat` does in your own
+**Q:** Can you describe what the generator `+is-lat` does in your own
 words?
 
 **A:** Here are our words:
@@ -1420,7 +1420,7 @@ where
 
 **A:** No answer,
 
-Because the parameter `l` must be a list.
+Because the argument `l` must be a list.
 
 **Q:** What would be the result if you called `+is-lat l`  
 where
@@ -1551,7 +1551,7 @@ This is sometimes called the 'OR' operation.
 
 **Q:** What does the `==` in the tall form do?
 
-**A:** In tall form, `?|` uses what's called a "running series".  You can keep asking questions, and when you use `==` to say that you are finished.
+**A:** In tall form, `?|` uses what's called a "running series".  You can keep asking questions, and you use `==` to say that you are finished.
 
 **Q:** Is it true or false that `a` is a member of `lat`  
 where `a` is `'tea'`  
@@ -1598,11 +1598,7 @@ and
 > `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
 
 <sup>1</sup> Add this code to a file called `gen/is-member.hoon` inside your
-`home` directory.  Then run the following in the dojo:
-```
-
-|commit %home
-```
+`home` directory.  Don't forget to run `|commit %home` in the dojo!
 
 **A:** `%.y`,
 
@@ -1622,9 +1618,9 @@ and
 > `|=  [a=@ lat=(list @)]`
 
 **A:** The `|=` declares a function.  This function has a pair of
-parameters.
+arguments.
 
-**Q:** What are the parameters
+**Q:** What are the arguments?
 
 **A:** `a=@`
 
@@ -1636,23 +1632,21 @@ and
 
 > `a=@`
 
-**A:** The first parameter is named `a` and its type is an atom (i.e. `@`).
+**A:** The first argument is named `a`.  The `@` (pronounced 'pat') means its type is an atom.
 
 **Q:** What is the meaning of
 
 > `lat=(list @)`
 
-**A:** The second parameter is named `lat` and its type is a list of atoms (i.e. `(list @)`).
+**A:** The second argument is named `lat`. The `(list @)` means its type is a list of atoms.
 
 **Q:** What does the second line do?
 
 > `|-`
 
-**A:** It sets the return point 
+**A:** It sets the restart point.
 
-**Q:** What is the first question?
-
-> `+is-member [a lat]`
+**Q:** What is after the restart point?
 
 **A:** `?:  .=(~ lat)`
 
@@ -1674,9 +1668,8 @@ where
 
 > `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
 
-**A:** `.=(~ lat)` asks if lat is the null value, `~`.  If it is, we have an empty list, so the atom `'meat'` was not in `lat`.  So we evaluate the next line, which is `$.n`.  If `lat` is not `~`, we keep going.
-
-In this case, it is not null, so we keep going.
+**A:** `.=(~ lat)` asks if lat is the null value, `~`.  
+Per the rules of `?:`, since `lat` is not null, we skip the `%.n` and keep going.
 
 **Q:** What is the meaning of:
 ```
@@ -1688,7 +1681,7 @@ In this case, it is not null, so we keep going.
 
 **A:** Now that we know that `lat` is not `~`, we have to find out
 whether the `head` of `lat` is the same atom as `a`, or whether `a` is
-somewhere in the rest of `lat`.  The answer
+somewhere in the rest of `lat`.  The answer to
 ```
 ?|
   .=((head lat) a)
@@ -1696,7 +1689,7 @@ somewhere in the rest of `lat`.  The answer
 ==
 ```
 
-does this
+does this.
 
 **Q:** True or false
 ```
@@ -1711,7 +1704,7 @@ and
 
 > `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
 
-**A:** We will find out by looking at each question in turn
+**A:** We will find out by looking at each question in turn.
 
 **Q:** Is `.=((head lat) a)` true or false  
 where `a` is `'meat'`  
@@ -1721,8 +1714,7 @@ and
 
 **A:** False,
 
-because `'meat'` is not equal to `'mashed'`,  
-the `head` of
+because `'meat'` is not equal to `'mashed'`, which is the `head` of
 
 > `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
 
@@ -1733,17 +1725,18 @@ the `head` of
 > This refers to returing to our restart point with `lat` replaced by
 > `(tail lat)`.
 
-**Q:** Now what are the two parameters?
+**Q:** Now what are the two arguments?
 
 **A:** `a` is `'meat'`  
+
 and
 
-> `lat` is now `(tail lat)`, specifically
+> `lat` is now `(tail lat)`, specifically  
 > `['potatoes' 'and' 'meat' 'gravy' ~]`
 
-**Q:** What is the next question?
+**Q:** What comes next?
 
-**A:** `.=(~ lat)`
+**A:** `?:  .=(~ lat)`
 
 > Remember The First Commandment
 
@@ -1756,7 +1749,7 @@ where
 
 **Q:** What do we do now?
 
-**A:** Keep going
+**A:** Skip the `%.n` and keep going
 
 **Q:** What's the meaning of 
 
@@ -1769,16 +1762,8 @@ where
 > 
 
 **A:** 
-```
-?|
-  .=((head lat) a)
-  $(lat (tail lat))
-==
-```
-
-finds out if `a` is equal to the `head` of `lat` or if `a` is a member
+This finds out if `a` is equal to the `head` of `lat` or if `a` is a member
 of the `tail` of `lat` by returning to the restart point.
-
 
 **Q:** Is `a` equal to the `head` of `lat`?
 
@@ -1789,20 +1774,21 @@ of the `tail` of `lat` by returning to the restart point.
 
 **A:** We return to our restart point.
 
-**Q:** Now, what are our parameters?
+**Q:** Now, what are our arguments?
 
 **A:** `a` is `'meat'`, and  
 `lat` is `['and' 'meat' 'gravy' ~]`
 
-**Q:**  What is the next question?
+**Q:**  What comes next?
 
 **A:** `?:  .=(~ lat)`
 
 **Q:** What do we do now?
 
-**A:** Keep going, since `.=(~ lat)` is false.
+**A:** Skip over the `%.n` and keep going, since `.=(~ lat)` is false.
 
 **Q:** What is the value of
+
 ```
 ?|
   .=((head lat) a)
@@ -1820,21 +1806,18 @@ of the `tail` of `lat` by returning to the restart point.
 
 **A:** Recur&mdash;return to the restart point with new arguments.
 
-KM: Decide on the terminology: argument or parameter?  And define them
-at some point.
-
 **Q:** What are the new arguments?
 
 **A:** `a` is `'meat'`, and  
 `lat` is `['meat' 'gravy' ~]`
 
-**Q:** What is the next question?
+**Q:** What comes next?
 
 **A:** `?:  .=(~ lat)`
 
 **Q:** What do we do now?
 
-**A:** Since `.=(~ lat)` is false, keep going
+**A:** Since `.=(~ lat)` is false, we skip over the `%.n` and keep going
 
 **Q:** What is the value of
 ```
@@ -1844,12 +1827,12 @@ at some point.
 ==
 ```
 
-**A:** `%.t`,
+**A:** `%.y`,
 > because `(head lat)`, which is `'meat'`, and `a`, which is `'meat'`,
 > are the same atom.  
 > Therefore, `?|` answers with `%.t`.
 
-**Q:** What is the value of the application
+**Q:** What is the value of the generator.
 
 > `+is-member [a lat]`
 
@@ -1862,7 +1845,7 @@ and
 
 > because we have found that `'meat'` is a member of `['meat' 'gravy' ~]`.
 
-**Q:** What is the value of the application
+**Q:** What is the value of the generator
 
 > `+is-member [a lat]`
 
@@ -1899,7 +1882,8 @@ and
 
 **A:** `%.t`,
 
-> because `'meat'` is also a member of the `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+> because `'meat'` is also a member of the `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`  
+> Of course, this is our original `lat`.
 
 **Q:** Just to make sure you have it right, let's quickly run through it
 again.  What is the value of `+is-member [a lat]`  
@@ -1916,11 +1900,9 @@ and
 > Hint: Write down the contents of `is-member.hoon` and its arguments
 > and refer to them as you go through the next group of questions.
 
-**Q:** `.=(~ lat)`
+**Q:** `?:  .=(~ lat)`
 
-**A:**  No.  Skip the next line and keep going
-
-KM: Instead of "keep going", call out that you should skip a line
+**A:**  No.  Skip the `%.n` and keep going.
 
 **Q:** 
 ```
@@ -1936,7 +1918,7 @@ KM: Instead of "keep going", call out that you should skip a line
 
 **A:** No.  Ask the next question.
 
-**Q:** What's next?
+**Q:** What next?
 
 **A:** Return to the restart point with `a` and `(tail lat)`  
 where `a` is `'meat'`  
@@ -1944,9 +1926,11 @@ and
 
 > `(tail lat)` is `['potatoes' 'and' 'meat' 'gravy' ~]`
 
-**Q:** `.=(~ lat)`
+KM: Verify terminology on `|-`
 
-**A:** No.  Skip the next line and keep going.
+**Q:** `?:  .=(~ lat)`
+
+**A:** No.  Skip the `%.n` and keep going.
 
 **Q:** 
 ```
@@ -1958,14 +1942,14 @@ and
 
 **A:** `.=((head lat) a)` is false.
 
-> Return to the restart point  with `a` and `(tail lat)`  
+> So return to `|-`  with `a` and `(tail lat)`  
 > where  `a` is `'meat'`  
 > and  
 > > `(tail lat)` is `['and' 'meat' 'gravy' ~]`
 
-**Q:**  `.=(~ lat)`
+**Q:**  `?:  .=(~ lat)`
 
-**A:**  No.  Skip the next line and keep going.
+**A:**  No.  Skip the `%.n` and keep going.
 
 **Q:**
 ```
@@ -1977,16 +1961,14 @@ and
 
 **A:** `.=((head lat) a)` is false.
 
-> Return to the restart point  with `a` and `(tail lat)`  
+> Return to `|-`  with `a` and `(tail lat)`  
 > where  `a` is `'meat'`  
 > and  
 > > `(tail lat)` is `['meat' 'gravy' ~]`
 
-**Q:**  `.=(~ lat)`
+**Q:**  `?:  .=(~ lat)`
 
-**A:**  No.  Skip the next line and keep going.
-
-KM: Really, explain how `?:` works.
+**A:**  No.  Skip the `%.n` and keep going.
 
 **Q:** `.=((head lat) a)`
 
@@ -2045,11 +2027,11 @@ and
 **Q:** Let's work out why it is `%.n`.  What's the first question
 `+is-member` asks?
 
-**A:** `.=(~ lat)`
+**A:** `?:  .=(~ lat)`
 
 **Q:** `.=(~ lat)`
 
-**A:** No.  Skip the next line and keep going
+**A:** No.  Skip the `%.n` and keep going
 
 **Q:** 
 ```
@@ -2059,16 +2041,16 @@ and
 ==
 ```
 
-**A:** `.=((head lat) a) is false.
+**A:** `.=((head lat) a)` is false.
 
-> Return to the restart point  with `a` and `(tail lat)`  
+> Return to the `|-`  with `a` and `(tail lat)`  
 > where  `a` is `'liver'`  
 > and  
 > > `(tail lat)` is `['and' 'lox' ~]`
 
-**Q:** `.=(~ lat)`
+**Q:** `?: .=(~ lat)`
 
-**A:** No.  Skip the next line and keep going
+**A:** No.  Skip the `%.n` and keep going
 
 **Q:** 
 ```
@@ -2080,14 +2062,14 @@ and
 
 **A:** `.=((head lat) a) is false.
 
-> Return to the restart point  with `a` and `(tail lat)`  
+> Return to the `|-`  with `a` and `(tail lat)`  
 > where  `a` is `'liver'`  
 > and  
 > > `(tail lat)` is `['lox' ~]`
 
-**Q:** `.=(~ lat)`
+**Q:** `?:  .=(~ lat)`
 
-**A:** No.  Skip the next line and keep going
+**A:** No.  Skip the `%.n` and keep going
 
 **Q:** 
 ```
@@ -2097,21 +2079,21 @@ and
 ==
 ```
 
-**A:** `.=((head lat) a) is false.
+**A:** `.=((head lat) a)` is false.
 
-> Return to the restart point  with `a` and `(tail lat)`  
+> Return to the `|-`  with `a` and `(tail lat)`  
 > where  `a` is `'liver'`  
 > and  
 > > `(tail lat)` is `~`
 
-
-**Q:** `.=(~ lat)`
+**Q:** `?:  .=(~ lat)`
 
 **A:** Yes.
 
-**Q:** What is the value on the next line?
+**Q:** What do we do now?
 
-**A:** `%.n`
+**A:** Since `.=(~ lat)` is true, we return the next value, which is
+`%.n`.
 
 **Q:** What is the value of `+is-member [a lat]`  
 where `a` is `'liver'`  
@@ -2134,7 +2116,7 @@ where
 
 and
 
-> `lat` is `['lox']`
+> `lat` is `['lox' ~]`
 
 
 **A:** `%.n`
@@ -2152,7 +2134,7 @@ where
 
 and
 
-> `lat` is `['and' 'lox']`
+> `lat` is `['and' 'lox' ~]`
 
 
 **A:** `%.n`
@@ -2170,7 +2152,7 @@ where
 
 and
 
-> `lat` is `['bagels' 'and' 'lox']`
+> `lat` is `['bagels' 'and' 'lox' ~]`
 
 
 **A:** `%.n`
