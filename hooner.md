@@ -149,6 +149,13 @@ You'll only have to do this once.  Once you do that, you'll get a folder
 called "home" inside your ship's directory.  If you created a developer
 ship, this will be `zod/home`.
 
+Whenever you change one of the files in your home directory, you'll need
+to run this command to add these changes to your ship
+
+```
+> |commit %home
+```
+
 ### TODO
 
 - Right now this is a Markdown file. It'd be pretty sweet to make some
@@ -1016,9 +1023,6 @@ where
 |commit %home
 ```
 
-KM: Add a section in the intro about `|mount`ing home and the necessity
-of `|commit`ing.
-
 **A:** `%.y`
 
 > The application of `+is-lat l`  
@@ -1026,7 +1030,7 @@ of `|commit`ing.
 
 > > `l` is `['bacon' 'and' 'eggs' ~]`
 
-> has the value `%.y` &mdash; true &mdash; because `l` is a lat.
+> has the value `%.y`&mdash;true&mdash;because `l` is a lat.
 
 **Q:** How do we determine the answer `%.y` for the function 
 
@@ -1042,9 +1046,13 @@ determined by answering the questions asked by `+is-lat`
 
 > `|=  l=(list)`
 
-**A:** It declares a function with one parameter.
+**A:** The rune `|=` (pronounced 'bartis') declares a function.
+According to the rules of `|=` the next thing should be the arguments
+for the function.
 
-**Q:** What is the one parameter?
+KM: Let's go with "arguments" instead of "parameters"
+
+**Q:** What are the arguments?
 
 **A:** `l=(list)`
 
@@ -1052,7 +1060,7 @@ determined by answering the questions asked by `+is-lat`
 
 > `l=(list)`
 
-**A:** The parameter is named `l` and it is of type `list`.
+**A:** This function has one argument, named `l`.  It is type of type `list`.
 
 **Q:** What does the next line do?
 
@@ -1093,10 +1101,12 @@ evaluate the next action, which is
 
 > `%.y`
 
-on the next line, and the value of the application is true.  If the answer 
+on the next line, and the value of the function is true.  If the answer 
 to the question is false, we keep going.
 
 Since the answer is false, we skip the `%.y` and keep going.
+
+KM: Let's go with "function" instead of "application"
 
 **Q:** What comes next?
 
@@ -1124,12 +1134,12 @@ evaluate the next action, which is
 
 > `%.n`
 
-on the next line, and the value of the application is false.  If the answer 
+on the next line, and the value of the function is false.  If the answer 
 to the question is false, we keep going.
 
 Since the answer is false, we skip the `%.n` and keep going.
 
-**Q:** What is after that?
+**Q:** What comes next?
 
 **A:** `$(l (tail l))`
 
@@ -1146,6 +1156,8 @@ a new value for `l`.
 **A:** The new value for `l` is `(tail l)`, which is 
 
 > `['and' 'eggs' ~]`
+
+**Q:** Why do we use `(tail l)`?
 
 **Q:** What is after our restart point, `|-`?
 
@@ -1217,7 +1229,7 @@ where
 Per the rules of `?:`, since l is not the null value, so we skip the `%.y` 
 and keep going.
 
-**Q:** What is the next question?
+**Q:** What is next?
 
 **A:** `?:  .?((head l))`
 
@@ -1232,9 +1244,6 @@ where
 **A:** `.?((head l))` asks if the argument `l` is null.  
 Per the rules of `?:`, since `(head l)` is not a list, we skip the `%.n` and keep going.
 
-KM: In TLS (in the next section) they clarify that if something isn't an
-empty list or an atom, it must be a list.
-
 **Q:** What is the meaning of 
 
 >  `$(l (tail l))`
@@ -1246,7 +1255,7 @@ only of atoms, by returning to our restart point `|-`, with l becoming the value
 
 **A:** `~`
 
-**Q:** What is the next question after `|-`?
+**Q:** What is the line after `|-`?
 
 **A:** `?:  .=(~ l)`
 
@@ -1259,7 +1268,7 @@ where
 > `l` is now `~`
 
 **A:** `.=(~ l)` asks if the argument `l` is null.  
-Per the rules of `?:`, since l is the null value, we evaluate the next action, which is the value `%.y`, or true.  Therefore, tthe value of the application 
+Per the rules of `?:`, since l is the null value, we evaluate the next action, which is the value `%.y`, or true.  Therefore, the value of the application 
 
 > `+is-lat l`  
 
@@ -1310,7 +1319,7 @@ where
 
 > since the list `l` contains a noun that is a list.
 
-**Q:** What is the first question?
+**Q:** What is the first line after the restart point, `|-`
 
 **A:** `?:  .=(~ l)`
 
@@ -1322,9 +1331,11 @@ where
 
 > `l` is `['bacon' ['and' 'eggs' ~] ~]`
 
-**A:** `.=(~ l)` asks if the argument `l` is equal to null.  If this is true, we return the value on the next line, `%.y`.  If not, we keep going.  In this case, it is not null, so we ask the next question.
+**A:** `.=(~ l)` asks if the argument `l` is equal to null.  
+Per the rules of `?:`, since `l` is not the null value, we skip the
+`%.y` and keep going.
 
-**Q:** What is the next question?
+**Q:** What is next?
 
 **A:** `?:  .?((head l))`
 
@@ -1337,8 +1348,8 @@ where
 > `l` is `['bacon' ['and' 'eggs' ~] ~]`
 
 **A:** `.?((head l))` asks if the first noun of the list `l` is a list.
-If it is, the return the value on the next line, `%.n`.  If not, we keep
-n this case, `(head l)` is an atom, so we keep going. 
+Per the rules of `?:`, since `(head l)` is not a list, we skip the `%.n`
+and keep going.
 
 **Q:** What is the meaning of 
 
@@ -1356,11 +1367,11 @@ where
 
 > `l` is now `[['and' 'eggs' ~] ~]`
 
-**A:** `.=(~ l)` asks if the argument `l` is null.  If this is true, we
-return `%.y`.  If not, we keep going.  In this case, `l` is not null, so
-we move to the next question.
+**A:** `.=(~ l)` asks if the argument `l` is null.
+Per the rules of `?:`, since `l` is not null, we skip the `%.y` and keep
+going.
 
-**Q:** What is the next question?
+**Q:** What is next?
 
 **A:** `?:  .?((head l))`
 
@@ -1373,14 +1384,9 @@ where
 > `l` is now `[['and' 'eggs' ~] ~]`
 
 **A:** `.?((head l))` asks if the first noun of the list `l` is a list.
-If this is true, we evaluate the next line, which is
-
-> `%.n`
-
-If `(head l)` is an atom, we keep going.
-
-In this case, `(head l)` is a a list.  So the answer is
-`%.n`&mdash;false.
+Per the rules of `?:`, since `(head l)` is a list, we evaluate the next
+action, which is `%.n`.  
+So the answer is `%.n`&mdash;false.
 
 **Q:** Can you describe how we determined the value `%.n` for
 
@@ -1397,10 +1403,6 @@ where
 > `+is-lat l` is `%.y`.  If it finds a list, as it did in the example
 > `['bacon' ['and' 'eggs' ~] ~]`, the value of `+is-lat l` is `%.n`."
 
-JL: A brief digression where we talk about declaring gates in Hoon
-
-KM: Introduce the word "gate" at some point before now.
-
 **Q:** What does the first line of `+is-lat` again?
 
 **A:** `|=  l=(list)`
@@ -1409,7 +1411,7 @@ KM: Introduce the word "gate" at some point before now.
 
 > `l=(list)`
 
-**A:** The parameter is named `l` and it is of type `list`.
+**A:** The function has one argument,  named `l`.  It is of type `list`.
 
 **Q:** What would be the result if you called `+is-lat l`  
 where
@@ -1429,9 +1431,12 @@ where
 
 Because `~` is the only atom that is also a list, in this case it is a list of zero nouns. And since an empty list does not contain any lists, it returns true, or `%.y`.
 
-KM: Add this fact (~ is both an atom and a zero-item list) tidbit to chapter 1
+Hint: Look at the code one last time and make sure this is true.
 
-KM: This is a deep concept which kind of muddies the waters here.  I'm seeing now why TLS made a function called `atom?`, which explicitly ruled out `~`.  Revisit the decision to exclude `atom?`.
+JL: This is a deep concept which kind of muddies the waters here.  I'm seeing 
+now why TLS made a scheme function called `atom?`, which explicitly ruled 
+out `~`.  I'm okay with how we describe things here, but I'm open to
+hearing about why this is wrong.
 
 **Q:** Is `?|(.=(~ l1) .=(~ l2))` true or false
 where `l1` is `~`   
@@ -1467,7 +1472,7 @@ and
 
 **A:** False,
 
-> because `.=(~ l1)` nor `.=(~ l2)` is true where
+> because neither `.=(~ l1)` nor `.=(~ l2)` are true where
 
 > `l1` is `['a' 'b' 'c' ~]`
 
@@ -1544,9 +1549,9 @@ This is sometimes called the 'OR' operation.
 
 **A:** This is called "tall form".
 
-**Q:** What does the `==` do?
+**Q:** What does the `==` in the tall form do?
 
-**A:** In tall form, `?|` uses what's called a "running series".  You use `==` to finish asking questions.
+**A:** In tall form, `?|` uses what's called a "running series".  You can keep asking questions, and when you use `==` to say that you are finished.
 
 **Q:** Is it true or false that `a` is a member of `lat`  
 where `a` is `'tea'`  
@@ -1595,6 +1600,7 @@ and
 <sup>1</sup> Add this code to a file called `gen/is-member.hoon` inside your
 `home` directory.  Then run the following in the dojo:
 ```
+
 |commit %home
 ```
 
