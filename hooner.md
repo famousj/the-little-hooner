@@ -171,8 +171,13 @@ to run this command to add these changes to your ship
   kind of interactive version where it doesn't give the answer until you
   hit the spacebar or something.
 
-- The section to get the tools running is extremely manual.  Probably an
-  opportunity to improve that
+- Revisit the "getting setup" section, which is a bit sparse.
+
+- Gently introduce the concept of types of atoms.  
+
+- Introduce "cells" before we get into lists.  Also, point out why we
+  need a list (i.e. when we don't know how many items we are going to
+  consume).
 
 - Make a chapter describing the aura type system.  We could, in chapter
   1, mention that most of the atoms discussed here are "cords", but I
@@ -187,7 +192,6 @@ to run this command to add these changes to your ship
   What it does have is `?~`, but this has a built in if-then-else
   structure, so I'll introduce that later.
 
-- Also need to figure out how to discuss "tall form".
 
 - TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
   thing here with Hoon, but need to be a bit more transparent about what 
@@ -246,57 +250,76 @@ to run this command to add these changes to your ship
 
 **A:** Yes,
 
-> `~` is the null value.  It's pronounced 'sig' or sometimes 'null'.  It
+> `~` is the null value.  It is pronounced 'sig' or sometimes 'null'.  It
 > is an atom with no value.
 
-**Q:** Is it true that this is a list?
+**Q:** Is it true that this is a cell?
 
-> `['atom' 'turkey' ~]`
-
-**A:** Yes,
-
-> because `['atom' 'turkey']` is two atoms enclosed by a left square
-> bracket (which is called a '`sel`') and a right square bracket (which is 
-> called a '`ser`'), ending in the null value (i.e. `~`).
-
-**Q:** Is it true that this is a list?
-
-> `['atom' ~]`
+> `['grilled' 'cheese']`
 
 **A:** Yes,
 
-> because `['atom' ~]` is an atom enclosed by '[' and ']' (i.e. 'sel' and
-> 'ser'), ending in a null value, i.e. `~`.
+> because it is a pair of two atoms, 'grilled' and 'cheese', surrounded
+> by a left square bracked (which is called a 'sel') and a right square
+> bracket, which is called a 'ser'.
 
-**Q:** Is it true that this is a list?
+**Q:** Is it true that this is a cell?
 
-> `['atom']`
+> `'tomato' 'soup'`
 
 **A:** No,
 
-> because `['atom']` does not end in the null value, `~`.
+> because cells must be enclosed in a 'sel' and a 'ser'.
 
-**Q:** Is it true that this is a list?
+**Q:** Is it true that this is a cell?
 
-> `['atom' 'turkey' 'or' ~]`
-
-**A:** Yes,
-
-> because it is a collection of atoms enclosed by square brackets,
-> ending in null.
-
-JL: This might be a good place to introduce list shorthand, i.e. ~['atom' 'turkey' 'or']
-
-**Q:** Is it true that this is a list?
-
-> `['atom' 'turkey' ~] 'or'`
+> `['atom' 'turkey'] 'or'`
 
 **A:** No,
 
-> because these are actually two nouns not enclosed by square brackets. 
-> The first one is a list containing two atoms plus the null value, and the second one is just an atom.
+> because these are actually two nouns, not enclosed by a 'sel' and a
+> 'ser'.  The first one is a cell and the second one is an atom.
 
-JL: TLS uses the term "S-expression", but I'm using the Hoon term "noun"
+**Q:** Is it true that this is a cell?
+
+> `[['atom' 'turkey'] 'or']`
+
+**A:** Yes,
+
+> because the two nouns are now enclosed by square brackets.
+
+**Q:** Is it true that this is a cell?
+
+> `['atom' 'turkey' 'or']`
+
+**A:** Yes,
+
+> because this is another way to write
+
+> > `['atom' ['turkey' 'or']]`
+
+> This is a cell containing an atom and another cell.
+
+**Q:** Is it true that this is a cell?
+
+> `['two' 'all' 'beef' 'patties']`
+
+**A:** Yes,
+
+> because this is another way to write
+
+> > `['two' ['all' ['beef' 'patties']]]
+
+> This is a cell containing an atom and another cell which contains an atom
+> and another cell.
+
+**Q:** Is it true that this is a cell?
+
+> `['cheese']`
+
+**A:** No,
+
+> A cell must have two nouns
 
 **Q:** Is it true that this is a noun?
 
@@ -308,19 +331,91 @@ JL: TLS uses the term "S-expression", but I'm using the Hoon term "noun"
 
 **Q:** Is it true that this is a noun?
 
-> `['x' 'y' 'z' ~]`
+> `['x' 'y' 'z']
 
 **A:** Yes,
 
-> because it is a list.
+> because it is a cell
 
 **Q:** Is it true that this is a noun?
+
+> `[['x' 'y'] 'z']
+
+**A:** Yes,
+
+> because all cells are nouns.
+
+### Lists
+
+JL: Should I put this discussion at the end or leave it here?
+
+**Q:** Is it true that this is a list?
+
+> `['atom' ~]`
+
+**A:** Yes,
+
+> because `['atom' ~]` is a cell ending in the null value, `~`,
+> which is pronounced ('sig' or "null").
+
+**Q:** Is it true that this is a list?
+
+> `['atom' 'turkey' ~]`
+
+> This is another way of writing
+
+> > `['atom' ['turkey ~]]`
+
+
+**A:** Yes,
+
+> because `['atom' 'turkey' ~]` is cell ending in the null value
+
+**Q:** Is it true that this is a list?
+
+> `['tomato' 'soup']`
+
+**A:** No,
+
+> because `['tomato' 'soup']` does not end in the null value, `~`.
+
+**Q:** Is it true that this is a list?
+
+> `['atom' 'turkey' 'or' ~]`
+
+**A:** Yes,
+
+> because it is a collection of atoms enclosed by square brackets,
+> ending in null.  
+
+
+**Q:** Is it true that this is a list?
+
+> `~['atom' 'turkey' 'or']`
+
+**Q:** Is it true that this is a list?
 
 > `[['x' 'y' ~] 'z' ~]`
 
 **A:** Yes,
 
-> because all lists are nouns.
+> This is a list whose first item is another list.
+
+**A:** Yes,
+
+> Because `~['atom' 'turkey' 'or']` is another way to write
+
+> > `['atom' 'turkey' 'or' ~]`
+
+KM: Do we want to introduce the shorthand for making lists now, or save it for later, or skip it in this doc?
+
+**Q:** Is it true that this is a noun?
+
+> `['x' 'y' 'z' ~]`
+
+**A:** Yes,
+
+> because it is a list, and all lists are cells.
 
 **Q:** Is it true that this is a list
 
@@ -330,6 +425,29 @@ JL: TLS uses the term "S-expression", but I'm using the Hoon term "noun"
 
 > because it is a collection of nouns enclosed by square brackets,
 > ending in null.
+
+**Q:** Is it true that this is an atom?
+
+> `~`
+
+**A:** Yes,
+
+> the null value is an atom with no value. 
+
+**Q:** Is it true that this is a list?
+
+> `~`
+
+**A:** Yes,
+
+> the null value is an empty list, a list with no nouns.
+
+**Q:** So the null value is both an atom and a list?
+
+**A:** Yes.
+
+> `~` is special.  It can act like a list when it needs to be a list.
+> Most of the time it's just an atom.
 
 **Q:**  How many nouns are in the list?
 
@@ -361,29 +479,6 @@ and what are they?
 > `[['how' ~] 'are' ~]`, `[['you' ~] ['doing' 'so' ~] ~]`, `'far'`, and
 > `~`, because it is a collection of nouns enclosed by square brackets,
 > ending in null.
-
-**Q:** Is it true that this is an atom?
-
-> `~`
-
-**A:** Yes,
-
-> the null value is an atom with no value. 
-
-**Q:** Is it true that this is a list?
-
-> `~`
-
-**A:** Yes,
-
-> the null value is an empty list, a list with no nouns.
-
-**Q:** So the null value is both an atom and a list?
-
-**A:** Yes.
-
-> `~` is special.  It can act like a list when it needs to be a list.
-> Most of the time it's just an atom.
 
 **Q:** What is the `head` of `l` where `l` is the argument
 
