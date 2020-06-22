@@ -208,11 +208,11 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is an atom?
 
-> `1492`
+> `42`
 
 **A:** Yes,
 
-> because `1492` is a number 
+> because `42` is a number 
 
 **Q:** Is it true that this is an atom?
 
@@ -246,8 +246,8 @@ to run this command to add these changes to your ship
 **A:** Yes,
 
 > because it is a pair of two atoms, 'grilled' and 'cheese', surrounded
-> by a left square bracked (which is called a 'sel') and a right square
-> bracket, which is called a 'ser'.
+> by a left square bracked (which is pronounced 'sel') and a right square
+> bracket, which is pronounced 'ser'.
 
 **Q:** Is it true that this is a cell?
 
@@ -263,7 +263,7 @@ to run this command to add these changes to your ship
 
 **A:** No,
 
-> because these are actually two nouns, not enclosed by a 'sel' and a
+> these are actually two nouns, not enclosed by a 'sel' and a
 > 'ser'.  The first one is a cell and the second one is an atom.
 
 **Q:** Is it true that this is a cell?
@@ -294,10 +294,10 @@ to run this command to add these changes to your ship
 
 > because this is another way to write
 
-> > `['two' ['all' ['beef' 'patties']]]
+> > `['two' ['all' ['beef' 'patties']]]`
 
-> This is a cell containing an atom and another cell which contains an atom
-> and another cell.
+> This is a cell containing an atom and another cell.  That cell also 
+contains an atom > and another cell.
 
 **Q:** Is it true that this is a cell?
 
@@ -317,7 +317,7 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is a noun?
 
-> `['x' 'y' 'z']
+> `['x' 'y' 'z']`
 
 **A:** Yes,
 
@@ -337,6 +337,27 @@ JL: Should I put this discussion at the end or leave it here?
 
 **Q:** Is it true that this is a list?
 
+> `['atom' ['turkey ~]]`
+
+**A:** Yes,
+
+> because `['atom' ['turkey' ~]]` is a cell where the last item is `~`,
+> i.e. the null value or 'sig'.
+
+**Q:** Is it true that this is a list?
+
+> `['atom' 'turkey' ~]`
+
+> This is another way of writing
+
+**A:** Yes,
+
+because `['atom' 'turkey' ~]` is another way of writing
+
+> `['atom' ['turkey ~]]`
+
+**Q:** Is it true that this is a list?
+
 > `['atom' ~]`
 
 **A:** Yes,
@@ -346,34 +367,11 @@ JL: Should I put this discussion at the end or leave it here?
 
 **Q:** Is it true that this is a list?
 
-> `['atom' 'turkey' ~]`
-
-> This is another way of writing
-
-> > `['atom' ['turkey ~]]`
-
-
-**A:** Yes,
-
-> because `['atom' 'turkey' ~]` is cell ending in the null value
-
-**Q:** Is it true that this is a list?
-
 > `['tomato' 'soup']`
 
 **A:** No,
 
-> because `['tomato' 'soup']` does not end in the null value, `~`.
-
-**Q:** Is it true that this is a list?
-
-> `['atom' 'turkey' 'or' ~]`
-
-**A:** Yes,
-
-> because it is a collection of atoms enclosed by square brackets,
-> ending in null.  
-
+> because the last value of `['tomato' 'soup']` is not the null value, `~`.
 
 **Q:** Is it true that this is a list?
 
@@ -401,7 +399,7 @@ KM: Do we want to introduce the shorthand for making lists now, or save it for l
 
 **A:** Yes,
 
-> because it is a list, and all lists are cells.
+> because it is a list, and all lists are nouns
 
 **Q:** Is it true that this is a list
 
@@ -435,15 +433,24 @@ KM: Do we want to introduce the shorthand for making lists now, or save it for l
 > `~` is special.  It can act like a list when it needs to be a list.
 > Most of the time it's just an atom.
 
-**Q:**  How many nouns are in the list?
+**Q:** Is it true that this is a cell?
+
+> `~`
+
+**A:** No,
+
+> the null value is the only list that is not also a cell.
+
+**Q:**  How many item are in the list?
 
 > `['how' 'are' 'you' 'doing' 'so' far' ~]`
 
 and what are they?
 
-**A:** Seven,
+**A:** Six,
 
-> `'how'`, `'are'`, `'you'`, `'doing'`, `'so'`, `'far'`, and `~`
+> `'how'`, `'are'`, `'you'`, `'doing'`, `'so'`, and `'far'`.  Plus the
+> `~`
 
 **Q:** Is it true that this is a list?
 
