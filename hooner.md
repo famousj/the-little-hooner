@@ -52,16 +52,15 @@ gal <               par )
 
 
 **1. [Toys](#chap1)**  
-**2. [Do It, Do It Again, and Again, and Again ...](#chap2)**
+**2. [Do It, Do It Again, and Again, and Again ...](#chap2)**  
 **3. [Colhep the Magnificent](#chap3)**
 
 ## 0. Preface and Setup
 
 ### Introductory Notes
 
-- I've tried to stick with how things are presented in The Little
-  Schemer, but Hoon and Scheme are different languages and they just do
-  things differently.
+- While this is based on The Little Schemer, Hoon and Scheme are
+  different languages and they do things differently.
 
 - If you see "JL", this is a translation note, or mentions a section
   that is original to this document.  
@@ -77,20 +76,20 @@ gal <               par )
   So I occasionally toss in some Hoon concepts on top of the recursion
   concepts.  If it feels like a needless distraction, let me know.
 
-- I'm on the fence about what style of lists to show.  You can either do 
+- There are two ways to enter a null-terminated list.  You can either do 
+
 ```
 [1 2 3 ~]
 ```
+
 Or you can do
+
 ```
 ~[1 2 3]
 ```
 
 I went with the former.  This is closer to how the data is being stored
-interally.  Also this is also the format the dojo uses, in case
-you want to check your answers.  
-
-I would like to introduce the shorter version at some point, but haven't found a place yet.
+interally.  I might at least mention the latter style at some point.
 
 - Scheme has a somewhat muddied distinction between code and data that Hoon
   doesn't have.  
@@ -100,25 +99,11 @@ I would like to introduce the shorter version at some point, but haven't found a
 
   This isn't possible in Hoon.  Either that or I'm not aware of someway to do it.  So I've had to make all the words into cords.  This is not ideal, but it works.
 
-- I am completely ignoring the fact that there are many data types other
-  than atoms and lists.  Pairs, tuples, trees, these are all ignored for
-  now.  This is how TLS works, as well, with the occasional footnote for
-  the "Um, akshually..." crowd.
+- Conceptually cells in Hoon act as binary trees.  I am more or less
+  ignoring this fact.  I'm going to discuss atoms, cells, and lists.
+  Also tuples when appropriate.
 
-
-- I'm using the `.=` rune for testing equality and the `:-` rune for
-  the _cons_ operation.  I could see the advantage of doing `=(a b)`
-  instead of `.=(a b)` or `[a b] instead of `[a b]`, but I want to
-  introduce the concept of the two-character rune.
-
-- I was going to refer to function as "gates", which is what the Hoon
-  docs call them.  But a "gate" is not precisely a function, it's a
-  "core" with one arm named `$`.  I'd rather not get into this, so I'm
-  just going to call them "functions".  I'll try to peel back the covers
-  on this whenver appropriate.
-
-- If you see any egregious errors, pull requests are welcome!
-
+- If you see any egregious errors, DM me at ~ribben-donnyl. Also, pull requests are welcome!
 
 ### Introduction
 
@@ -127,13 +112,15 @@ KM
 I plan to note here that what I'm describing is a superset of Hoon, and
 that we'll add to it as we go along.  
 
+KM Make sure to note that punctuation has a three-letter pronounciation.
+
 ### How to Read This Book - JL
 
 -KM - Pull in content from the TLS preface here
 
 This book is written in a question-and-answer format.  Go slowly!  Make sure you really understand a chapter before you go onto the next chapter.
 
-To get started, you'll need a [running ship on Urbit](https://urbit.org/using/install/).  Developing on your own ship is Considered Harmful, so you might consider setting up a [development ship](https://urbit.org/using/develop/#creating-a-development-ship).
+To get started, you'll need a [running ship on Urbit](https://urbit.org/using/install/).  Developing on your own ship is Considered Harmful, so we recommend setting up a [development ship](https://urbit.org/using/develop/#creating-a-development-ship).
 
 Once you're runnning, you'll have a dojo prompt.
 
@@ -146,17 +133,17 @@ If you want to assign a variable, you can do that like so:
 
 You are highly encouraged to follow along and test things out in the dojo.  
 
-When you get to chapter 2, you'll make something called a "generator",
-which is a kind of program you can run on your Urbit ship.  
+When you get to chapter 2, you'll be writing a "generator", which is a kind 
+of program you can run on your Urbit ship.  
 
-To do this, you'll need to run this command in the dojo
+To do this, you'll need to run this command in the dojo:
 ```
 > |mount /=home=
 ```
 
 You'll only have to do this once.  Once you do that, you'll get a folder
-called "home" inside your ship's directory.  If you created a developer
-ship, this will be `zod/home`.
+called "home" inside your ship's directory.  If you created a
+development ship, this will be `zod/home`.
 
 Whenever you change one of the files in your home directory, you'll need
 to run this command to add these changes to your ship
@@ -171,36 +158,35 @@ to run this command to add these changes to your ship
   kind of interactive version where it doesn't give the answer until you
   hit the spacebar or something.
 
-- Revisit the "getting setup" section, which is a bit sparse.
-
 - Gently introduce the concept of types of atoms.  
 
-- Introduce "cells" before we get into lists.  Also, point out why we
-  need a list (i.e. when we don't know how many items we are going to
-  consume).
-
-- Make a chapter describing the aura type system.  We could, in chapter
-  1, mention that most of the atoms discussed here are "cords", but I
-  thought we'd save that for a bit.
+- Make a chapter describing the aura type system.  We might, in chapter
+  1, mention that most of the atoms discussed here are "cords".
 
 - Introduce tree addressing at some point.  Possibly a new, original
   chapter, since Scheme doesn't have anything like that.
 
 - At some point (possibly in chapter 1) I should introduce the `:~` rune and discuss that this is a way to construct a null-terminated list. 
 
+- Change "The Law of Null?" so it comes after 'dottis', then introduce
+  `?~`
+
 - In re: The Law of Null?, Hoon doesn't exactly have a function `null?`.
   What it does have is `?~`, but this has a built in if-then-else
   structure, so I'll introduce that later.
-
 
 - TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
   thing here with Hoon, but need to be a bit more transparent about what 
   you can and can't do in Hoon.
 
+- Do we want section headers?
+
+- Introduce the term "gate" and "trap" for functions?  Maybe in the
+  future.
+
 <a name="chap1"></a>
 
 ## 1. Toys
-
 
 **Q:** Is it true that this is an atom?
 
