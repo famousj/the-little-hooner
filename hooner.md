@@ -18,10 +18,10 @@ KM Fourth commandment
 ## The <strike>Five</strike> Four Rules
 
 ###  The Law of Head
-> The primitive `head` is defined only for non-null lists.
+> The primitive `head` is defined only for cells and non-null lists.
 
 ### The Law of Tail
-> The primitive `tail` is defined only for non-null lists. The `tail` of any non-null list is always another list.
+> The primitive `tail` is defined only for cells and non-null lists. The `tail` of any non-null list is always another list.
 
 ### The Law of Colhep
 > The rune `:-` takes two arguments.  The second argument to `:-` must be a 
@@ -461,37 +461,62 @@ and what are they?
 > because it is a collection of nouns enclosed by square brackets,
 > ending in null.
 
-**Q:** How many nouns are in the list
+**Q:** How many items are in the list
 
 > `[[['how' ~] 'are' ~] [['you' ~] ['doing' 'so' ~] ~] 'far' ~]`
 
 and what are they?
 
-**A:** Four,
+**A:** Three,
 
-> `[['how' ~] 'are' ~]`, `[['you' ~] ['doing' 'so' ~] ~]`, `'far'`, and
-> `~`, because it is a collection of nouns enclosed by square brackets,
-> ending in null.
+> `[['how' ~] 'are' ~]`, `[['you' ~] ['doing' 'so' ~] ~]`, and `'far'`, plus 
+> the `~` 
 
-**Q:** What is the `head` of `l` where `l` is the argument
+**Q:** What is the advantages of using lists versus using cells?
 
-> `['a' 'b' 'c' ~]`
+**A:** A cell can only have two or more items.  You can't have a cell
+with one item.
+
+> `['item']`
+
+is converted into the atom
+
+You also can't have a cell with zero items.
+
+A list can have zero items:
+
+> `~`
+
+It can have one item:
+
+> `['item' ~]`
+
+It can have as many or as few items as you want, as long as you
+terminate with a `~`.
+
+> `['this' 'list' 'has' 'a' 'lot' 'of' 'items' ~]`
+
+### Heads and Tails
+
+KM: Start with cells here
+
+**Q:** What is the `head` of the cell `c` where `c` is
+
+> `['a' 'b']`
 
 **A:** `'a'`
 
-> because `'a'` is the first atom on the list.
+> because `'a'` is the first item in the cell.
 
-**Q:** What is the `head` of `l` where `l` is 
+**Q:** What is the `head` of `c` where `c` is 
 
-> `[['a' 'b' 'c' ~] 'x' 'y' 'z' ~]`
+> `[['a' 'b' 'c'] 'x' 'y' 'z']`
 
-**A:**  `['a' 'b' 'c' ~]`
+**A:**  `['a' 'b' 'c']`
 
-> because `['a' 'b' 'c' ~]` is the first noun of this list.
+> because `['a' 'b' 'c']` is the first noun in the cell.
 
-- TLS - "this non-empty list"
-
-**Q:** What is the `head` of `l` where `l` is `hotdog`
+**Q:** What is the `head` of `a` where `a` is `hotdog`
 
 **A:** No answer.
 
@@ -501,12 +526,12 @@ and what are they?
 
 **A:** No answer.
  
-> You cannot ask for the `head` of `~`, since `~` is the empty list.
+> You cannot ask for the `head` of `~`, since `~` is not a cell.
 
 ---
 
 ###  The Law of Head
-#### The primitive `head` is defined only for non-null lists.
+#### The primitive `head` is defined only for cells and non-null lists.
 
 ---
 
@@ -524,44 +549,50 @@ read as:
 
 `[['hotdogs' ~] ~]` is the first noun of `l`
 
-**Q:** What is `(head l)`
+**Q:** What is `(head c)`
 
 where
 
-> `l` is `[[['hotdogs' ~] ~] ['and' ~] ['pickle' ~] 'relish' ~]`
+> `c` is `[['hotdogs' 'and'] ['pickle' 'relish']]`
 
-**A:** `[['hotdogs' ~] ~]`
+**A:** `['hotdogs' 'and']`
 
-> because `(head l)` is another way to ask for "the `head` of the list
-> `l`"
+> because `(head l)` is another way to ask for "the `head` of the cell
+> `c`"
 
-**Q:** What is `(head (head l))`
+KM: `(head c)` is the irregular form of %-(head c)  This might be a good place
+to break that down.  Or maybe not.
 
-where
-
-> `l` is `[[['hotdogs' ~] ~] ['and' ~] ~]`
-
-**A:** `[hotdogs ~]`
-
-**Q:** What is the `tail` of `l`
+**Q:** What is `(head (head c))`
 
 where
 
-> `l` is `['a' b' 'c' ~]`
+> `l` is `[['hotdogs' 'and'] ['pickle' 'relish']]`
 
-- TLS uses `cdr`
+**A:** `hotdogs`
 
-**A:** `['b' 'c' ~]`
-
-> because `['b' 'c' ~]` is the list `l` without `(head l)`.
-
-**Q:** What is the `tail` of `l`
+**Q:** What is the `tail` of `c`
 
 where
 
-> `l` is `[['a' 'b' 'c' ~] 'x' 'y' 'z' ~]`
+> `c` is `['a' b' 'c']`
 
-**A:** `['x' 'y' 'z' ~]`
+
+**A:** `['b' 'c']`
+
+> because `['a' 'b' 'c']` is another way to write `['a' ['b' 'c']]`.
+
+And
+
+> `['b' 'c']` is the cell `c` without `(head c)`.
+
+**Q:** What is the `tail` of `c`
+
+where
+
+> `c` is `[['a' 'b' 'c'] 'x' 'y' 'z']`
+
+**A:** `['x' 'y' 'z']`
 
 **Q:** What is the `tail` of `l`
 
@@ -605,31 +636,34 @@ where `l` is `~`
 ---
 
 ###  The Law of Tail
-#### The primitive `tail` is defined only for non-null lists. The `tail` of any non-null list is always another list.
+#### The primitive `tail` is defined only for cells and non-null lists. The `tail` of any non-null list is always another list.
 
 ---
 
-**Q:** What is `(head (tail l))`
+KM: Consider reorganizing this so you do cells, head and tails, and then
+throw out lists and do heads and tails on lists.
+
+**Q:** What is `(head (tail c))`
 
 where
 
-> `l` is `[['b' ~] ['x' 'y' ~] [['c' ~] ~] ~]`
+> `c` is `['b' ['x' 'y'] ['c' 'd']]`
 
-**A:** `['x' 'y' ~]`,
+**A:** `['x' 'y']`,
 
-> because `[['x' 'y' ~] [['c' ~] ~] ~]` is `(tail l)` and `['x'  'y' ~]`
+> because `[['x' 'y'] ['c' 'd']]` is `(tail l)` and `['x' 'y']`
 > is the `head` of `(tail l)`.
 
-**Q:** What is `(tail (tail l))`
+**Q:** What is `(tail (tail c))`
 
 where
 
-> `l` is `[['b' ~] ['x' 'y' ~] [['c' ~] ~] ~]`
+> `c` is `['b' ['x' 'y'] ['c' 'd']]`
 
-**A:** `[[['c' ~] ~] ~]`
+**A:** `['c' 'd']`
 
-> because `[['x' 'y' ~] [['c' ~] ~] ~]` is `(tail l)` and `[[['c' ~] ~]
- ~]` is the `tail` of `(tail l)`.
+> because `[['x' 'y'] ['c' 'd']]` is `(tail l)` and `['c' 'd']` is the 
+> `tail` of `(tail l)`.
 
 **Q:** What is `(tail (head l))`
 
@@ -644,13 +678,23 @@ where
 
 **Q:** What does `head` take as an argument?
 
-**A:** It takes any non-empty list.
+**A:** It takes any cell or non-empty list.
 
 **Q:** What does `tail` take as an argument?
 
-**A:**  It takes any non-empty list.
+**A:**  It takes any cell or non-empty list.
 
-**Q:** What is the _cons_ of the atom `a` and the list `l` 
+KM: Explain how :- really works!
+
+**Q:** What is the 'cons' of `'a'` and `'b'`?
+
+**A:** `['a' 'b']`
+
+This can be written as
+
+> :-('a' 'b')
+
+**Q:** What is the 'cons' of the atom `a` and the list `l` 
 
 where `a` is `'peanut'`
 
@@ -658,13 +702,12 @@ and
 
 > `l` is `['butter' 'and' 'jelly' ~]`
 
-This can be written as `:-(a l)`
-
 > You can read this as: "_cons_ the atom `a` onto the list `l`"
 
 **A:** `['peanut' 'butter' 'and' 'jelly' ~]`
 
-> because the _cons_ operation adds an atom to the front of the list.
+> because the _cons_ operation can add an atom to the front of the list
+> and make a new list.
 
 **Q:** What is the _cons_ of `s` and `l`
 
@@ -677,9 +720,6 @@ and
 **A:** `[['banana' 'and' ~] 'peanut' 'butter' 'and' 'jelly' ~]`
 
 > because _cons_ adds any noun to the front of a list.
-
-- JL: I thought this would be a good spot for a brief digression about runes 
-and ASCII pronunciation.
 
 **Q:** What is `:-`
 
@@ -709,6 +749,9 @@ and
 
 > the first one is any noun;  
 > the second one is either a list or null.
+
+KM: If we're going to introduce lists separately, introduce how cons
+works with lists after that.
 
 **Q:** What is `:-(s l)`
 
@@ -2608,9 +2651,10 @@ we must find out before we can 'cons' `(tail lat)` onto it.
 
 KM: Should I ditch the word "cons"? Use something like "combine"
 
-KM: This thing with `|-` and $(lat (tail lat)) is a bit hand-wavey.  I'm
-considering actually describing what`|-` does (i.e. makes a new function
-(i.e. `arm`) called `$`). 
+KM: This thing with `|-` and `$(lat (tail lat))` is a bit hand-wavey.  I'm
+considering actually describing what barhep does i.e. makes a new function
+(i.e. `arm`) called `$`. 
+
 KM: I'm also considering using `%=` to describe that we're calling this 
 function `$` with new parameters.
 
@@ -3736,4 +3780,34 @@ $(lat (tail lat))
 <a name="chap4"></a>
 
 ## 4. Numbers Game
+
+**A:** 
+
+**Q:** 
+
+TODO: 
+- Unbinding to the introduction
+
+- Explain why we need lists
+- Introduce cord/atom type
+
+- For |- use %= to show what's actually happening
+
+- Cast the result!
+- Introduce more tall form
+- Explain what `|=` actually does (a trap)
+- Introduce `%=` for calling `$`
+- At some point explain what a 'core' is
+- Remove the term 'cons' and use a different verb.  Merge?
+- Come up with an entirely new non-food-based theme and rewrite the
+  whole thing.
+- Find a place to use the `?~` shorthand
+- What about a gate that is not recursive?  Just pairs?  Ease into the
+  idea of how functions work in hoon
+
+- Special format for list of cords: <|this is a list|>
+
+- `lest` is a non-null list
+
+- faces
 
