@@ -181,8 +181,38 @@ to run this command to add these changes to your ship
 
 - Do we want section headers?
 
+- Gently introduce types in terms of `~`. Then `?=`, to do a type check,
+  then `?~` to test if something is null.  (Possibly skip step 2 here).
+
 - Introduce the term "gate" and "trap" for functions?  Maybe in the
   future.
+
+- Add instructions for unbinding to the introduction
+
+- Introduce cord and number types of atoms
+
+- For |- use %= to show what's actually happening, i.e. we are calling
+  the function `$` with changes (running style).
+
+- Cast the result!  This is good style
+
+- Introduce more tall form
+
+- At some point explain what a 'core' is (much later)
+
+- Come up with an entirely new non-food-based theme and rewrite the
+  whole thing.
+
+- Find a place to use the `?~` shorthand
+
+- What about a gate that is not recursive?  Just pairs?  Ease into the
+  idea of how functions work in hoon
+
+- Special format for list of cords: <|this is a list|>
+
+- `lest` is a non-null list
+
+- Add a discussion about faces?
 
 <a name="chap1"></a>
 
@@ -3785,29 +3815,4 @@ $(lat (tail lat))
 
 **Q:** 
 
-TODO: 
-- Unbinding to the introduction
-
-- Explain why we need lists
-- Introduce cord/atom type
-
-- For |- use %= to show what's actually happening
-
-- Cast the result!
-- Introduce more tall form
-- Explain what `|=` actually does (a trap)
-- Introduce `%=` for calling `$`
-- At some point explain what a 'core' is
-- Remove the term 'cons' and use a different verb.  Merge?
-- Come up with an entirely new non-food-based theme and rewrite the
-  whole thing.
-- Find a place to use the `?~` shorthand
-- What about a gate that is not recursive?  Just pairs?  Ease into the
-  idea of how functions work in hoon
-
-- Special format for list of cords: <|this is a list|>
-
-- `lest` is a non-null list
-
-- faces
 
