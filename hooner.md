@@ -247,11 +247,11 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is an atom?
 
-> `'*abc$'`
+> `'*abc$🙃'`
 
 **A:** Yes,
 
-> because `'*abc$'` is a string of characters.
+> because `'*abc$🙃'` is a string of characters.
 
 **Q:** Is it true that this is an atom?
 
@@ -291,6 +291,15 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is an atom?
 
+> `%🙃`
+
+**A:** No answer,
+
+> because a term cannot have special characters, only lower-case
+> letters, numbers and `-`.
+
+**Q:** Is it true that this is an atom?
+
 > `~`
 
 **A:** Yes,
@@ -300,17 +309,17 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is a cell?
 
-> `['grilled' 'cheese']`
+> `[%grilled %cheese]`
 
 **A:** Yes,
 
-> because it is a pair of two atoms, 'grilled' and 'cheese', surrounded
+> because it is a pair of two atoms, the terms %grilled and %cheese, surrounded
 > by a left square bracked (which is pronounced 'sel') and a right square
 > bracket, which is pronounced 'ser'.
 
 **Q:** Is it true that this is a cell?
 
-> `'tomato' 'soup'`
+> `%tomato %soup`
 
 **A:** No,
 
@@ -318,16 +327,17 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is a cell?
 
-> `['atom' 'turkey'] 'or'`
+> `[%atom %turkey] 'or'`
 
 **A:** No,
 
 > these are actually two nouns, not enclosed by a 'sel' and a
-> 'ser'.  The first one is a cell and the second one is an atom.
+> 'ser'.  The first one is a cell with two terms, and the second one is
+> a cord.
 
 **Q:** Is it true that this is a cell?
 
-> `[['atom' 'turkey'] 'or']`
+> `[[%atom %turkey] %or]`
 
 **A:** Yes,
 
@@ -335,32 +345,32 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is a cell?
 
-> `['atom' 'turkey' 'or']`
+> `[%atom %turkey %or]`
 
 **A:** Yes,
 
 > because this is another way to write
 
-> > `['atom' ['turkey' 'or']]`
+> > `[%atom [%turkey %or]]`
 
 > This is a cell containing an atom and another cell.
 
 **Q:** Is it true that this is a cell?
 
-> `['two' 'all' 'beef' 'patties']`
+> `[%two %all %beef %patties]`
 
 **A:** Yes,
 
 > because this is another way to write
 
-> > `['two' ['all' ['beef' 'patties']]]`
+> > `[%two [%all [%beef %patties]]]`
 
 > This is a cell containing an atom and another cell.  That cell also 
-contains an atom > and another cell.
+> contains an atom and another cell.
 
 **Q:** Is it true that this is a cell?
 
-> `['cheese']`
+> `[%cheese]`
 
 **A:** No,
 
@@ -372,19 +382,19 @@ contains an atom > and another cell.
 
 **A:** Yes,
 
-> because all atoms are nouns.
+> because a cord is an atom, and all atoms are nouns.
 
 **Q:** Is it true that this is a noun?
 
-> `['x' 'y' 'z']`
+> `[%x %y %z]`
 
 **A:** Yes,
 
-> because it is a cell
+> because it is a cell.
 
 **Q:** Is it true that this is a noun?
 
-> `[['x' 'y'] 'z']
+> `[[%x %y] %z]
 
 **A:** Yes,
 
