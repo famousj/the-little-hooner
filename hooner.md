@@ -158,10 +158,11 @@ to run this command to add these changes to your ship
   kind of interactive version where it doesn't give the answer until you
   hit the spacebar or something.
 
-- Gently introduce the concept of types of atoms.  
-
 - Make a chapter describing the aura type system.  We might, in chapter
   1, mention that most of the atoms discussed here are "cords".
+
+- Instead of cords, use symbols.  (This will basically involve redoing
+  every bit of code in here, but do it anyway.)
 
 - Introduce tree addressing at some point.  Possibly a new, original
   chapter, since Scheme doesn't have anything like that.
@@ -238,14 +239,6 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is an atom?
 
-> `42`
-
-**A:** Yes,
-
-> because `42` is a number 
-
-**Q:** Is it true that this is an atom?
-
 > `'u'`
 
 **A:** Yes,
@@ -259,6 +252,42 @@ to run this command to add these changes to your ship
 **A:** Yes,
 
 > because `'*abc$'` is a string of characters.
+
+**Q:** Is it true that this is an atom?
+
+> `42`
+
+**A:** Yes,
+
+> because `42` is a number 
+
+**Q:** Is it true that this is an atom?
+
+> `%atom`
+
+**A:** Yes,
+
+> because `%atom` is a string of lower-case letters beginning with a `%`
+> (pronounced 'cen')
+
+> This kind of atom is called a "term"
+
+**Q:** Is it true that this is an atom?
+
+> `%this-is-an-atom-2`
+
+**A:** Yes,
+
+> because `%atom` is a string of lower-case letters beginning with a
+> `%`, along with numbers and the `-` (pronounced 'hep').
+
+**Q:** Is it true that this is an atom?
+
+> `%-atom`
+
+**A:** No answer,
+
+> because a term must start with the 'cen' and then a lower-case letter
 
 **Q:** Is it true that this is an atom?
 
