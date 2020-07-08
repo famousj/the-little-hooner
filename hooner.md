@@ -165,39 +165,35 @@ to run this command to add these changes to your ship
   kind of interactive version where it doesn't give the answer until you
   hit the spacebar or something.
 
-- Make a chapter describing the aura type system.  We might, in chapter
-  1, mention that most of the atoms discussed here are "cords".
+- Make a chapter describing the aura type system.  Or add this to
+  chapter 1, although that's already lengthy.  We might, in chapter
+  1, mention that most of the atoms discussed here are "cords" or
+  "terms".
 
-- Instead of cords, use symbols.  (This will basically involve redoing
+- Instead of cords, use terms.  (This will basically involve redoing
   every bit of code in here, but do it anyway.)
 
 - Introduce tree addressing at some point.  Possibly a new, original
   chapter, since Scheme doesn't have anything like that.
 
-- At some point (possibly in chapter 1) I should introduce the `:~` rune and discuss that this is a way to construct a null-terminated list. 
-
-- Change "The Law of Null?" so it comes after 'dottis', then introduce
-  `?~`
+- At some point I might introduce the `:~` rune and discuss that this is a 
+  way to construct a null-terminated list. 
 
 - In re: The Law of Null?, Hoon doesn't exactly have a function `null?`.
   What it does have is `?~`, but this has a built in if-then-else
-  structure, so I'll introduce that later.
+  structure.  We get into the if-then-else in chapter 2.  In chapter 4,
+  we start using numbers, so it'll be important to distinguish between 0
+  and ~, so introduce it then.
+
+- Gently introduce types in terms of `~`. Then `?=`, to do a type check,
+  then `?~` to test if something is null.  (Possibly skip step 2 here).
 
 - TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
   thing here with Hoon, but need to be a bit more transparent about what 
   you can and can't do in Hoon.
 
-- Do we want section headers?
-
-- Gently introduce types in terms of `~`. Then `?=`, to do a type check,
-  then `?~` to test if something is null.  (Possibly skip step 2 here).
-
 - Introduce the term "gate" and "trap" for functions?  Maybe in the
   future.
-
-- Add instructions for unbinding to the introduction
-
-- Introduce cord and number types of atoms
 
 - For |- use %= to show what's actually happening, i.e. we are calling
   the function `$` with changes (running style).
@@ -211,8 +207,6 @@ to run this command to add these changes to your ship
 - Come up with an entirely new non-food-based theme and rewrite the
   whole thing.
 
-- Find a place to use the `?~` shorthand
-
 - What about a gate that is not recursive?  Just pairs?  Ease into the
   idea of how functions work in hoon
 
@@ -221,6 +215,10 @@ to run this command to add these changes to your ship
 - `lest` is a non-null list
 
 - Add a discussion about faces?
+
+- `%-` is the rune to call functions. Considering whether to add
+  this to the discussion of `head` in chapter 1 or to do it somewhere
+  else.
 
 <a name="chap1"></a>
 
