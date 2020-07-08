@@ -18,18 +18,14 @@ KM Fourth commandment
 ## The <strike>Five</strike> Four Rules
 
 ###  The Law of Head
-> The primitive 'head' is defined only for cells and non-null lists.
+> The primitive 'head' is defined only for cells and non-empty lists.
 
 ### The Law of Tail
-> The primitive `tail` is defined only for cells and non-null lists. The `tail` of any non-null list is always another list.
+> The primitive 'tail' is defined only for cells and non-empty lists.
 
 ### The Law of Colhep
-> The rune `:-` takes two arguments.  The second argument to `:-` must be a 
-list or null.  The result is a list.
-
-### The Law of Dottis
-> The rune `.=` takes two arguments.  Each must be an atom.
-
+> The rune `:-` takes two arguments.  To create a new list with `:-`, the 
+> second argument must be a list or null.
 
 ## Rune Pronunciation
 
@@ -407,8 +403,6 @@ to run this command to add these changes to your ship
 
 ### Heads and Tails
 
-KM: Start with cells here
-
 **Q:** What is the 'head' of the cell `c` where `c` is
 
 > `[%a %b]`
@@ -431,14 +425,6 @@ KM: Start with cells here
 
 > You cannot ask for the 'head' of an atom.
 
-**Q:** What is the 'head' of `l` where `l` is `~`
-
-**A:** No answer.
- 
-> You cannot ask for the 'head' of `~`, since `~` is not a cell.
-
-KM: Move to below when talking about lists.
-
 ---
 
 ###  The Law of Head
@@ -446,22 +432,6 @@ KM: Move to below when talking about lists.
 #### The primitive 'head' is defined only for cells.
 
 ---
-
-**Q:** What is the 'head' of `l` 
-
-where
-
-> `l` is `[[['hotdogs' ~] ~] ['and' ~] ['pickle' ~] 'relish' ~]`
-
-**A:** `[['hotdogs' ~] ~]`
-
-read as:
-
-> "The list of the list of 'hotdogs'."
-
-`[['hotdogs' ~] ~]` is the first noun of `l`
-
-KM: Below
 
 **Q:** What is the 'head' of `c`
 
@@ -481,11 +451,8 @@ where
 
 **A:** `[%hotdogs %and]`
 
-> because `%-(head l)` is another way to ask for "the 'head' of the cell
+> because `(head c)` is another way to ask for "the 'head' of the cell
 > `c`"
-
-KM: `(head c)` is the irregular form of %-(head c)  This might be a good place
-to break that down.  Or maybe not.
 
 **Q:** What is `(head (head c))`
 
@@ -540,34 +507,6 @@ where
 > becuase `(tail c)` is just another way to ask for "the `tail` of the
 > cell `c`."
 
-
-**Q:** What is the `tail` of `l`
-
-where 
-
-> `l` is `['hamburger' ~]`
-
-KM: Below
-
-**A:** `~`
-
-> the null value, in this case acting as an empty list.
-
-KM: Below
-
-**Q:** What is `(tail l)`
-
-where
-
-> `l` is `[['x' ~] 't' 'r' ~]`
-
-**A:** `['t' 'r' ~]`
-
-> becuase `(tail l)` is just another way to ask for "the `tail` of the
-> list `l`."
-
-KM: Below
-
 **Q:** What is `(tail a)`
 
 where
@@ -577,24 +516,6 @@ where
 **A:** No answer.
 
 > You cannot ask for the `tail` of an atom.
-
-**Q:** What is `(tail l)`
-
-where `l` is `~`
-
-**A:** No answer.
-
-> You cannot ask for the `tail` of `~`, since `~` is an empty list.
-
-KM: Below
-
----
-
-###  The Law of Tail
-##### (preliminary)
-#### The primitive 'tail' is defined only for cells.
-
----
 
 **Q:** What is `(head (tail c))`
 
@@ -685,7 +606,7 @@ where `c` is `[%ice %cream]`
 
 and
 
-> `a` is `%sundae
+> `a` is `%sundae`
 
 **A:** `[[%ice %cream] %sundae]`
 
@@ -723,159 +644,18 @@ and
 
 > Why?
 
-KM: Maybe some more cells with numbers?
-
-**Q:** What is `:-(s (tail c))`
-
-where `s` is `4'`
-
-and
-
-> `c` is `[2 1 0]`
-
-**A:** `[4 1 0]`
-
-> Why?
-
-**Q:** What is the 'cons' of the atom `a` and the list `l`
-
-where `a` is `'peanut'`
-
-and
-
-> `l` is `['butter' 'and' 'jelly' ~]`
-
-**A:** `['peanut' 'butter' 'and' 'jelly' ~]`
-
-> because the _cons_ operation can add an atom to the front of the list
-> and make a new list.
-
-KM: Below.  Look up the original in TLS
-
 **Q:** What is `:-(s l)`
 
 where
 
-> `s` is `[['help' ~] 'this' ~]`
+> `s` is `[[%help %this] %is]`
 
 and 
 
-> `l` is `['is' 'very' [['hard' ~] 'to' 'learn' ~] ~]`
+> `l` is `[%very [[%hard %to] %learn]`
 
 
-**A:** `[[['help' ~] 'this' ~] 'is' 'very' [['hard' ~] 'to' 'learn' ~] ~]`
-
-KM: Below
-
-**Q:** What does the `:-` rune take as its arguments?
-
-**A:**  `:-` takes two arguments:
-
-> the first one is any noun;  
-> the second one is either a list or null.
-
-KM: Below.  If you're making a list, this is true, actually.
-
-**Q:** What is `:-(s l)`
-
-where
-
-> `s` is `['a' 'b' ['c' ~] ~]`
-
-and
-
-> `l` is ~
-
-**A:** `[['a' 'b' ['c' ~] ~] ~]`
-
-> because `~` can act as a list.
-
-KM: Below
-
-**Q:** What is `:-(s l)`
-
-where `s` is `'a'`
-
-and `l` is `~`
-
-**A:** `['a' ~]`
-
-KM: Below
-
-**Q:** What is `:-(s l)`
-
-where
-
-> `s` is `['a' 'b' 'c' ~]`
-
-and
-
-> `l` is `'b'`
-
-**A:** No answer,<sup>1</sup>
-
-> since the second argument `l` must be a list or null.
-
-<sup>1</sup> In practice, `:-(a b)` works for all values `a` and `b`, and
-```
-(head :-(a b)) => a
-(tail :-(a b)) => b
-```
-
-KM: Below.  Make ths not completely wrong.
-
-**Q:** What is `:-(s l)`
-
-where `s` is `'a'`
-
-and `l` is `'b'`
-
-**A:** No answer.
-
-> Why?
-
-KM: Below.  Fix this.
-
----
-
-### The Law of Colhep
-#### The rune `:-` takes two arguments.  To create a new list with `:-`, the second argument must be a list or null.
-
----
-
-**Q:** What is `:-(s (head l))`
-
-where `s` is `'a'`
-
-and
-
-> `l` is `[['b' ~] 'c' 'd' ~]`
-
-**A:** `['a' 'b' ~]`
-
-> Why?
-
-KM: Below
-
-**Q:** What is `:-(s (tail l))`
-
-where `s` is `'a'`
-
-and
-
-> `l` is `[['b' ~] 'c' 'd' ~]`
-
-**A:** `['a' 'c' 'd' ~]`
-
-> Why?
-
-KM: Below
-
-- JL - The next section of TLS referst to empty lists and then
-  introduces `null?`.  Hoon doesn't work this way, so I left it out.
-
-- KM: At some point consider introducing `?~` (i.e. "if this thing is
-  null") into the discussion of recursion.
+**A:** `[[%help %this] %is %very [[%hard %to] %learn]`
 
 ### Atoms?  Cells?
 
@@ -933,18 +713,6 @@ where
 > `l` is `['Harry' 'had' 'a' 'heap' 'of' 'apples']`
 
 **A:** True
-
-**Q:** Is `.?((tail l))` true or false
-
-where
-
-> `l` is `['Harry' ~]`
-
-**A:** False,
-
-> because the null value, `~`, acts as an atom here.
-
-KM: Below
 
 **Q:** Is `.?((head (tail l)))` true or false
 
