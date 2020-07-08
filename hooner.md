@@ -131,6 +131,13 @@ If you want to assign a variable, you can do that like so:
 > =l ['ham' 'and' 'eggs' ~]
 ```
 
+When you are finished with a variable, you can unbind it by running
+something like:
+```
+> =a
+> =l
+```
+
 You are highly encouraged to follow along and test things out in the dojo.  
 
 When you get to chapter 2, you'll be writing a "generator", which is a kind 
