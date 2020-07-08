@@ -1071,9 +1071,6 @@ where
 
 > because it compares the first and second atoms in the list
 
-KM: Show how equality works with lists: 
-l1 = l2, head l = atom, etc.
-
 ### Lists
 
 **Q:** Is it true that this is a list?
@@ -1142,7 +1139,7 @@ This is called a "list of lists".
 
 **A:** Yes,
 
-> because all lists are cells, and all cells are nouns
+> because non-empty lists are cells, and all cells are nouns
 
 **Q:** Is it true that this is an atom?
 
@@ -1179,7 +1176,6 @@ This is called a "list of lists".
 
 > `[%how %are %you %doing %so %far ~]`
 
-
 **A:** Yes,
 
 > because it is a collection of nouns enclosed by a 'sel' and a 'ser',
@@ -1193,8 +1189,7 @@ and what are they?
 
 **A:** Six,
 
-> `%how`, `%are`, `%you`, `%doing`, `%so`, and `%far`.  Plus the
-> `~`
+> `%how`, `%are`, `%you`, `%doing`, `%so`, and `%far`.
 
 **Q:** Is it true that this is a list?
 
@@ -1213,9 +1208,7 @@ and what are they?
 
 **A:** Three,
 
-> `[[%how ~] %are ~]`, `[[%you ~] [%doing %so ~] ~]`, and `'far'`, plus 
-> the `~` 
-
+> `[[%how ~] %are ~]`, `[[%you ~] [%doing %so ~] ~]`, and `'far'`.
 
 **Q:** What is a list with one item?
 
@@ -1244,6 +1237,8 @@ items, one items, as many or as few items as you want, as long as you
 terminate it with a `~`.
 
 > `[%this %list %has %a %lot %of %items %and %ends %with %a ~]`
+
+KM: Review head, tail, cons, .= with lists
 
 ### =&gt; Now go make yourself a peanut butter and jelly sandwich &lt;=
 
