@@ -124,7 +124,7 @@ If you want to assign a variable, you can do that like so:
 
 ```
 > =a 42
-> =l ['ham' 'and' 'eggs' ~]
+> =l [%ham %and %eggs ~]
 ```
 
 When you are finished with a variable, you can unbind it by running
@@ -238,6 +238,8 @@ to run this command to add these changes to your ship
 > because `'turkey'` is a string of characters beginning with a letter,
 > surrounded by `soq`s.
 
+> This kind of atom is called a 'cord'
+
 **Q:** Is it true that this is an atom?
 
 > `'u'`
@@ -271,7 +273,7 @@ to run this command to add these changes to your ship
 > because `%atom` is a string of lower-case letters beginning with a `%`
 > (pronounced 'cen')
 
-> This kind of atom is called a "term"
+> This kind of atom is called a 'term'
 
 **Q:** Is it true that this is an atom?
 
@@ -298,15 +300,6 @@ to run this command to add these changes to your ship
 
 > because a term cannot have special characters, only lower-case
 > letters, numbers and `-`.
-
-**Q:** Is it true that this is an atom?
-
-> `~`
-
-**A:** Yes,
-
-> `~` is the null value.  It is pronounced 'sig' or sometimes 'null'.  It
-> is an atom with no value.
 
 **Q:** Is it true that this is a cell?
 
@@ -338,7 +331,7 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is a cell?
 
-> `[[%atom %turkey] %or]`
+> `[[%atom %turkey] 'or']`
 
 **A:** Yes,
 
@@ -346,13 +339,13 @@ to run this command to add these changes to your ship
 
 **Q:** Is it true that this is a cell?
 
-> `[%atom %turkey %or]`
+> `[%atom %turkey 'or']`
 
 **A:** Yes,
 
 > because this is another way to write
 
-> > `[%atom [%turkey %or]]`
+> > `[%atom [%turkey 'or']]`
 
 > This is a cell containing an atom and another cell.
 
@@ -539,16 +532,16 @@ where
 > because `[%cheese %grits]` is `(tail c)` and `%grits` is the
 > `tail` of `(tail c)`.
 
-**Q:** What is `(tail (head l))`
+**Q:** What is `(tail (head c))`
 
 where
 
-> `l` is `[%a [%b %c ] %d]`
+> `l` is `[%a [%b %c] %d]`
 
 **A:** No answer,
 
-> since `(head l)` is an atom, and `tail` does not take an atom as an
-> argument; see The Law of Tail.
+> since `(head c)` is an atom, and `tail` does not take an atom as an
+> argument.
 
 **Q:** What does 'head' take as an argument?
 
@@ -570,7 +563,7 @@ but I suspect another word would work better here.
 
 **Q:** What is the 'cons' of the atom `a` and the cell `c`
 
-where `a` is `'peanut'`
+where `a` is `%peanut`
 
 and
 
@@ -661,18 +654,17 @@ and
 
 **Q:** Is it true or false that `s` is an atom
 
-where `s` is `'Harry'`
+where `s` is `%harry`
 
 **A:** True,
 
-> because `'Harry'` is a string of characters surrounded by single
-> quotes.
+> because `%harry` is a term.
 
 **Q:** Is `.?(s)` true or false
 
 where
 
-> `s` is `'Harry'`
+> `s` is `%harry`
 
 **A:** False,
 
@@ -686,7 +678,7 @@ where
 
 where
 
-> `s` is `['Harry' 'had' 'a' 'heap' 'of' 'apples']`
+> `s` is `[%harry %had %a %heap %of %apples]`
 
 **A:** True,
 
@@ -700,17 +692,17 @@ where
 
 where
 
-> `l` is `['Harry' 'had' 'a' 'heap' 'of' 'apples']`
+> `l` is `[%harry %had %a %heap %of %apples]`
 
 **A:** False,
 
-> because `(head l)` is 'Harry', and 'Harry' is an atom.
+> because `(head l)` is `%harry`, and `%harry` is an atom.
 
 **Q:** Is `.?((tail l))` true or false
 
 where
 
-> `l` is `['Harry' 'had' 'a' 'heap' 'of' 'apples']`
+> `l` is `[%harry %had %a %heap %of %apples]`
 
 **A:** True
 
@@ -729,34 +721,34 @@ where
 
 where
 
-> `l` is `['swing' ['low' 'sweet' ~] 'cherry' 'oat' ~]`
+> `l` is `[%swing [%low %sweet] %cherry %oat]`
 
 **A:** True,
 
-> since `(tail l)` is `[['low' 'sweet' ~] 'cherry' 'oat' ~]`
-> and `(head (tail l))` is `['low' 'sweet' ~]`, which is a list.
+> since `(tail l)` is `[[%low %sweet] %cherry %oat]`
+> and `(head (tail l))` is `[%low %sweet]`, which is a cell.
 
 ### Equality
 
 **Q:** True or false, `a1` and `a2` are the same atom
 
-where `a1` is `'Harry'`
+where `a1` is `%harry`
 
 and
 
-> `a2` is `'Harry'`
+> `a2` is `%harry`
 
 **A:** True,
 
-> because `a1` is the atom `'Harry'` and `a2` is the atom `'Harry'`.
+> because `a1` is the atom `%harry` and `a2` is the atom `%harry`.
 
 **Q:** Is `.=(a1 a2)` true or false
 
-where `a1` is `'Harry'`
+where `a1` is `%harry`
 
 and
 
-> `a2` is `'Harry'`
+> `a2` is `%harry`
 
 **A:** True,
 
@@ -789,7 +781,8 @@ and
 
 **A:** True,
 
-> since `c1` and `c2` are the same cells.
+> since `c1` and `c2` are the same cells, and 'dottis' works with atoms
+> and cells.
 
 **Q:** Is `.=(c1 c2)` true or false
 
@@ -811,16 +804,16 @@ and
 
 where
 
-> `c` is `['Mary' 'had' 'a' 'little' 'lamb' 'chop']`
+> `c` is `[%mary %had %a %little %lamb %chop]`
 
 and
 
-> `a` is `'Mary'`
+> `a` is `%mary`
 
 **A:** True,
 
-> because `(head c)` is the atom `'Mary'`, and the argument `a` is also
-> the atom `'Mary'`.
+> because `(head c)` is the atom `%mary`, and the argument `a` is also
+> the atom `%mary`.
 
 **Q:** Is `.=((tail c) a)` true or false
 
@@ -853,7 +846,7 @@ where
 **A:** Yes,
 
 > because `[%atom ~]` is a cell ending in the null value, `~`,
-> which is pronounced ('sig' or "null").
+> which is pronounced ('sig' or 'null').
 
 **Q:** Is it true that this is a list?
 
@@ -864,11 +857,9 @@ where
 > because `[%atom %bacon ~]` is a cell where the last item is `~`,
 > i.e. the null value or 'sig'.
 
-> This is another way of writing
-
 **Q:** Is it true that this is a list?
 
-> `[%atom [%bacon ]]`
+> `[%atom [%bacon ~]]`
 
 **A:** Yes,
 
@@ -1006,12 +997,214 @@ and what are they?
 **Q:** What is the advantages of using lists versus using cells?
 
 **A:** A cell can only have two or more items. A list can have zero
-items, one items, as many or as few items as you want, as long as you
+items, one item, as many or as few items as you want, as long as you
 terminate it with a `~`.
 
 > `[%this %list %has %a %lot %of %items %and %ends %with %a ~]`
 
-KM: Review head, tail, cons, .= with lists
+**Q:** What is the 'head' of the list `l` where `l` is
+
+> `[%a ~]`
+
+**A:** `%a`
+
+> because non-empty lists are cells, and `%a` is the first item in the cell.
+
+**Q:** What is the 'head' of `l` where `l` is 
+
+> `[[%a %b %c ~] %x %y %z ~]`
+
+**A:**  `[%a %b %c ~]`
+
+> because `[%a %b %c ~]` is the first noun in the cell.
+
+**Q:** What is the 'head' of `l` where `l` is `~`
+
+**A:** No answer.
+ 
+> You cannot ask for the 'head' of `~`, since `~` is not a cell.
+
+---
+
+###  The Law of Head
+##### (final version)
+#### The primitive 'head' is defined only for cells and non-empty lists.
+
+---
+
+**Q:** What is the 'head' of `l` 
+
+where
+
+> `l` is `[[['hotdogs' ~] ~] ['and' ~] ['pickle' ~] 'relish' ~]`
+
+**A:** `[['hotdogs' ~] ~]`
+
+read as:
+
+> "The list of the list of 'hotdogs'."
+
+because `[['hotdogs' ~] ~]` is the first noun of `l`
+
+**Q:** What is the `tail` of `l`
+
+where
+
+> `l` is `[[%x ~] %t %r ~]`
+
+**A:** `[%t %r ~]`
+
+because `[[%x ~] %t %r ~]` is another way to write
+
+> `[[%x ~] [%t %r ~]]`
+
+The head of this cell is `[%x ~]`.  And
+
+> `[%t %r ~]` is the second part of this cell.
+
+**Q:** What is the `tail` of `l`
+
+where 
+
+> `l` is `['hamburger' ~]`
+
+**A:** `~`
+
+> the null value, in this case acting as an empty list.
+
+**Q:** What is `(tail l)`
+
+where `l` is `~`
+
+**A:** No answer.
+
+> You cannot ask for the 'tail' of `~`, since `~` is not a cell.
+
+---
+
+###  The Law of Tail
+##### (final version)
+#### The primitive 'tail' is defined only for cells and non-empty lists.
+
+---
+
+**Q:** What is the 'cons' of the atom `a` and the list `l`
+
+where `a` is `%peanut`
+
+and
+
+> `l` is `[%butter %and %jelly ~]`
+
+**A:** `[%peanut %butter %and %jelly ~]`
+
+> because the 'cons' operation can add an atom to the front of the list
+> and make a new list.
+
+**Q:** Is this a list?
+
+**A:** Yes, because it ends in `~`
+
+**Q:** What is the 'cons' of the atom `a` and `~`
+
+where `a` is `%pumpkin`
+
+**A:** `[%pumpkin ~]`
+
+**Q:** Is this a list?
+
+**A:** Yes, because it ends in `~`
+
+**Q:** What is the 'cons' of the list `l` and `c`
+
+where 
+
+> `l` is `[%hot %ham ~]`
+
+and 
+
+> `c` is `[%and cheese]`
+
+**A:** `[[%hot %ham ~] [%and %cheese]]`
+
+**Q:** Is this a list?
+
+**A:** No, because it does not end in `~`
+
+**Q:** What is the 'cons' of `c` and `a`
+
+where 
+
+> `c` is `[%cinnamon %and]`
+
+and 
+
+> `a` is `%sugar`
+
+**A:** `[%cinnamon %and %sugar]`
+
+**Q:** Is this a list?
+
+**A:** No
+
+**Q:** How can we make a list using the `:-` rune?
+
+**A:**  To make a list using `:-` you need two arguments:
+
+> the first one is any noun;  
+> the second one is either a list or null.
+
+---
+
+### The Law of Colhep
+#### The rune `:-` takes two arguments.  To create a new list with `:-`, the second argument must be a list or null.
+
+---
+
+**Q:** What is `:-(s (head l))`
+
+where `s` is `%a`
+
+and
+
+> `l` is `[[%b ~] %c %d ~]`
+
+**A:** `[%a %b ~]`
+
+> Why?
+
+**Q:** What is `:-(s (tail l))`
+
+where `s` is `%a`
+
+and
+
+> `l` is `[[%b ~] %c %d ~]`
+
+**A:** `[%a %c %d ~]`
+
+> Why?
+
+**Q:** Is `.?(l)` true or false
+
+where
+
+> `l` is `[%harry ~]`
+
+**A:** `%.y`,
+
+> because non-empty lists are cells and `.?` returns true if its
+> argument is a cell.
+
+**Q:** Is `.?((tail l))` true or false
+
+where
+
+> `l` is `[%harry ~]`
+
+**A:** False,
+
+> because the null value, `~`, acts as an atom here.
 
 ### =&gt; Now go make yourself a peanut butter and jelly sandwich &lt;=
 
