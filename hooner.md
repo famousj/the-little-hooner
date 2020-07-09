@@ -146,7 +146,7 @@ To do this, you'll need to run this command in the dojo:
 
 You'll only have to do this once.  Once you do that, you'll get a folder
 called "home" inside your ship's directory.  If you created a
-development ship, this will be `zod/home`.
+evelopment ship, this will be `zod/home`.
 
 Whenever you change one of the files in your home directory, you'll need
 to run this command to add these changes to your ship
@@ -154,67 +154,6 @@ to run this command to add these changes to your ship
 ```
 > |commit %home
 ```
-
-### TODO
-
-- Right now this is a Markdown file. It'd be pretty sweet to make some
-  kind of interactive version where it doesn't give the answer until you
-  hit the spacebar or something.
-
-- Make a chapter describing the aura type system.  Or add this to
-  chapter 1, although that's already lengthy.  We might, in chapter
-  1, mention that most of the atoms discussed here are "cords" or
-  "terms".
-
-- Instead of cords, use terms.  (This will basically involve redoing
-  every bit of code in here, but do it anyway.)
-
-- Introduce tree addressing at some point.  Possibly a new, original
-  chapter, since Scheme doesn't have anything like that.
-
-- At some point I might introduce the `:~` rune and discuss that this is a 
-  way to construct a null-terminated list. 
-
-- In re: The Law of Null?, Hoon doesn't exactly have a function `null?`.
-  What it does have is `?~`, but this has a built in if-then-else
-  structure.  We get into the if-then-else in chapter 2.  In chapter 4,
-  we start using numbers, so it'll be important to distinguish between 0
-  and ~, so introduce it then.
-
-- Gently introduce types in terms of `~`. Then `?=`, to do a type check,
-  then `?~` to test if something is null.  (Possibly skip step 2 here).
-
-- TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
-  thing here with Hoon, but need to be a bit more transparent about what 
-  you can and can't do in Hoon.
-
-- Introduce the term "gate" and "trap" for functions?  Maybe in the
-  future.
-
-- For |- use %= to show what's actually happening, i.e. we are calling
-  the function `$` with changes (running style).
-
-- Cast the result!  This is good style
-
-- Introduce more tall form
-
-- At some point explain what a 'core' is (much later)
-
-- Come up with an entirely new non-food-based theme and rewrite the
-  whole thing.
-
-- What about a gate that is not recursive?  Just pairs?  Ease into the
-  idea of how functions work in hoon
-
-- Special format for list of cords: <|this is a list|>
-
-- `lest` is a non-null list
-
-- Add a discussion about faces?
-
-- `%-` is the rune to call functions. Considering whether to add
-  this to the discussion of `head` in chapter 1 or to do it somewhere
-  else.
 
 <a name="chap1"></a>
 
@@ -3944,5 +3883,89 @@ $(lat (tail lat))
 **A:** 
 
 **Q:** 
+
+
+
+
+### TODO
+
+- Right now this is a Markdown file. It'd be pretty sweet to make some
+  kind of interactive version where it doesn't give the answer until you
+  hit the spacebar or something.
+
+- Make a chapter describing the aura type system.  Or add this to
+  chapter 1, although that's already lengthy.  We might, in chapter
+  1, mention that most of the atoms discussed here are "cords" or
+  "terms".
+
+- Instead of cords, use terms.  (This will basically involve redoing
+  every bit of code in here, but do it anyway.)
+
+- Introduce tree addressing at some point.  Possibly a new, original
+  chapter, since Scheme doesn't have anything like that.
+
+- At some point I might introduce the `:~` rune and discuss that this is a 
+  way to construct a null-terminated list. 
+
+- In re: The Law of Null?, Hoon doesn't exactly have a function `null?`.
+  What it does have is `?~`, but this has a built in if-then-else
+  structure.  We get into the if-then-else in chapter 2.  In chapter 4,
+  we start using numbers, so it'll be important to distinguish between 0
+  and ~, so introduce it then.
+
+- Gently introduce types in terms of `~`. Then `?=`, to do a type check,
+  then `?~` to test if something is null.  (Possibly skip step 2 here).
+
+- TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
+  thing here with Hoon, but need to be a bit more transparent about what 
+  you can and can't do in Hoon.
+
+- Introduce the term "gate" and "trap" for functions?  Maybe in the
+  future.
+
+- For |- use %= to show what's actually happening, i.e. we are calling
+  the function `$` with changes (running style).
+
+- Cast the result!  This is good style
+
+- Introduce more tall form
+
+- At some point explain what a 'core' is (much later)
+
+- Come up with an entirely new non-food-based theme and rewrite the
+  whole thing.
+
+- What about a gate that is not recursive?  Just pairs?  Ease into the
+  idea of how functions work in hoon
+
+- Special format for list of cords: <|this is a list|>
+
+- `lest` is a non-null list
+
+- Add a discussion about faces?
+
+- `%-` is the rune to call functions. Considering whether to add
+  this to the discussion of `head` in chapter 1 or to do it somewhere
+  else.
+
+- There are two ways to enter a null-terminated list.  You can either do 
+
+```
+[1 2 3 ~]
+```
+
+Or you can do
+
+```
+~[1 2 3]
+```
+
+I went with the former.  This is closer to how the data is being stored
+interally.  I might at least mention the latter style at some point.
+
+- Instead of `.?(c)` to look for cells (which is a perfectly cromulent way
+  of doing it, might switch to `?=(^ c)`. Or better yet, do `?=(@ a)`,
+  since this matches the book.
+  It's a bit more mental overhead, but this is the more general purpose way of doing it.
 
 
