@@ -72,41 +72,41 @@ gal <               par )
   So I occasionally toss in some Hoon concepts on top of the recursion
   concepts.  If it feels like a needless distraction, let me know.
 
-- There are two ways to enter a null-terminated list.  You can either do 
-
-```
-[1 2 3 ~]
-```
-
-Or you can do
-
-```
-~[1 2 3]
-```
-
-I went with the former.  This is closer to how the data is being stored
-interally.  I might at least mention the latter style at some point.
-
 - Scheme has a somewhat muddied distinction between code and data that Hoon
   doesn't have.  
   So in Scheme you can have a list, like `(a b c)` and prepend a soq, like 
   `'(a b c)`, to tell the compiler "everything in these parentheses are 
   data".  
 
-  This isn't possible in Hoon.  Either that or I'm not aware of someway to do it.  So I've had to make all the words into cords.  This is not ideal, but it works.
+  This isn't possible in Hoon.  Either that or I'm not aware of someway to do it.  So I've had to make all the words into cords or terms.  This is not ideal, but I think it works.
 
 - Conceptually cells in Hoon act as binary trees.  I am more or less
   ignoring this fact.  I'm going to discuss atoms, cells, and lists.
   Also tuples when appropriate.
 
-- If you see any egregious errors, DM me at ~ribben-donnyl. Also, pull requests are welcome!
+- If you see any egregious errors, DM me at ~ribben-donnyl. Also, pull 
+requests are welcome!
+
+- This has taken a non-trivial amount of time, and will require much more
+time before it's done.  
+
+If you get anything out of it, if you'd like to show your appreciation,
+and encourage me to keep at it until we get to the part where you
+write the Y combinator in Hoon, feel free to drop a tip in the tip jar.
+
+Bitcoin:
+
+![bitcoin wallet](wallet.png)
+
+1Lp2hDwt4xBvySUyFSNA56w95dAaCYDZry
+
+Cash app: [cash.app/$jleblanc](https://cash.app/$jleblanc)
+
+Venmo: [venmo.com/jrl314](https://venmo.com/jrl314)
+
+PayPal: [paypal.me/jleblanc314](https://www.paypal.me/jleblanc314)
 
 ### Introduction
-
-KM
-
-I plan to note here that what I'm describing is a superset of Hoon, and
-that we'll add to it as we go along.  
 
 KM Make sure to note that punctuation has a three-letter pronounciation.
 
