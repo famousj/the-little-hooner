@@ -586,7 +586,6 @@ and
 
 > `l` is `[%very [[%hard %to] %learn]`
 
-
 **A:** `[[%help %this] %is %very [[%hard %to] %learn]`
 
 ### Atoms?  Cells?
@@ -599,7 +598,32 @@ where `s` is `%harry`
 
 > because `%harry` is a term.
 
-**Q:** Is `.?(s)` true or false
+**Q:** Is `?=(@ s)` true or false
+
+where
+
+> `s` is `%harry`
+
+**A:** True,
+
+> because `?=(@ s)` is another way to ask "Is `s` an atom?"
+
+**Q:** What does `?=` do?
+
+**A:** `?=` (pronounced 'wuttis') asks if a noun is of a particular type.
+
+**Q:** How many arguments does `?=` take and what are they?
+
+**A:** It takes two arguments.  The first argument is a type symbol.
+The second argument is the noun you want to test.
+
+**Q:** What is the `@` in 
+
+> `?=(@ s)`
+
+**A:** `@` (pronounced 'pat') is the type symbol for an atom.
+
+**Q:** Is `?=(^ s)` true or false
 
 where
 
@@ -607,13 +631,41 @@ where
 
 **A:** False,
 
-> because `.?` is another way to ask "Is `s` a cell?"
+> because `?=(^ s)` is another way to ask "Is `s` a cell?"
 
-**Q:** How do you pronounce `.?`
+**Q:** What is the `^` in 
 
-**A:** `.?` is pronounced 'dotwut'
+> `?=(^ s)`
 
-**Q:** Is `.?(s)` true or false
+**A:** `^` (pronounced 'ket') is the type symbol for a cell.
+
+**Q:** Is `?=(* s)` true or false
+
+where
+
+> `s` is `%harry`
+
+**A:** True,
+
+> because `?=(* s)` is another way to ask "Is `s` a noun?"
+
+**Q:** What is the `*` in 
+
+> `?=(* s)`
+
+**A:** `*` (pronounced 'tar') is the type symbol for a cell.
+
+**Q:** Is `?=(@ s)` true or false
+
+where
+
+> `s` is `[%harry %had %a %heap %of %apples]`
+
+**A:** False,
+
+> since `s` is not an atom.
+
+**Q:** Is `?=(^ s)` true or false
 
 where
 
@@ -623,29 +675,25 @@ where
 
 > since `s` is a cell.
 
-**Q:** How many arguments does `.?` take and what are they?
-
-**A:** It takes one argument.  The argument can be any noun.
-
-**Q:** Is `.?((head l))` true or false
+**Q:** Is `?=(@ (head l))` true or false
 
 where
 
 > `l` is `[%harry %had %a %heap %of %apples]`
 
-**A:** False,
+**A:** True,
 
 > because `(head l)` is `%harry`, and `%harry` is an atom.
 
-**Q:** Is `.?((tail l))` true or false
+**Q:** Is `?=(@ (tail l))` true or false
 
 where
 
 > `l` is `[%harry %had %a %heap %of %apples]`
 
-**A:** True
+**A:** False
 
-**Q:** Is `.?((head (tail l)))` true or false
+**Q:** Is `?=(^ (head (tail l)))` true or false
 
 where
 
@@ -654,9 +702,9 @@ where
 **A:** False
 
 > because `(tail l)` is `[%low %sweet %cherry %oat]`
-> and `(head (tail l))` is `%low`, which is an atom.
+> and `(head (tail l))` is `%low`, which is not a cell.
 
-**Q:** Is `.?((head (tail l)))` true or false
+**Q:** Is `?=(^ (head (tail l)))` true or false
 
 where
 
