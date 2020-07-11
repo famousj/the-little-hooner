@@ -1297,15 +1297,15 @@ Good luck.
 <br>
 
 **Q:** Here are the contents of the generator `is-lat.hoon`<sup>1</sup>
-
 ```
 |=  l=(list)
+^-  ?
 |-
 ?:  .=(~ l)
   %.y
-?:  .?((head l))
+?:  ?=(^ (head l))
   %.n
-$(l (tail l))
+%=($ l (tail l))
 ```
 
 What is the value of `+is-lat l`
@@ -1347,11 +1347,20 @@ determined by answering the questions asked by `+is-lat`
 
 > `|=  l=(list)`
 
-**A:** The rune `|=` (pronounced 'bartis') declares a function.
-According to the rules of `|=` the next thing should be the arguments
-for the function.
+**A:** The rune `|=` (pronounced 'bartis') declares a gate, which is a
+kind of function that takes a 'sample', i.e. the arguments for the
+function.
 
-**Q:** What are the arguments?
+KM: An earlier version skipped the term "gate" and just called this a
+"function".  I'm leaving the "gate" terminology to distinguish from the 
+"trap" below.
+
+**Q:** What is after the `|=`
+
+**A:** Two spaces.  The parts of functions in Hoon need to be separated
+by two or more spaces, and/or a newline.  This is called a 'gap'.
+
+**Q:**  What is after the 'gap'?
 
 **A:** `l=(list)`
 
@@ -1359,14 +1368,40 @@ for the function.
 
 > `l=(list)`
 
-**A:** This function has one argument, named `l`.  It is type of type `list`.
+**A:** The gate we are creating has one argument, named `l`.  Its type is 
+`list`.
+
+**Q:** What does the next line do?
+
+> `^-  ?`
+
+**A:** The `^-` rune (pronounced 'kethep') is used to change something from 
+one type to another type.
+
+In this case, we aren't changing types.  We are saying what type the result of
+this function should be.
+
+**Q:** What type should the result of this function be?
+
+**A:**  `?`
+
+**Q:** What is type is `?`
+
+**A:** `?` is 'loobean'.  It is an answer to a question.
+
+It has two possible value:
+
+> `%.y`, which means "true"  
+> `%.n`, which means "false"
 
 **Q:** What does the next line do?
 
 > `|-`
 
-**A:** `|-` (pronounced 'barhep') sets a restart point.  More on this in
-a bit.
+**A:** `|-` creates a 'trap', which is another type of function.  Unlike a
+gate, a trap does not have a sample.  The function you are creating is
+called `$`.  When you use the `|-` rune, the trap starts running 
+automatically.
 
 **Q:** What is the next line?
 
@@ -1380,7 +1415,7 @@ the next action, and keep going.
 
 **Q:** What the question that `?:` is asking?
 
-**A:** `=(~ l)`
+**A:** `.=(~ l)`
 
 **Q:** What is the meaning of
 
@@ -1407,21 +1442,21 @@ Since the answer is false, we skip the `%.y` and keep going.
 
 **Q:** What comes next?
 
-**A:** `?:  .?((head l))`
+**A:** `?:  ?=(^ (head l))`
 
 **Q:** What is the question for `?:`
 
-**A:** `.?((head l))`
+**A:** `?=(^ (head l))`
 
 **Q:** What is the meaning of
 
-> `?((head l))`
+> `?=(^ (head l))`
 
 where
 
 > `l` is `[%bacon %and %eggs ~]`
 
-**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+**A:** `?=(^ (head l))` asks if the first noun of the list `l` is a cell.
 In this case, `(head l)` is an atom, so the answer if false.
 
 **Q:** So what do we do?
@@ -1434,29 +1469,50 @@ evaluate the next action, which is
 on the next line, and the value of the function is false.  If the answer 
 to the question is false, we keep going.
 
-Since the answer is false, we skip the `%.n` and keep going.
+Since the answer is false, and `(head l)` is an atom, we want to 
+find out if the rest of the list is composed only of atoms.  
+
+So we skip the `%.n` and keep going.
 
 **Q:** What comes next?
 
-**A:** `$(l (tail l))`
+**A:** 
+%=($ l (tail l))
 
-**Q:** What is the meaning of 
+**Q:** What is the meaning of `%=`
 
->  `$(l (tail l))`
+**A:** The rune `%=` (pronounced 'centis') means to call a function with
+some data changed.
 
-**A:** `$(l (tail l))` finds out if the rest of the list `l` is composed
-only of atoms, by returning to our restart point `|-` (or 'barhep') with
-a new value for `l`.
+**Q:** What arguments does `%=` take?
 
-**Q:** What is the new value for `l`?
+**A:** `%=` takes the name of the function to call and a list of data
+changes.
 
-**A:** The new value for `l` is `(tail l)`, which is 
+**Q:** What function are we calling?
 
-> `['and' 'eggs' ~]`
+**A:** `$`
+
+**Q:** What is `$`
+
+**A:** This is the name of the function for the 'trap' we declared with `|-`.  
+After we change our data, we will return to that point and restart.
+
+**Q:** What is the meaning of
+
+> `l (tail l)`
+
+**A:** For the next time we call `$`, replace the value of `l` with `(tail l)`,
+which is
+
+> `[%and %eggs ~]`
 
 **Q:** Why do we use `(tail l)`?
 
-**Q:** What is after our restart point, `|-`?
+**A:** We know that `(head l)` is an atom.  We want to find out if the
+rest of the list `l` is composed only of atoms.  
+
+**Q:** What is after our restart point, `|-`
 
 **A:** `?:  .=(~ l)`
 
@@ -1481,17 +1537,17 @@ In this case, l is not the null value, so we skip the `%.y` and keep going.
 
 **Q:** What is next?
 
-**A:** `?:  .?((head l))`
+**A:** `?:  ?=(^ (head l))`
 
 **Q:** What is the meaning of
 
-> `?:  .?((head l))`
+> `?:  ?=(^ (head l))`
 
 where
 
 > `l` is now `[%and %eggs ~]`
 
-**A:** `.?((head l))` asks if `(head l)` is a list.
+**A:** `?=(^ (head l))` asks if `(head l)` is a cell.
 Per the rules of `?:`, if the answer to the question is true, we 
 evaluate the next action, which is 
 
@@ -1500,15 +1556,16 @@ evaluate the next action, which is
 on the next line, and the value of the function is false.  If the answer 
 to the question is false, we keep going.
 
-In this case, `(head l)` is not a list, so we skip the `%.n` and keep going.
+In this case, `(head l)` is an atom and not a cell, so we skip the `%.n` 
+and keep going.
 
 **Q:** What is the meaning of 
 
->  `$(l (tail l))`
+> `%=($ l (tail l))`
 
-**A:** `$(l (tail l))` finds out if the rest of the list `l` is composed
-only of atoms, by returning to our restart point `|-` with a new value for 
-`l`.  This new value is `(tail l)` or `['eggs' ~]`.
+**A:** Find out if the rest of the list `l` is composed only of atoms, by 
+calling `$` and returning to our restart point `|-` with new values.
+The new value for `l` is `(tail l)` or `[%eggs ~]`.
 
 **Q:** What is the after `|-`
 
@@ -1528,25 +1585,26 @@ and keep going.
 
 **Q:** What is next?
 
-**A:** `?:  .?((head l))`
+**A:** `?:  ?=(^ (head l))`
 
 **Q:** What is the meaning of
 
-> `?:  .?((head l))`
+> `?:  ?=(^ (head l))`
 
 where
 
 > `l` is now `[%eggs ~]`
 
-**A:** `.?((head l))` asks if the argument `l` is null.  
-Per the rules of `?:`, since `(head l)` is not a list, we skip the `%.n` and keep going.
+**A:** `?=(^ (head l))` asks if `(head l)` is a cell.  Per the rules of `?:`, 
+since `(head l)` is not a cell, we skip the `%.n` and keep going.
 
 **Q:** What is the meaning of 
 
->  `$(l (tail l))`
+> `%=($ l (tail l))`
 
-**A:** `$(l (tail l))` finds out if the rest of the list `l` is composed
-only of atoms, by returning to our restart point `|-`, with l becoming the value of `(tail l)`.
+**A:** Find out if the rest of the list `l` is composed only of atoms, by 
+calling `$` and returning to our restart point `|-` with new values.
+The new value for `l` is `(tail l)`.
 
 **Q:** Now, what is the new value for `l`?
 
@@ -1565,7 +1623,8 @@ where
 > `l` is now `~`
 
 **A:** `.=(~ l)` asks if the argument `l` is null.  
-Per the rules of `?:`, since l is the null value, we evaluate the next action, which is the value `%.y`, or true.  Therefore, the value of
+Per the rules of `?:`, since l is the null value, we evaluate the next action, 
+which is the value `%.y`, or true.  Therefore, the value of
 
 > `+is-lat l`  
 
@@ -1588,9 +1647,9 @@ words?
 **A:** Here are our words:
 
 > "`+is-lat` looks at each noun in a list, in turn, and asks if each
-> noun is an atom, until it gets to the null value.  If it runs out
-> without encountering a list, the value is `%.y`.  If it finds a list,
-> the value is `%.n`&mdash;false."
+> noun is not a cell (i.e. if it is an atom), until it gets to the 
+> null value.  If it runs out without encountering a cell, the value 
+> is `%.y`.  If it finds a cell, the value is `%.n`&mdash;false."
 
 To see how we could arrive at a value of "false", consider the next few
 questions.
@@ -1598,12 +1657,13 @@ questions.
 **Q:** Here are the contents of `+is-lat` again.
 ```
 |=  l=(list)
+^-  ?
 |-
 ?:  .=(~ l)
   %.y
-?:  .?((head l))
+?:  ?=(^ (head l))
   %.n
-$(l (tail l))
+%=($ l (tail l))
 ```
 
 What is the value of `+is-lat l`
@@ -1614,7 +1674,7 @@ where
 
 **A:** `%.n`
 
-> since the list `l` contains a noun that is a list.
+> since the list `l` contains a noun that is not an atom, i.e a list.
 
 **Q:** What is the first line after the restart point, `|-`
 
@@ -1634,27 +1694,27 @@ Per the rules of `?:`, since `l` is not the null value, we skip the
 
 **Q:** What is next?
 
-**A:** `?:  .?((head l))`
+**A:** `?:  ?=(^ (head l))`
 
 **Q:** What is the meaning of
 
-> `?:  .?((head l))`
+> `?:  ?=(^ (head l))`
 
 where
 
 > `l` is `[%bacon [%and %eggs ~] ~]`
 
-**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
-Per the rules of `?:`, since `(head l)` is not a list, we skip the `%.n`
-and keep going.
+**A:** `?=(^ (head l))` asks if the first noun of the list `l` is a cell.
+Per the rules of `?:`, since `(head l)` is an atom and not a cell, we skip 
+the `%.n` and keep going.
 
 **Q:** What is the meaning of 
 
->  `$(l (tail l))`
+> %=($ l (tail l))
 
-**A:** `$(l (tail l))` checks to see if the rest of the list `l` is composed
-only of atoms, by returning to our restart point `|-` with l replaced by
-`(tail l)`.
+**A:** Find out if the rest of the list `l` is composed only of atoms, by 
+calling `$` and returning to our restart point `|-` with new values.
+The new value for `l` is `(tail l)`.
 
 **Q:** What is the meaning of 
 
@@ -1670,19 +1730,20 @@ going.
 
 **Q:** What is next?
 
-**A:** `?:  .?((head l))`
+**A:** `?:  ?=(^ (head l))`
 
 **Q:** What is the meaning of
 
-> `?:  .?((head l))`
+> `?:  ?=(^ (head l))`
 
 where
 
 > `l` is now `[[%and %eggs ~] ~]`
 
-**A:** `.?((head l))` asks if the first noun of the list `l` is a list.
+**A:** `?=(^ (head l))` asks if the first noun of the list `l` is a list.
 Per the rules of `?:`, since `(head l)` is a list, we evaluate the next
 action, which is `%.n`.  
+
 So the answer is `%.n`&mdash;false.
 
 **Q:** Can you describe how we determined the value `%.n` for
@@ -1695,10 +1756,11 @@ where
 
 **A:** Here is one way to say it:
 
-> "`+is-lat l` looks at each item in its argument to see if it is an
-> atom.  If it runs out of items before it finds a list, the value of
-> `+is-lat l` is `%.y`.  If it finds a list, as it did in the example
-> `['bacon' ['and' 'eggs' ~] ~]`, the value of `+is-lat l` is `%.n`."
+> "`+is-lat l` looks at each item in its argument to see if it is a
+> cell.  If it runs out of items before it finds a cell, then all the
+> items are atoms, so the value of `+is-lat l` is `%.y`.  If it 
+> finds a cell, as it did in the example `[%bacon [%and %eggs ~] ~]`, 
+> the value of `+is-lat l` is `%.n`."
 
 **Q:** What does the first line of `+is-lat` again?
 
@@ -1722,11 +1784,22 @@ Because the argument `l` must be a list.
 **Q:** What would be the result if you called `+is-lat l`  
 where
 
+> `l` is `[%cheese %burger]`
+
+**A:** No answer,
+
+Because the argument `[%cheese %burger]` does not end in `~`
+and is not a list.
+
+**Q:** What would be the result if you called `+is-lat l`  
+where
+
 > `l` is `~`
 
 **A:** It would return `%.y`
 
-Because `~` is the only atom that is also a list, in this case it is a list of zero nouns. And since an empty list does not contain any lists, it returns true, or `%.y`.
+Because `~` is the only atom that is also a list, in this case it is a list of zero nouns. 
+And since an empty list does not contain any cells, it returns true, or `%.y`.
 
 Hint: Look at the code one last time and make sure this is true.
 
@@ -1877,15 +1950,15 @@ and
 **Q:**   
 
 Here are the contents of the generator `is-member.hoon`<sup>1</sup>
-
 ```
 |=  [a=@ lat=(list @)]
+^-  ?
 |-
 ?:  .=(~ lat)
   %.n
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -1913,11 +1986,19 @@ and
 > Hint: Write down the contents of `is-member.hoon` and refer to
 > it while you work on the next group of questions.
 
+**Q:** What does the next line do?
+
+> `^-  ?`
+
+**A:** The `^-` rune says that the result of this gate will be `?`, which is the 
+type symbol for a loobean, i.e. an answer to a question.
+
 **Q:** What does the first line of `+is-member` do?
 
 > `|=  [a=@ lat=(list @)]`
 
-**A:** The `|=` declares a function.  This function has a pair of
+**A:** The `|=` declares a gate, which is a function with arguments,
+also known as the sample.  This particular gate has a pair of
 arguments.
 
 **Q:** What are the arguments?
@@ -1938,15 +2019,17 @@ and
 
 > `lat=(list @)`
 
-**A:** The second argument is named `lat`. The `(list @)` means its type is a lat or list of atoms.
+**A:** The second argument is named `lat`. `(list @)` means its type is a lat or list of atoms.
 
 **Q:** What does the second line do?
 
 > `|-`
 
-**A:** It sets the restart point.
+**A:** It creates a trap, a function `$` with no arguments, and calls it
+immediately.  It acts as the restart point when we call the function
+`$`.
 
-**Q:** What is after the restart point?
+**Q:** What is after `|-`
 
 **A:** `?:  .=(~ lat)`
 
@@ -1966,7 +2049,7 @@ and
 
 where 
 
-> `lat` is `['mashed' 'potatoes' 'and' 'meat' 'gravy' ~]`
+> `lat` is `[%mashed %potatoes %and %meat %gravy ~]`
 
 **A:** `.=(~ lat)` asks if lat is the null value, `~`.  
 Per the rules of `?:`, since `lat` is not null, we skip the `%.n` and keep going.
@@ -1975,7 +2058,7 @@ Per the rules of `?:`, since `lat` is not null, we skip the `%.n` and keep going
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -1985,7 +2068,7 @@ somewhere in the rest of `lat`.  The answer to
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -1995,7 +2078,7 @@ does this.
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -2020,10 +2103,14 @@ because `%meat` is not equal to `%mashed`, which is the `head` of
 
 **Q:** What is the second question of `?|`
 
-**A:** `$(lat (tail lat))`
+**A:** `%=($ lat (tail lat))`
 
-> This refers to returing to our restart point with `lat` replaced by
+> This means we should call the function `$` with `lat` replaced by
 > `(tail lat)`.
+
+**Q:** Where do we go from here?
+
+**A:** Back to `|-`
 
 **Q:** Now what are the two arguments?
 
@@ -2052,27 +2139,26 @@ where
 **A:** Skip the `%.n` and keep going
 
 **Q:** What's the meaning of 
-
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 > 
 
 **A:** 
 This finds out if `a` is equal to the `head` of `lat` or if `a` is a member
-of the `tail` of `lat` by returning to the restart point.
+of the `tail` of `lat` by calling `$` and returning to the restart point.
 
 **Q:** Is `a` equal to the `head` of `lat`?
 
-**A:** No, because `a` is `'meat'` and the `head` of `lat` is
-`'potatoes'`.
+**A:** No, because `a` is `%meat` and the `head` of `lat` is
+`%potatoes`.
 
 **Q:** What do we do next?
 
-**A:** We return to our restart point.
+**A:** We call `$` and return to our restart point.
 
 **Q:** Now, what are our arguments?
 
@@ -2092,7 +2178,7 @@ of the `tail` of `lat` by returning to the restart point.
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -2104,7 +2190,8 @@ of the `tail` of `lat` by returning to the restart point.
 
 **Q:** What do we do now?
 
-**A:** Recur&mdash;return to the restart point with new arguments.
+**A:** Call `$` to return to our restart point, with new
+arguments.
 
 **Q:** What are the new arguments?
 
@@ -2123,7 +2210,7 @@ of the `tail` of `lat` by returning to the restart point.
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -2132,9 +2219,7 @@ of the `tail` of `lat` by returning to the restart point.
 > are the same atom.  
 > Therefore, `?|` answers with `%.t`.
 
-**Q:** What is the value of
-
-> `+is-member [a lat]`
+**Q:** What is the value of `$`
 
 when `a` is `%meat`  
 and   
@@ -2145,9 +2230,7 @@ and
 
 > because we have found that `%meat` is a member of `[%meat %gravy ~]`.
 
-**Q:** What is the value of
-
-> `+is-member [a lat]`
+**Q:** What is the value of `$`
 
 where `a` is `%meat`  
 and   
@@ -2158,10 +2241,7 @@ and
 
 > because `%meat` is also a member of the `lat` `[%and %meat %gravy ~]`
 
-**Q:** What is the value of
-
-> `+is-member [a lat]`
-
+**Q:** What is the value of `$`  
 where `a` is `%meat`  
 and   
 
@@ -2171,9 +2251,7 @@ and
 
 > because `%meat` is also a member of the `lat` `[%potatoes %and %meat %gravy ~]`
 
-**Q:** What is the value of
-
-> `+is-member [a lat]`
+**Q:** What is the value of `$`
 
 where `a` is `%meat`  
 and   
@@ -2208,7 +2286,7 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
@@ -2220,20 +2298,14 @@ and
 
 **Q:** What next?
 
-**A:** Return to the restart point with `a` and `(tail lat)`  
-where `a` is `'meat'`  
+**A:** Call `$` to return to the restart point `|-` using `(tail lat)`
+for `lat`
+
+So `a` is `%meat`  
+
 and
 
-> `(tail lat)` is `['potatoes' 'and' 'meat' 'gravy' ~]`
-
-
-KM:  Technically, `|-` creates a 'trap' (core with one arm, named `$`) and then 
-executes it.  This is actually the thing that is recursing.  
-
-I think my description is pretty close to what's happening, but verify
-that my description isn't more misleading than necessary.  We aren't
-calling the 'gate' (defined by `|=`) we are calling the trap (defined by
-`|-`).
+> `lat` is `[%potatoes %and %meat %gravy ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2243,16 +2315,15 @@ calling the 'gate' (defined by `|=`) we are calling the trap (defined by
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
 **A:** `.=((head lat) a)` is false.
 
-> So return to `|-`  with `a` and `(tail lat)`  
-> where  `a` is `'meat'`  
-> and  
-> > `(tail lat)` is `['and' 'meat' 'gravy' ~]`
+Call `$` to return to `|-`  with `(tail lat)`  
+
+> So now `lat` is `[%and %meat %gravy ~]`
 
 **Q:**  `?:  .=(~ lat)`
 
@@ -2262,16 +2333,15 @@ calling the 'gate' (defined by `|=`) we are calling the trap (defined by
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
 **A:** `.=((head lat) a)` is false.
 
-> Return to `|-`  with `a` and `(tail lat)`  
-> where  `a` is `'meat'`  
-> and  
-> > `(tail lat)` is `['meat' 'gravy' ~]`
+Call `$` to return to `|-`  with `(tail lat)`  
+
+> So now `lat` is `[%meat %gravy ~]`
 
 **Q:**  `?:  .=(~ lat)`
 
@@ -2285,13 +2355,13 @@ calling the 'gate' (defined by `|=`) we are calling the trap (defined by
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
 **A:** `%.y`
 
-**Q:** What is the value of `+is-member [a lat]`  
+**Q:** What is the value of `$`  
 when `a` is `%meat`  
 and  
 
@@ -2299,7 +2369,7 @@ and
 
 **A:** `%.y`
 
-**Q:** What is the value of `+is-member [a lat]`  
+**Q:** What is the value of `$`  
 when `a` is `%meat`  
 and  
 
@@ -2307,7 +2377,7 @@ and
 
 **A:** `%.y`
 
-**Q:** What is the value of `+is-member [a lat]`  
+**Q:** What is the value of `$`  
 when `a` is `%meat`  
 and  
 
@@ -2315,7 +2385,7 @@ and
 
 **A:** `%.y`
 
-**Q:** What is the value of `+is-member [a lat]`  
+**Q:** What is the value of `$`  
 when `a` is `%meat`  
 and  
 
@@ -2336,7 +2406,7 @@ and
 
 **A:** `?:  .=(~ lat)`
 
-**Q:** `.=(~ lat)`
+**Q:** `?:  .=(~ lat)`
 
 **A:** No.  Skip the `%.n` and keep going
 
@@ -2344,16 +2414,15 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
 **A:** `.=((head lat) a)` is false.
 
-> Return to the `|-`  with `a` and `(tail lat)`  
-> where  `a` is `'liver'`  
-> and  
-> > `(tail lat)` is `['and' 'lox' ~]`
+> Call `$` and return to the `|-`  with `(tail lat)`  
+
+> > So now `lat` is `[%and %lox ~]`
 
 **Q:** `?: .=(~ lat)`
 
@@ -2363,16 +2432,14 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
 **A:** `.=((head lat) a)` is false.
 
-> Return to the `|-`  with `a` and `(tail lat)`  
-> where  `a` is `'liver'`  
-> and  
-> > `(tail lat)` is `['lox' ~]`
+> Call `$` and return to the `|-`  `(tail lat)`  
+> > So now `lat` is `[%lox ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2382,16 +2449,14 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 
 **A:** `.=((head lat) a)` is false.
 
-> Return to the `|-`  with `a` and `(tail lat)`  
-> where  `a` is `'liver'`  
-> and  
-> > `(tail lat)` is `~`
+> Call `$` and return to the `|-`  with `(tail lat)`  
+> > So now `lat` is `~`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2402,8 +2467,8 @@ and
 **A:** Since `.=(~ lat)` is true, we return the next value, which is
 `%.n`.
 
-**Q:** What is the value of `+is-member [a lat]`  
-where `a` is `'liver'`  
+**Q:** What is the value of `$`
+where `a` is `%liver`  
 and  
 
 > `lat` is `~`
@@ -2414,7 +2479,7 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 where  
@@ -2431,7 +2496,7 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 where  
