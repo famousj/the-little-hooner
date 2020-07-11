@@ -1172,7 +1172,17 @@ and
 
 > Why?
 
-**Q:** Is `.?(l)` true or false
+**Q:** Is `?=(@ l)` true or false
+
+where
+
+> `l` is `[%harry ~]`
+
+**A:** `%.n`,
+
+> because non-empty lists are not atoms.
+
+**Q:** Is `?=(^ l)` true or false
 
 where
 
@@ -1180,16 +1190,15 @@ where
 
 **A:** `%.y`,
 
-> because non-empty lists are cells and `.?` returns true if its
-> argument is a cell.
+> because non-empty lists are cells.
 
-**Q:** Is `.?((tail l))` true or false
+**Q:** Is `?=(@ (tail l))` true or false
 
 where
 
 > `l` is `[%harry ~]`
 
-**A:** False,
+**A:** True,
 
 > because the null value, `~`, acts as an atom here.
 
