@@ -2557,9 +2557,10 @@ and
 
 ## 3. Colhep the Magnificent
 
-JL: TLS calls this "Cons the Magnificent", but we're focusing on the
-`:-` rune in this chapter.
-
+JL: TLS calls this "Cons the Magnificent".  I decided to use "colhep",
+since this is the rune we're focused on, but since "cons" is the 
+name of the  operation we're doing here, I could be convinced that this
+should be "Cons the Magnificent". 
 
 **Q:** What is `+rember [a lat]`  
 where `a` is `'mint'`  
@@ -4091,7 +4092,6 @@ interally.  I might at least mention the latter style at some point.
 
 - Instead of `.?(c)` to look for cells (which is a perfectly cromulent way
   of doing it, might switch to `?=(^ c)`. Or better yet, do `?=(@ a)`,
-  since this matches the book.
-  It's a bit more mental overhead, but this is the more general purpose way of doing it.
-
+  since this matches the book.  It's a bit more mental overhead, but this 
+  is the more general purpose way of doing it.
 
