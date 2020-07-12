@@ -2248,7 +2248,7 @@ of the `tail` of `lat` by calling `$` and returning to the restart point.
 ==
 ```
 
-**A:** The value of `$(lat (tail lat))`.
+**A:** The value of `%=($ lat (tail lat))`.
 
 **Q:** Why?
 
@@ -2580,7 +2580,7 @@ and
 ```
 ?|
   .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 ==
 ```
 where  
@@ -2698,8 +2698,6 @@ KM: Introduce `?~` here?
 
 **A:** `.=((head lat) a)`
 
-KM: Use dottis in chapter 1 to introduce tall form
-
 **Q:** What would be the value of `+rember [a lat]` if a were the same
 as `(head lat)`?
 
@@ -2728,19 +2726,15 @@ questions.
 
 ```
 |=  [a=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
 ?:  .=((head lat) a)
   (tail lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
-
-KM: Well...  This works.  Except... it casts the tapes into `@ud`.
-So... deal with this.  Maybe update the code to handle tapes
-KM: Also check the above generators to make sure they don't do the same
-thing.
 
 What is the value of `+rember [a lat]` where  
 
@@ -2827,10 +2821,10 @@ What is the first question asked by `rember`?
 **A:** No, so skip over `(tail lat)` and keep going.
 
 **Q:** What is the meaning of  
-`$(lat (tail lat))`
+`%=($ lat (tail lat))`
 
-**A:** Go back to our restart point `|-` with `lat` set to `(tail lat)`
-or `[%lettuce %and %tomato ~]`
+**A:** Call `$` and return to the `|-` with `lat` set to 
+`(tail lat)` or `[%lettuce %and %tomato ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2841,10 +2835,12 @@ or `[%lettuce %and %tomato ~]`
 **A:** No, skip over `(tail lat)` and keep going.
 
 **Q:** What is the meaning of  
-`$(lat (tail lat))`
+`%=($ lat (tail lat))`
 
 **A:** Recur  
 setting `lat` to `(tail lat)` or `[%and %tomato ~]`
+
+KM: Use the word "recur" more in chapter 2
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2887,13 +2883,14 @@ with just `a`&mdash;`'and`&mdash;removed.
 **Q:** Let's see what happens when we use `:-`
 ```
 |=  [a=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
 ?:  .=((head lat) a)
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 What is the value of `+rember [a lat]`  
@@ -2919,7 +2916,7 @@ and
 **Q:** What is the meaning of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 where
@@ -2930,30 +2927,18 @@ and
 
 > `lat` is `[%bacon %lettuce %and %tomato ~]`
 
-KM: this bit is an argument for using pairs instead of lists, and adding
-lists as a type of pair.
-
 **A:** It says to 'cons' the `head` of `lat`&mdash;`%bacon`&mdash; onto
 the value of  
 
-> `+rember`, using `(tail lat)` as the value for `lat`
+> `$`, using `(tail lat)` as the value for `lat`
 
-But since we don't know the value of `+rember` using `(tail lat)` yet,
+But since we don't know the value of `$` using `(tail lat)` yet,
 we must find out before we can 'cons' `(tail lat)` onto it.
 
-KM: Should I ditch the word "cons"? Use something like "combine"
+**Q:** What is the meaning of `%=($ lat (tail lat))`
 
-KM: This thing with `|-` and `$(lat (tail lat))` is a bit hand-wavey.  I'm
-considering actually describing what barhep does i.e. makes a new function
-(i.e. `arm`) called `$`. 
-
-KM: I'm also considering using `%=` to describe that we're calling this 
-function `$` with new parameters.
-
-**Q:** What is the meaning of `$(lat (tail lat))`
-
-**A:** Go back to the restart point with `lat` replaced by `(tail
-lat)`&mdash;`[%lettuce %and %tomato ~]`
+**A:** Call `$` and go back to the restart point with `lat` replaced by  
+`(tail lat)`&mdash;`[%lettuce %and %tomato ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2966,25 +2951,24 @@ lat)`&mdash;`[%lettuce %and %tomato ~]`
 **Q:** What is the meaning of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
-**A:** It says to 'cons' the `tail` of
+**A:** It says to 'cons' the `head` of
 `lat`&mdash;`%lettuce`&mdash;onto the value of 
 
-> `+rember`, using `(tail lat)` as the value for `lat`
+> `$`, using `(tail lat)` as the value for `lat`
 
-But since we don't know the value of `+rember` using `(tail lat)` yet,
+But since we don't know the value of `$` using `(tail lat)` yet,
 we must find out before we can 'cons' `(tail lat)` onto it.
 
 KM: Is this actually true?  Can you start the 'cons' with a promise that
 you'll fill in the details at some point?
-KM: Really need to rework this to make it a bit more accurate.
 
-**Q:** What is the meaning of `$(lat (tail lat))`
+**Q:** What is the meaning of `%=($ lat (tail lat))`
 
-**A:** Go back to the restart point with `lat` replaced by `(tail
-lat)`, that is, `[%and %tomato ~]`.
+**A:** Call `$` and go back to the restart point with `lat` replaced by  
+`(tail lat)`, that is, `[%and %tomato ~]`.
 
 **Q:** `?:  .=(~ lat)`
 
@@ -3000,7 +2984,7 @@ lat)`, that is, `[%and %tomato ~]`.
 
 **Q:** Are we finished?
 
-**A:** Certainly not!  We know what `+rember [a lat]` is when `lat` is
+**A:** Certainly not!  We know what `$` is when `lat` is
 `[%and %tomato ~]`, but we don't yet know what it is when `lat` is
 
 > `[%lettuce %and %tomato ~]`
@@ -3011,7 +2995,7 @@ or
 
 **Q:** We now have a value for 
 
-> `+rember [a (tail lat)]`
+> `$`
 
 where `a` is `%and`  
 and
@@ -3022,10 +3006,10 @@ This value is `[%tomato ~]`
 What next?
 
 **A:** Recall that we wanted to 'cons' `%lettuce` onto the value of
-`+rember [a (tail lat)]`  
+`$`  
 where  
 
-> `a` was `%and` and `(tail lat)` was `[%and %tomato ~]`
+> `(tail lat)` was `[%and %tomato ~]`
 
 Now that we have this value, which is `[%tomato ~]`, we can 'cons'
 `%lettuce` onto it.
@@ -3039,7 +3023,7 @@ Now that we have this value, which is `[%tomato ~]`, we can 'cons'
 **A:** It represents the value of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 when
@@ -3048,12 +3032,11 @@ when
 
 and
 
-> `$(lat (tail lat))` is `[%tomato ~]`
-
+> `%=($ lat (tail lat))` is `[%tomato ~]`
 
 **Q:** Are we finished yet?
 
-**A:** Not quite.  So far we know what `+rember [a lat]` is when
+**A:** Not quite.  So far we know what `$` is when
 
 > `lat` is `[%lettuce %and %tomato ~]`,
 
@@ -3061,13 +3044,10 @@ but we don't yet know what it is when
 
 > `lat` is `[%bacon %lettuce %and %tomato ~]`
 
-KM: If we're going to introduce pairs/cells before lists, we should make a
-point to mention _why_ we use lists, i.e. if we don't know exactly how
-many items we are going to be dealing with.
+i.e. the first time `$` was called, when we first ran `+rember [a lat]`
 
-**Q:** Now we have a value for `+rember [a (tail lat)]`  
-where `a` is `%and`  
-and  
+**Q:** Now we have a value for `$` 
+where  
 
 > `(tail lat)` is `[%lettuce %and %tomato ~]`
 
@@ -3075,12 +3055,8 @@ This value is `[%lettuce %tomato ~]`
 This is not the final value, so what must we do again?
 
 **A:** Recall that, at one time, we wanted to 'cons' `%bacon` onto the
-value of `+rember [a (tail lat)]`,  
+value of `$`
 where
-
-> `a` is `%and`
-
-and 
 
 > `(tail lat)` was `[%lettuce %and %tomato ~]`
 
@@ -3100,7 +3076,7 @@ we can 'cons' `%bacon` onto it.
 **A:** It represents the value of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 when
@@ -3109,7 +3085,7 @@ when
 
 and
 
-> `+rember [a (tail lat)]` was `[%lettuce %tomato ~]`
+> `$` using `(tail lat)` was `[%lettuce %tomato ~]`
 
 **Q:** Are we finished yet?
 
@@ -3201,7 +3177,7 @@ where `l` is
 ?:  .=(~ l)
   ...
 :-  ...
-$(l (tail l))
+%=($ l (tail l))
 ```
 
 KM: Change the elipses to `!!` and explain what that means
@@ -3231,7 +3207,7 @@ least one non-empty list.
 
 **A:** Because we are building a list&mdash;The Second Commandment
 
-**Q:** Why `$(l (tail l))`
+**Q:** Why `%=($ l (tail l))`
 
 **A:** Because at this point, we need to look at the rest of the list.
 
@@ -3264,7 +3240,7 @@ where
 **Q:** When we find a typical element of `firsts l` what do we do with
 it?
 
-**A:** 'cons' it onto the recursion&mdash;`$(l (tail l))`
+**A:** 'cons' it onto the recursion&mdash;`%=($ l (tail l))`
 
 ---
 
@@ -3281,7 +3257,7 @@ What do the last two lines look like now?
 **A:** 
 ```
 :-  (head (head l))  :: typical element
-$(l (tail l))        :: natural recursion
+%=($ l (tail l))     :: natural recursion
 ```
 
 Note: `::`  (pronounced 'colcol') is a way to make a "comment", a note
@@ -3294,7 +3270,7 @@ to yourself or whoever else might read your code
 ?:  .=(~ l)
   !!
 :-  (head (head l))
-$(l (tail l))
+%=($ l (tail l))
 ```
 
 where `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
@@ -3303,22 +3279,21 @@ where `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
 our recipe.  The line `?:  .=(~ l)` needs a value for the case where `l`
 is the null list.  We can, however, proceed without it for now.
 
-**Q:** `?:  .=(~ l)` where `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
+**Q:** `?:  .=(~ l)` where `l` is 
+
+> `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
 
 **A:** No, so skip the `!!` and keep going.
 
 **Q:** What is the meaning of
 ```
 :-  (head (head l))
-$(l (tail l))
+%=($ l (tail l))
 ```
 
-**A:** It saves `(head (head l))` to 'cons' onto `$(l (tail l))`.  To
-find `$(l (tail l))`, we return to our restart point with the new
-argument `(tail l)`
-
-KM: Rework these descriptions.  We don't actually call `+firsts`, we call
-$, so make sure this is clear.
+**A:** It saves `(head (head l))` to 'cons' onto `%=($ l (tail l))`.  To
+find `%=($ l (tail l))`, we call `$` and return to our restart point with 
+the new value for `l`,  `(tail l)`
 
 **Q:** `?:  .=(~ l)`  
 where
@@ -3330,7 +3305,7 @@ where
 **Q:** What is the meaning of
 ```
 :-  (head (head l))
-$(l (tail l))
+%=($ l (tail l))
 ```
 
 **A:** Save `(head (head l))`, and recur with `l` set to  `(tail l)`.
@@ -3345,7 +3320,7 @@ where
 **Q:** What is the meaning of
 ```
 :-  (head (head l))
-$(l (tail l))
+%=($ l (tail l))
 ```
 
 **A:** Save `(head (head l))`, and recur with `l` set to  `(tail l)`.
@@ -3361,7 +3336,7 @@ $(l (tail l))
 
 **A:** Crash!  This is where we need to add our value.
 
-**Q:** What do we need to `con` atoms onto?
+**Q:** What do we need to `con` atoms onto to make a list?
 
 **A:** A list.
 
@@ -3512,7 +3487,7 @@ Replacing `!!` with actual code.
 ?:  .=((head lat) old)
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 KM: This needs to use 'tape' otherwise, we can't inspect the results!
@@ -3564,7 +3539,7 @@ to the right.
   :-  new
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 **A:** Yes.
@@ -3612,7 +3587,7 @@ before the atom `new`.
   :-  new
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 When `new` is `%topping`, `old` is `%fudge`, and `lat` is `[%ice
@@ -3639,9 +3614,8 @@ occurrence of the atom `old` in `lat`
   :-  old
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
-
 **Q:** Did you think of a different way to do it?
 
 
@@ -3694,7 +3668,7 @@ same as `lat`.
   :-  new
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 This is the same as one of our incorrect attempts at `+insert-r`
@@ -3741,7 +3715,7 @@ This is the same as one of our incorrect attempts at `+insert-r`
   :-  new
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 **Q:** Did you think of a better way?
@@ -3779,7 +3753,7 @@ If you do this, you `subst2.hoon` will look like this:
   :-  new
   (tail lat)
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ~
 ```
 
@@ -3828,9 +3802,9 @@ and
 ?:  .=(~ lat)
   ~
 ?:  .=((head lat) a)
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 > After the first occurrence of `a`, we now recur with `lat` set to
@@ -3853,19 +3827,19 @@ at the value
 
 **Q:** `?:  .=((head lat) a)`
 
-**A:** No, skip `$(lat (tail lat))` and continue.
+**A:** No, skip `%=($ lat (tail lat))` and continue.
 
 **Q:** What is the meaning of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 **A:** Save `(head lat)`&mdash;`%coffee`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
-> `$(lat (tail lat))`
+> `%=($ lat (tail lat))`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -3882,19 +3856,19 @@ Now determine
 
 **Q:** `?:  .=((head lat) a)`
 
-**A:** No, so skip `$(lat (tail lat))` and continue.
+**A:** No, so skip `%=($ lat (tail lat))` and continue.
 
 **Q:** What is the meaning of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 **A:** Save `(head lat)`&mdash;`'tea'`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
-> `$(lat (tail lat))`
+> `%=($ lat (tail lat))`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -3911,19 +3885,19 @@ Now determine
 
 **Q:** `?:  .=((head lat) a)`
 
-**A:** No, so skip `$(lat (tail lat))` and continue.
+**A:** No, so skip `%=($ lat (tail lat))` and continue.
 
 **Q:** What is the meaning of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 **A:** Save `(head lat)`&mdash;`%and`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
-> `$(lat (tail lat))`
+> `%=($ lat (tail lat))`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -3931,19 +3905,19 @@ Now determine
 
 **Q:** `?:  .=((head lat) a)`
 
-**A:** No, so skip `$(lat (tail lat))` and continue.
+**A:** No, so skip `%=($ lat (tail lat))` and continue.
 
 **Q:** What is the meaning of
 ```
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 **A:** Save `(head lat)`&mdash;`%hick`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
-> `$(lat (tail lat))`
+> `%=($ lat (tail lat))`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -4003,9 +3977,9 @@ have&mdash;`%hick`&mdash;onto `~`.
 ?:  .=((head lat) old)
   :-  (head lat)
   :-  new
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 It would also be correct to use `old` in place of `(head lat)` in the
@@ -4031,9 +4005,9 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 ?:  .=((head lat) old)
   :-  new
   :-  old
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 ---
@@ -4065,9 +4039,9 @@ $(lat (tail lat))
   ~
 ?:  .=((head lat) old)
   :-  new
-  $(lat (tail lat))
+  %=($ lat (tail lat))
 :-  (head lat)
-$(lat (tail lat))
+%=($ lat (tail lat))
 ```
 
 <a name="chap4"></a>
@@ -4157,8 +4131,18 @@ Or you can do
 I went with the former.  This is closer to how the data is being stored
 interally.  I might at least mention the latter style at some point.
 
+I note the latest dojo is returning the later version, so to avoid
+confusion, I should make sure I mention this.  I'll keep using the long
+version, because this matches the data as it is.
+
 - Instead of `.?(c)` to look for cells (which is a perfectly cromulent way
   of doing it, might switch to `?=(^ c)`. Or better yet, do `?=(@ a)`,
   since this matches the book.  It's a bit more mental overhead, but this 
   is the more general purpose way of doing it.
 
+- Call functions with %-
+
+- Tidy up terminology.  Make sure we don't refer to a "function" when we
+  should be referring to a "gate" or maybe a "trap".
+
+- Review the original TLS preface and pull in ideas, etc.
