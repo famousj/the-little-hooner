@@ -2563,30 +2563,30 @@ name of the  operation we're doing here, I could be convinced that this
 should be "Cons the Magnificent". 
 
 **Q:** What is `+rember [a lat]`  
-where `a` is `'mint'`  
+where `a` is `%mint`  
 and  
 
->`lat` is `['lamb' 'chops' 'and' 'mint' 'jelly' ~]`
+>`lat` is `[%lamb %chops %and %mint %jelly ~]`
 
-**A:** `['lamb' 'chops' 'and' 'jelly' ~]`
+**A:** `[%lamb %chops %and %jelly ~]`
 
 > `rember` stands for `rem`ove  mem`ber`.
 
 **Q:** `+rember [a lat]`  
-where `a` is `'mint'`  
+where `a` is `%mint`  
 and
 
-> `lat` is `['lamb' 'chops' 'and' 'mint' 'flavored' 'mint' 'jelly' ~]`
+> `lat` is `[%lamb %chops %and %mint %flavored %mint %jelly ~]`
 
-**A:** `['lamb' 'chops' 'and' 'flavored' 'mint' 'jelly' ~]`
+**A:** `[%lamb %chops %and %flavored %mint %jelly ~]`
 
 **Q:** `+rember [a lat]`  
-where `a` is `'cup'`  
+where `a` is `%cup`  
 and  
 
-> `lat` is `['coffee' 'cup' 'tea' 'cup' 'and' 'hick' 'cup' ~]`
+> `lat` is `[%coffee %cup %tea %cup %and %hick %cup ~]`
 
-**A:** `['coffee' 'tea' 'cup' 'and' 'hick' 'cup' ~]`
+**A:** `[%coffee %tea %cup %and %hick %cup ~]`
 
 **Q:** What does `+rember [a lat]` do?
 
@@ -2678,11 +2678,11 @@ thing.
 
 What is the value of `+rember [a lat]` where  
 
-> `a` is `'bacon'`
+> `a` is `%bacon`
 
 and
 
-> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%bacon %lettuce %and %tomato ~]`
 
 <sup>1</sup> You can put this code in a file `gen/rember.hoon` in your home
 directory to try it out (don't forget to `|commit %home`).  
@@ -2690,7 +2690,7 @@ directory to try it out (don't forget to `|commit %home`).
 KM: Add questions about the first line
 KM: Note that we are going to recurse, so you need a `|-`
 
-**A:** `['lettuce' 'and' 'tomato' ~]`
+**A:** `[%lettuce %and %tomato ~]`
 
 > Hint: write down the code for `+rember` and its arguments, and refer
 > to them as you go through the next sequence of questions.
@@ -2716,11 +2716,11 @@ First Commandment
 **A:** `.=((head lat) a)` is true, so the value is `(tail lat)`  In this
 case, it is the list
 
-> `['lettuce' 'and' 'tomato' ~]`
+> `[%lettuce %and %tomato ~]`
 
 **Q:**  Is this the correct value?
 
-**A:** Yes, because it is the original list without the atom `'bacon'`
+**A:** Yes, because it is the original list without the atom `%bacon`
 
 **Q:** But did we really use a good example?
 
@@ -2739,12 +2739,12 @@ comparison fails we build a list that begins with the atom we just
 compared.
 
 **Q:** What is the value of `+rember [a lat]`  
-where `a` is `'and'`  
+where `a` is `%and`  
 and  
 
-> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%bacon %lettuce %and %tomato ~]`
 
-**A:** `['bacon' 'lettuce' 'tomato' ~]`
+**A:** `[%bacon %lettuce %tomato ~]`
 
 **Q:** Let us see if our function `rember` works.  
 What is the first question asked by `rember`?
@@ -2764,7 +2764,7 @@ What is the first question asked by `rember`?
 `$(lat (tail lat))`
 
 **A:** Go back to our restart point `|-` with `lat` set to `(tail lat)`
-or `['lettuce' 'and' 'tomato' ~]`
+or `[%lettuce %and %tomato ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2778,7 +2778,7 @@ or `['lettuce' 'and' 'tomato' ~]`
 `$(lat (tail lat))`
 
 **A:** Recur  
-setting `lat` to `(tail lat)` or `['and' 'tomato' ~]`
+setting `lat` to `(tail lat)` or `[%and %tomato ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2790,24 +2790,24 @@ setting `lat` to `(tail lat)` or `['and' 'tomato' ~]`
 
 **Q:** So what is the result?
 
-**A:** `(tail lat)`&mdash;`['tomato' ~]`
+**A:** `(tail lat)`&mdash;`[%tomato ~]`
 
 **Q:** Is this correct?
 
-**A:** No, since `['tomato' ~]` is not the list  
+**A:** No, since `[%tomato ~]` is not the list  
 
-> `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `[%bacon %lettuce %and %tomato ~]`
 
 with just `a`&mdash;`'and`&mdash;removed.
 
 **Q:** What did we do wrong?
 
-**A:** We dropped `'and'`, but we also lost all the atoms preceding
+**A:** We dropped `%and`, but we also lost all the atoms preceding
 `'and`.
 
-**Q:** How can wek eep from losing the atoms
+**Q:** How can we keep from losing the atoms
 
-> `'bacon'` `'and'` `'lettuce'`
+> `%bacon` `%and` `%lettuce`
 
 **A:** We use Colhep the Magnificent.  Remember `:-` from chapter 1?
 
@@ -2831,12 +2831,12 @@ $(lat (tail lat))
 ```
 
 What is the value of `+rember [a lat]`  
-where `a` is `'and'`  
+where `a` is `%and`  
 and  
 
-> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%bacon %lettuce %and %tomato ~]`
 
-**A:** `['bacon' 'lettuce' 'tomato' ~]`
+**A:** `[%bacon %lettuce %tomato ~]`
 
 **Q:** What is the first question?
 
@@ -2858,16 +2858,16 @@ $(lat (tail lat))
 
 where
 
-> `a` is `'and'`
+> `a` is `%and`
 
 and
 
-> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%bacon %lettuce %and %tomato ~]`
 
 KM: this bit is an argument for using pairs instead of lists, and adding
 lists as a type of pair.
 
-**A:** It says to 'cons' the `head` of `lat`&mdash;`'bacon'`&mdash; onto
+**A:** It says to 'cons' the `head` of `lat`&mdash;`%bacon`&mdash; onto
 the value of  
 
 > `+rember`, using `(tail lat)` as the value for `lat`
@@ -2887,7 +2887,7 @@ function `$` with new parameters.
 **Q:** What is the meaning of `$(lat (tail lat))`
 
 **A:** Go back to the restart point with `lat` replaced by `(tail
-lat)`&mdash;`['lettuce' 'and' 'tomato' ~]`
+lat)`&mdash;`[%lettuce %and %tomato ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2904,7 +2904,7 @@ $(lat (tail lat))
 ```
 
 **A:** It says to 'cons' the `tail` of
-`lat`&mdash;`'lettuce'`&mdash;onto the value of 
+`lat`&mdash;`%lettuce`&mdash;onto the value of 
 
 > `+rember`, using `(tail lat)` as the value for `lat`
 
@@ -2918,7 +2918,7 @@ KM: Really need to rework this to make it a bit more accurate.
 **Q:** What is the meaning of `$(lat (tail lat))`
 
 **A:** Go back to the restart point with `lat` replaced by `(tail
-lat)`, that is, `['and' 'tomato' ~]`.
+lat)`, that is, `[%and %tomato ~]`.
 
 **Q:** `?:  .=(~ lat)`
 
@@ -2930,45 +2930,45 @@ lat)`, that is, `['and' 'tomato' ~]`.
 
 **Q:** What is the next value?
 
-**A:** `(tail lat)`&mdash;`['tomato' ~]`
+**A:** `(tail lat)`&mdash;`[%tomato ~]`
 
 **Q:** Are we finished?
 
 **A:** Certainly not!  We know what `+rember [a lat]` is when `lat` is
-`['and' 'tomato' ~]`, but we don't yet know what it is when `lat` is
+`[%and %tomato ~]`, but we don't yet know what it is when `lat` is
 
-> `['lettuce' 'and' 'tomato' ~]`
+> `[%lettuce %and %tomato ~]`
 
 or
 
-> `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `[%bacon %lettuce %and %tomato ~]`
 
 **Q:** We now have a value for 
 
 > `+rember [a (tail lat)]`
 
-where `a` is `'and'`  
+where `a` is `%and`  
 and
 
-> `(tail lat)` is `['and' 'tomato' ~]`
+> `(tail lat)` is `[%and %tomato ~]`
 
-This value is `['tomato' ~]`  
+This value is `[%tomato ~]`  
 What next?
 
-**A:** Recall that we wanted to 'cons' `'lettuce'` onto the value of
+**A:** Recall that we wanted to 'cons' `%lettuce` onto the value of
 `+rember [a (tail lat)]`  
 where  
 
-> `a` was `'and'` and `(tail lat)` was `['and' 'tomato' ~]`
+> `a` was `%and` and `(tail lat)` was `[%and %tomato ~]`
 
-Now that we have this value, which is `['tomato' ~]`, we can 'cons'
-`'lettuce'` onto it.
+Now that we have this value, which is `[%tomato ~]`, we can 'cons'
+`%lettuce` onto it.
 
-**Q:** What is the result when we 'cons' `'lettuce'` onto `['tomato' ~]`
+**Q:** What is the result when we 'cons' `%lettuce` onto `[%tomato ~]`
 
-**A:** `['lettuce' 'tomato' ~]`
+**A:** `[%lettuce %tomato ~]`
 
-**Q:** What does `['lettuce' 'tomato' ~]` represent?
+**Q:** What does `[%lettuce %tomato ~]` represent?
 
 **A:** It represents the value of
 ```
@@ -2978,55 +2978,56 @@ $(lat (tail lat))
 
 when
 
-> `lat` is `['lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%lettuce %and %tomato ~]`
 
 and
 
-> `$(lat (tail lat))` is `['tomato' ~]`
+> `$(lat (tail lat))` is `[%tomato ~]`
 
 
 **Q:** Are we finished yet?
 
 **A:** Not quite.  So far we know what `+rember [a lat]` is when
 
-> `lat` is `['lettuce' 'and' 'tomato' ~]`,
+> `lat` is `[%lettuce %and %tomato ~]`,
 
 but we don't yet know what it is when
 
-> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%bacon %lettuce %and %tomato ~]`
 
 KM: If we're going to introduce pairs/cells before lists, we should make a
 point to mention _why_ we use lists, i.e. if we don't know exactly how
 many items we are going to be dealing with.
 
 **Q:** Now we have a value for `+rember [a (tail lat)]`  
-where `a` is `'and'`  
+where `a` is `%and`  
 and  
 
-> `(tail lat)` is `['lettuce' 'and' 'tomato' ~]`
+> `(tail lat)` is `[%lettuce %and %tomato ~]`
 
-This value is `['lettuce' 'tomato' ~]`  
+This value is `[%lettuce %tomato ~]`  
 This is not the final value, so what must we do again?
 
-**A:** Recall that, at one time, we wanted to 'cons' `'bacon'` onto the
+**A:** Recall that, at one time, we wanted to 'cons' `%bacon` onto the
 value of `+rember [a (tail lat)]`,  
 where
 
-> `a` is `'and'`
+> `a` is `%and`
 
 and 
 
-> `(tail lat)` was `['lettuce' 'and' 'tomato' ~]`
+> `(tail lat)` was `[%lettuce %and %tomato ~]`
 
-Now that we have this value, which is `['lettuce' 'tomato' ~]`,  
-we can 'cons' `'bacon'` onto it.
+Now that we have this value, which is `[%lettuce %tomato ~]`,  
+we can 'cons' `%bacon` onto it.
 
-**Q:** What is the result when we 'cons' `'bacon'` onto `['lettuce'
-'tomato' ~]`
+**Q:** What is the result when we 'cons' `%bacon` onto 
 
-**A:** `['bacon' 'lettuce' 'tomato' ~]`
+> `[%lettuce %tomato ~]`
 
-**Q:** What does `['bacon' 'lettuce' 'tomato' ~]` represent?&dagger;
+**A:** `[%bacon %lettuce %tomato ~]`
+
+**Q:** What does `[%bacon %lettuce %tomato ~]` represent?&dagger;
 
 &dagger; Lunch?
 
@@ -3038,11 +3039,11 @@ $(lat (tail lat))
 
 when
 
-> `lat` is `['bacon' 'lettuce' 'and' 'tomato' ~]`
+> `lat` is `[%bacon %lettuce %and %tomato ~]`
 
 and
 
-> `+rember [a (tail lat)]` was `['lettuce' 'tomato' ~]`
+> `+rember [a (tail lat)]` was `[%lettuce %tomato ~]`
 
 **Q:** Are we finished yet?
 
@@ -3050,14 +3051,14 @@ and
 
 **Q:** Can you put into your own words how we determined the final value
 
-> `['bacon' 'lettuce' 'tomato' ~]`
+> `[%bacon %lettuce %tomato ~]`
 
 **A:** In our words:
 
 > "The function `rember` checked each atom of the lat, one at a time, to
-> see if it was the same atom `'and'`.  If the `car` was not the same as
+> see if it was the same atom `%and`.  If the `car` was not the same as
 > the atom, we saved it to be 'cons'-ed to the final value later.  When
-> `rember` found the atom  `'and'`, it dropped it, and 'cons'-ed the
+> `rember` found the atom  `%and`, it dropped it, and 'cons'-ed the
 > previous atoms back onto the rest of the lat."
 
 JL: At this point TLS has a digression where they refactor the function
@@ -3065,30 +3066,30 @@ they'd just been working through,  Fewer if-then-else and one big
 `cond`.  This doesn't make sense for what we're doing here.
 
 **Q:**  Now that we have completed `rember`, try this example: `+rember
-[a lat]` where `a` is `'sauce'`  
+[a lat]` where `a` is `%sauce`  
 and  
 
-> `lat` is `['soy' 'sauce' 'and' 'tomato' 'sauce' ~]`
+> `lat` is `[%soy %sauce %and %tomato %sauce ~]`
 
-**A:**  `+rember [a lat]` is `['soy' 'and' 'tomato' 'sauce' ~]`
+**A:**  `+rember [a lat]` is `[%soy %and %tomato %sauce ~]`
 
 **Q:** What is `+firsts l`  
 where  `l` is 
 ```
-[['apple' 'peach' 'pumpkin' ~]
- ['plum' 'pear' 'cherry' ~]
- ['grape' 'raisin' 'pea' ~]
- ['bean' 'carrot' 'eggplant' ~] ~]
+[[%apple %peach %pumpkin ~]
+ [%plum %pear %cherry ~]
+ [%grape %raisin %pea ~]
+ [%bean %carrot %eggplant ~] ~]
 ```
 
-**A:**  `['apple' 'plum' 'grape' 'bean' ~]`
+**A:**  `[%apple %plum %grape %bean ~]`
 
 **Q:** What is `+firsts l`  
 where  
 
-> `l` is `[['a' 'b' ~] ['c' 'd' ~] ['e' 'f' ~] ~]`
+> `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
 
-**A:** `['a' 'c' 'e' ~]`
+**A:** `[%a %c %e ~]`
 
 **Q:** What is `+firsts l`  
 where `l` is `~`
@@ -3098,22 +3099,22 @@ where `l` is `~`
 **Q:** What is `+firsts l`  
 where `l` is 
 ```
-[['five' 'plums' ~]
- ['four' ~]
- ['eleven' 'green' 'oranges' ~]]
+[[%five %plums ~]
+ [%four ~]
+ [%eleven %green %oranges ~]]
 ```
 
-**A:** `['five 'four' 'eleven' ~]`
+**A:** `[%five %four %eleven ~]`
 
 **Q:** What is `+firsts l`  
 where `l` is
 ```
-[[['five' 'plums' ~] 'four' ~]
-  ['eleven' 'green' 'oranges' ~]
-  [['no' ~] 'more' ~] ~]
+[[[%five %plums ~] %four ~]
+  [%eleven %green %oranges ~]
+  [[%no ~] %more ~] ~]
 ```
 
-**A:** `[['five' 'plums' ~] 'eleven' ['no' ~] ~]`
+**A:** `[[%five %plums ~] %eleven [%no ~] ~]`
 
 **Q:** In your own words, what does `+firsts l` do?
 
@@ -3172,21 +3173,21 @@ least one non-empty list.
 what is the typical element of the value of `+firsts l`  
 where  
 
-> `l` is `[['a' 'b' ~] ['c' 'd' ~] ['e' 'f' ~] ~]`
+> `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
 
-**A:**  `'a'`
+**A:**  `%a`
 
 **Q:** What is another typical element?
 
-**A:** `'c'` or even `'e'`
+**A:** `%c` or even `%e`
 
 **Q:** Consider the function `+seconds`  
 What would be a typical element of the value of `+seconds l`
 where  
 
-> `l` is `[['a' 'b' ~] ['c' 'd' ~] ['e' 'f' ~] ~]`
+> `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
 
-**A:** `'b'`, `'d'`, or `'f'`.
+**A:** `%b`, `%d`, or `%f`.
 
 **Q:** How do we describe a typical element for `+firsts l`
 
@@ -3230,13 +3231,13 @@ to yourself or whoever else might read your code
 $(l (tail l))
 ```
 
-where `l` is `[['a' 'b' ~] ['c' 'd' ~] ['e' 'f' ~] ~]`
+where `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
  
 **A:** Nothing yet.  We are still missing one important ingredient in
 our recipe.  The line `?:  .=(~ l)` needs a value for the case where `l`
 is the null list.  We can, however, proceed without it for now.
 
-**Q:** `?:  .=(~ l)` where `l` is `[['a' 'b' ~] ['c' 'd' ~] ['e' 'f' ~] ~]`
+**Q:** `?:  .=(~ l)` where `l` is `[[%a %b ~] [%c %d ~] [%e %f ~] ~]`
 
 **A:** No, so skip the `!!` and keep going.
 
@@ -3256,7 +3257,7 @@ $, so make sure this is clear.
 **Q:** `?:  .=(~ l)`  
 where
 
-> `l` is `[['c' 'd' ~] ['e' 'f' ~] ~]`
+> `l` is `[[%c %d ~] [%e %f ~] ~]`
 
 **A:** No, so skip `!!` and keep going.
 
@@ -3271,7 +3272,7 @@ $(l (tail l))
 **Q:** `?:  .=(~ l)`  
 where
 
-> `l` is `[['e' 'f' ~] ~]`
+> `l` is `[[%e %f ~] ~]`
 
 **A:** No, so skip `!!` and keep going.
 
@@ -3315,26 +3316,26 @@ and pick up.  We need to:
 
 > I. either
 
-> > 1. 'cons' `'e'` onto `~` 
-> > 2. 'cons' `'c'` onto the value of 1
-> > 3. 'cons' `'a'` onto the value of 2
+> > 1. 'cons' `%e` onto `~` 
+> > 2. 'cons' `%c` onto the value of 1
+> > 3. 'cons' `%a` onto the value of 2
 
 > II. or
 
-> > 1. 'cons' `'a'` onto the value of 2
-> > 2. 'cons' `'c'` onto the value of 3
-> > 3. 'cons' `'e'` onto `~`
+> > 1. 'cons' `%a` onto the value of 2
+> > 2. 'cons' `%c` onto the value of 3
+> > 3. 'cons' `%e` onto `~`
 
 > III. or
 
-> > 'cons' `'a'` onto
-> > > the 'cons' of `'c'` onto
-> > > > the 'cons' of `'e'` onto
+> > 'cons' `%a` onto
+> > > the 'cons' of `%c` onto
+> > > > the 'cons' of `%e` onto
 > > > > > `~`
 
 In any case, what is the value of `+firsts l`
 
-**A:** `['a' 'c' 'e' ~]`
+**A:** `[%a %c %e ~]`
 
 **Q:** With which of the three alternatives do you feel most
 comfortable?
@@ -3344,38 +3345,38 @@ comfortable?
 **Q:** What is `+insert-r [new old lat]`  
 where
 
-> `new` is `'topping'`  
-> `old` is `'fudge'`
+> `new` is `%topping`  
+> `old` is `%fudge`
 
 and
 
-> `lat` is `['ice' 'cream' 'with' 'fudge' 'for' 'dessert' ~]`
+> `lat` is `[%ice %cream %with %fudge %for %dessert ~]`
 
-**A:** `['ice' 'cream' 'with' 'fudge' 'topping' 'for' 'dessert' ~]`
+**A:** `[%ice %cream %with %fudge %topping %for %dessert ~]`
 
 **Q:** `+insert-r [new old lat]`  
 where
 
-> `new` is `'jalapeño'`  
-> `old` is `'and'`
+> `new` is `%jalapeño`  
+> `old` is `%and`
 
 and 
 
-> `lat` is `['tacos' 'tamales' 'and' 'salsa' ~]`
+> `lat` is `[%tacos %tamales %and %salsa ~]`
 
-**A:** `['tacos' 'tamales' 'and' 'jalapeño' 'salsa' ~]`
+**A:** `[%tacos %tamales %and %jalapeño %salsa ~]`
 
 **Q:** `+insert-r [new old lat]`  
 where  
 
-> `new` is `'e'`  
-> `old` is `'d'`
+> `new` is `%e`  
+> `old` is `%d`
 
 and
 
-> `lat` is `['a' 'b' 'c' 'd' 'e' 'f' 'g' 'd' 'h' ~]`
+> `lat` is `[%a %b %c %d %e %f %g %d %h ~]`
 
-**A:** `['a' 'b' 'c' 'd' 'e' 'f' 'g' 'd' 'h' ~]`
+**A:** `[%a %b %c %d %e %f %g %d %h ~]`
 
 **Q:** In your own words, what does  
 `+insert-r [new old lat]` do?
@@ -3457,26 +3458,26 @@ KM: This needs to use 'tape' otherwise, we can't inspect the results!
 that we just determined  
 where
 
-> `new` is `'topping'`
-> `old` is `'fudge'`
+> `new` is `%topping`
+> `old` is `%fudge`
 
 and
 
-> `lat` is `['ice' 'cream' 'with' 'fudge' 'for' 'dessert' ~]`
+> `lat` is `[%ice %cream %with %fudge %for %dessert ~]`
 
 Hint: Try adding the code to `gen/insert-r.hoon`.  Then `|commit %home`
 and try running it in the dojo.
 ```
-> =new 'topping'
-> =old 'fudge'
-> =lat ['ice' 'cream' 'with' 'fudge' 'for' 'dessert' ~] 
+> =new %topping
+> =old %fudge
+> =lat [%ice %cream %with %fudge %for %dessert ~] 
 > +insert-r [new old lat]
 ```
 
 KM: verify that insert-r.hoon works as expected.
 KM: make a dojo helper description above when we first do a generator.
 
-**A:** `['ice' 'cream' 'with' 'for' 'dessert' ~]`
+**A:** `[%ice %cream %with %for %dessert ~]`
 
 **Q:** So far this is the same as `rember`  What do we do in `insert-r` when `.=((head lat) old)` is true?
 
@@ -3506,18 +3507,18 @@ $(lat (tail lat))
 that we just determined  
 where
 
-> `new` is `'topping'`
-> `old` is `'fudge'`
+> `new` is `%topping`
+> `old` is `%fudge`
 
 and
 
-> `lat` is `['ice' 'cream' 'with' 'fudge' 'for' 'dessert' ~]`
+> `lat` is `[%ice %cream %with %fudge %for %dessert ~]`
 
-**A:** `['ice' 'cream' 'with' 'topping' 'for' 'dessert' ~]`
+**A:** `[%ice %cream %with %topping %for %dessert ~]`
 
 **Q:** Is this the list we wanted?
 
-**A:** No, we have only replaced `'fudge'` with `'topping'`.
+**A:** No, we have only replaced `%fudge` with `%topping`.
 
 **Q:** What still needs to be done?
 
@@ -3548,11 +3549,11 @@ before the atom `new`.
 $(lat (tail lat))
 ```
 
-When `new` is `'topping'`, `old` is `'fudge'`, and `lat` is `['ice'
-'cream' 'with' 'fudge' 'for' 'dessert' ~]`, the value of the generator
+When `new` is `%topping`, `old` is `%fudge`, and `lat` is `[%ice
+%cream %with %fudge %for %dessert ~]`, the value of the generator
 `+insert-r [new old lat]`, is 
 
-> `['ice' 'cream' 'with' 'fudge' 'topping' 'for' 'dessert' ~]`
+> `[%ice %cream %with %fudge %topping %for %dessert ~]`
 
 If you got this right, have one.
 
@@ -3604,16 +3605,16 @@ same as `lat`.
 > For example,  
 > where  
 
-> > `new` is `'topping'`  
-> > `old` is `'fudge'`
+> > `new` is `%topping`  
+> > `old` is `%fudge`
 
 > and
 
-> > `lat` is `['ice' 'cream' 'with' 'fudge' 'for' 'dessert' ~]`
+> > `lat` is `[%ice %cream %with %fudge %for %dessert ~]`
 
 > the value is
 
-> > `['ice' 'cream' 'with' 'topping' 'for' 'dessert' ~]`
+> > `[%ice %cream %with %topping %for %dessert ~]`
 
 > Now you have the idea.
 
@@ -3649,17 +3650,17 @@ This is the same as one of our incorrect attempts at `+insert-r`
 > For example,  
 > where  
 
-> > `new` is `'vanilla'`  
-> > `o1` is `'chocolate'`
-> > `o2` is `'banana'`
+> > `new` is `%vanilla`  
+> > `o1` is `%chocolate`
+> > `o2` is `%banana`
 
 > and
 
-> > `lat` is `['banana' 'ice' 'cream' 'with' 'chocolate' 'topping' ~]`
+> > `lat` is `[%banana %ice %cream %with %chocolate %topping ~]`
 
 > the value is
 
-> > `['vanilla' 'ice' 'cream' 'with' 'chocolate' 'topping' ~]`
+> > `[%vanilla %ice %cream %with %chocolate %topping ~]`
 
 **A:** 
 ```
@@ -3748,10 +3749,10 @@ Hint: What do we want as the value when
 > `.=((head lat) a)` is true?
 
 Consider the example  
-where `a` is `'cup'`  
+where `a` is `%cup`  
 and  
 
-> `lat` is `['coffee' 'cup' 'tea' 'cup' 'and' 'hick' 'cup' ~]`
+> `lat` is `[%coffee %cup %tea %cup %and %hick %cup ~]`
  
 
 **A:** 
@@ -3771,14 +3772,14 @@ $(lat (tail lat))
 
 The value of this generator is
 
-> `['coffee' 'tea' 'and' 'hick' ~]`
+> `[%coffee %tea %and %hick ~]`
 
 **Q:** Can you see how `+multirember` works?
 
 **A:** Possibly not, so we will go through the steps necessary to arrive
 at the value
 
-> `['coffee' 'tea' 'and' 'hick' ~]`
+> `[%coffee %tea %and %hick ~]`
 
 **Q:** `?:  .=(~ lat)`
 
@@ -3794,7 +3795,7 @@ at the value
 $(lat (tail lat))
 ```
 
-**A:** Save `(head lat)`&mdash;`'coffee'`&mdash;to be 'cons'-ed onto the
+**A:** Save `(head lat)`&mdash;`%coffee`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
@@ -3852,7 +3853,7 @@ Now determine
 $(lat (tail lat))
 ```
 
-**A:** Save `(head lat)`&mdash;`'and'`&mdash;to be 'cons'-ed onto the
+**A:** Save `(head lat)`&mdash;`%and`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
@@ -3872,7 +3873,7 @@ Now determine
 $(lat (tail lat))
 ```
 
-**A:** Save `(head lat)`&mdash;`'hick'`&mdash;to be 'cons'-ed onto the
+**A:** Save `(head lat)`&mdash;`%hick`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
@@ -3898,19 +3899,19 @@ Now determine
 **Q:** What do we do next?
 
 **A:** We 'cons' the most recent `(head lat)` we
-have&mdash;`'hick'`&mdash;onto `~`.
+have&mdash;`%hick`&mdash;onto `~`.
 
 **Q:** What do we do next?
 
-**A:** We 'cons' `'and'` onto `['hick' ~]`
+**A:** We 'cons' `%and` onto `[%hick ~]`
 
 **Q:** What do we do next?
 
-**A:** We 'cons' `'tea'` onto `['and' 'hick' ~]`
+**A:** We 'cons' `%tea` onto `[%and %hick ~]`
 
 **Q:** What do we do next?
 
-**A:** We 'cons' `'coffee'` onto `['tea' 'and' 'hick' ~]`
+**A:** We 'cons' `%coffee` onto `[%tea %and %hick ~]`
 
 **Q:** Are we finished now?
 
