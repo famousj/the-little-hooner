@@ -1466,8 +1466,8 @@ It has two possible value:
 
 **A:** `|-` creates a 'trap', which is another type of function.  Unlike a
 gate, a trap does not have a sample.  The function you are creating is
-called `$`.  When you use the `|-` rune, the trap starts running 
-automatically.
+called `$` (which is pronounced 'buc').  When you use the `|-` rune, the 
+function `$` starts running automatically.
 
 **Q:** What is the next line?
 
