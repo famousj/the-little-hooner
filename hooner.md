@@ -221,7 +221,7 @@ To do this, you'll need to run this command in the dojo:
 
 You'll only have to do this once.  Once you do that, you'll get a folder
 called "home" inside your ship's directory.  If you created a
-evelopment ship, this will be `zod/home`.
+development ship, this will be `zod/home`.
 
 Whenever you change one of the files in your home directory, you'll need
 to run this command to add these changes to your ship
