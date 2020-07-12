@@ -53,7 +53,78 @@ gal <               par )
 
 ## 0. Preface and Setup
 
-### Introductory Notes
+### Preface
+
+> "Tlön is surely a labyrinth, but it is a labyrinth devised
+> by men, a labyrinth destined to be deciphered by men."
+> - Jorge Luis Borges, "Tlön, Uqbar, Orbis Tertius"
+
+> "Don't Panic!"
+> - Douglas Adams, _The Hitchhiker's Guide to the Galaxy_
+
+I first got on the Internet when I was in college in the 90s.  In those
+benighted days, this often involved a dial-up modem.  If you only had 
+one phone line and your roommate picked up the phone to make a phone call, 
+you would get what's called line noise.
+
+The email you were reading went from being regular text to being filled
+with weird characters, and the email suddenly stopped making sense.  
+It was really disorienting.
+
+The first time I looked at Hoon, the programming language for Urbit, 
+I had a similar feeling.
+
+For instance, here's code to decrement an integer:
+
+```
+|=  a=@ud
+^-  @ud
+=/  b=@ud  0
+|-
+?:  .=  a  .+  b
+  b
+%=  $
+  b  .+  b
+==
+```
+
+Hoon is a member of the family of languages called [Lisps](https://en.wikipedia.org/wiki/Lisp_(programming_language).  
+
+Conceptually, it works more or less like any other Lisp, but it looks totally different.  For starters, Hoon has no keywords.  Instead it uses what's called "runes", which are a set of two ASCII characters.  This helps contribute to its
+austere "line-noise" look.
+
+To help with this, each ASCII character in Hoon has a standard way of
+pronoucing it, which this book will introduce as we go along.
+This somehow makes programming in Hoon even weirder.  But if you're an 
+auditory person (like me), you'll find this helps a lot to
+make all these runes memorable.
+
+Also, most languages in the Lisp family make use of parentheses.  Lots and lots of parentheses.  So many parentheses.
+
+Hoon does away with the parentheses, but in a way that adds a bit more
+conceptual overhead to really understand how things work.
+
+Because it's a Lisp, Hoon is a functional programming language.
+Programming in functional programming languages works differently than
+you might be used to.
+
+This book is an adaptation of the book The Little Schemer, which uses
+the language Scheme, another Lisp and therefore a cousin of Hoon.  It goes 
+very slowly, using very small program to introduce and illustrate concepts 
+that you'll need to understand to do programming in Hoon.
+
+I assume zero experience in Hoon, or in any other programming
+language for that matter.
+
+It should be considered a starting point.  It won't teach you all
+the Hoon you need to know to do anything on Urbit you'd like, but it
+will give you the conceptual framework you need.
+
+Enjoy!
+
+- J LeBlanc
+
+### Text Notes
 
 - While this is based on The Little Schemer, Hoon and Scheme are
   different languages and they do things differently.
@@ -88,7 +159,7 @@ gal <               par )
 requests are welcome!
 
 - This has taken a non-trivial amount of time, and will require much more
-time before it's done.  
+time before it's done.
 
 If you get anything out of it, if you'd like to show your appreciation,
 and encourage me to keep at it until we get to the part where you
@@ -106,13 +177,8 @@ Venmo: [venmo.com/jrl314](https://venmo.com/jrl314)
 
 PayPal: [paypal.me/jleblanc314](https://www.paypal.me/jleblanc314)
 
-### Introduction
 
-KM Make sure to note that punctuation has a three-letter pronounciation.
-
-### How to Read This Book - JL
-
--KM - Pull in content from the TLS preface here
+### How to Read This Book
 
 This book is written in a question-and-answer format.  Go slowly!  Make sure you really understand a chapter before you go onto the next chapter.
 
