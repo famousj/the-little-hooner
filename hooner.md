@@ -496,7 +496,7 @@ where
 
 **A:** `[%a %b]`
 
-KM: Scheme (and TLS) calls this operation "cons".  It's apparently short
+JL: Scheme (and TLS) calls this operation "cons".  It's apparently short
 for "construct" but everyone just calls it "cons".  I think this works,
 but I suspect another word would work better here.
 
@@ -1320,7 +1320,7 @@ where
 |commit %home
 ```
 
-KM: Note: The original version in the book was not tall-recursive.  This
+JL: The original version in the book was not tall-recursive.  This
 one is.  I don't know if I'll explain what "tail-recursion" is here, but
 I thought I'd write it this way to demonstrate good style.
 
@@ -1351,7 +1351,7 @@ determined by answering the questions asked by `+is-lat`
 kind of function that takes a 'sample', i.e. the arguments for the
 function.
 
-KM: An earlier version skipped the term "gate" and just called this a
+JL: An earlier version skipped the term "gate" and just called this a
 "function".  I'm leaving the "gate" terminology to distinguish from the 
 "trap" below.
 
