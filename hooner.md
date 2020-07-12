@@ -149,11 +149,20 @@ Enjoy!
   `'(a b c)`, to tell the compiler "everything in these parentheses are 
   data".  
 
-  This isn't possible in Hoon.  Either that or I'm not aware of someway to do it.  So I've had to make all the words into cords or terms.  This is not ideal, but I think it works.
+  This isn't possible in Hoon.  Either that or I'm not aware of someway to 
+  do it.  So I've had to make all the words into cords or terms.  This is 
+  not ideal, but I think it works.
 
 - Conceptually cells in Hoon act as binary trees.  I am more or less
   ignoring this fact.  I'm going to discuss atoms, cells, and lists.
   Also tuples when appropriate.
+
+- Given the choice between brevity or clarity of code, I usually opt for
+  clarity.  There are shorter ways of writing some things, irregular forms 
+  that do away with the runes.  On most of these, I leave the rune in.
+
+  At some point, I might make an appendix to note the other ways of
+  doing things.
 
 - If you see any egregious errors, DM me at ~ribben-donnyl. Also, pull 
 requests are welcome!
