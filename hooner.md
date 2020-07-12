@@ -2677,6 +2677,15 @@ which is an atom, and `lat`, which is a list of atoms.
 
 **A:** `|=  [a=@ lat=(list @)]`
 
+**Q:** Then what?
+
+**A:** We use `^-` to specify that the type of value we will return is a
+list of atoms.
+
+**Q:** How would we do that?
+
+**A:** `^-  (list @)`
+
 **Q:** What is the first question?
 
 **A:** First we will test `.=(~ lat)`&mdash;The First Commandment.
@@ -2717,16 +2726,16 @@ as `(head lat)`?
 **A:** We want to keep `(head lat)`, but also find out if `a` is
 somewhere in the rest of the lat.
 
-**Q:** How do we remove the first occurrance of `a` in the rest of `lat`
+**Q:** How could we remove the first occurrance of `a` in the rest of `lat`
 
-**A:** `+rember [a (tail lat)]`
+**A:** Ask the questions again, using `(tail lat)` for `lat`
 
 **Q:** Is there any other question we should ask?
 
 **A:** No.
 
-**Q:** Since we are going to call the function again with different
-arguments, what do we need to add?
+**Q:** Since we are going to ask the questions again with different
+values, what do we need to add?
 
 **A:** We need `|-`, our restart point, right before we start asking
 questions.
@@ -2756,8 +2765,12 @@ and
 <sup>1</sup> You can put this code in a file `gen/rember.hoon` in your home
 directory to try it out (don't forget to `|commit %home`).  
 
-KM: Add questions about the first line
-KM: Note that we are going to recurse, so you need a `|-`
+KM: Serious complication: The default for atoms is @ud, the unsigned
+integer.  So running the above example in the dojo gives you
+`~[28.538.328.763.884.908 6.581.857 122.545.641.451.380]`
+This is not good.  The solution is, instead of just using any atom, we
+use @tas, which is the type for a term.  Or we use numbers, which is not
+nearly as engaging as using %bacon, %lettuce, and %tomato
 
 **A:** `[%lettuce %and %tomato ~]`
 
@@ -2768,9 +2781,6 @@ KM: Note that we are going to recurse, so you need a `|-`
 question?
 
 **A:** `?:  .=(~ lat)`
-
-KM: Either we should do `?~` here or we should wait until we revisit the
-First Commandment
 
 **Q:**  What do we do now?
 
@@ -2817,7 +2827,6 @@ and
 
 **Q:** Let us see if our function `rember` works.  
 What is the first question asked by `rember`?
-
 
 **A:** `?:  .=(~ lat)`
 
@@ -2869,12 +2878,12 @@ KM: Use the word "recur" more in chapter 2
 
 > `[%bacon %lettuce %and %tomato ~]`
 
-with just `a`&mdash;`'and`&mdash;removed.
+with just `a`&mdash;`%and`&mdash;removed.
 
 **Q:** What did we do wrong?
 
 **A:** We dropped `%and`, but we also lost all the atoms preceding
-`'and`.
+`%and`.
 
 **Q:** How can we keep from losing the atoms
 
@@ -2907,6 +2916,10 @@ where `a` is `%and`
 and  
 
 > `lat` is `[%bacon %lettuce %and %tomato ~]`
+
+KM: If you fix the @ to be @tas, do so here too.
+KM: Make code files so they can be opened in another tab/window or
+something.  This isn't a book and we have options.
 
 **A:** `[%bacon %lettuce %tomato ~]`
 
@@ -3107,7 +3120,7 @@ and
 **A:** In our words:
 
 > "The function `rember` checked each atom of the lat, one at a time, to
-> see if it was the same atom `%and`.  If the `car` was not the same as
+> see if it was the same atom `%and`.  If the `head` was not the same as
 > the atom, we saved it to be 'cons'-ed to the final value later.  When
 > `rember` found the atom  `%and`, it dropped it, and 'cons'-ed the
 > previous atoms back onto the rest of the lat."
@@ -3171,32 +3184,56 @@ where `l` is
 
 **A:** We tried the following:
 
-> "The functions `firsts` takes one argument, a list, which is either a
-> null list or contains only non-empty lists.  It builds another list
-> composed of the first noun of each internal list"
+> "The functions `firsts` takes one argument, which is either a
+> null list or a list containing non-empty lists.  It builds another 
+> list composed of the first noun of each internal list"
 
-**Q:** See if you can write the function `firsts`
+KM: See [1] in the TODOs below.
+KM: tl;dr is that a list like `[~ ~ ~]` will cause problems.
+
+**Q:** What is a `lest`?
+
+**A:** A non-empty list
+
+**Q:** What is  
+
+> `(list (lest))`
+
+**A:** This is the type for a list of non-empty lists.
+
+**Q:** Would `~` work if the type is `(list (lest))`?
+
+**A:** Yes, because it's a valid list type.
+
+**Q:** With that in mind, see if you can write the function `firsts`
 
 > Remember the Commandments!
 
 **A:**  This much is easy:
 ```
-|=  l=list
+|=  l=(list (lest))
+^-  (list)
 |-
 ?:  .=(~ l)
-  ...
-:-  ...
+  !!
+:-  !!
 %=($ l (tail l))
 ```
 
-KM: Change the elipses to `!!` and explain what that means
-  
 **Q:** Why 
 ```
-|=  l=list
+|=  l=(list (lest))
 ```
 
 **A:** Because we need to create a function, and the argument is a list
+of non-empty lists.
+
+**Q:** Why
+```
+^-  (list)
+```
+
+**A:** Because our function returns a list.
 
 **Q:** Why `|-`
 
@@ -3219,6 +3256,20 @@ least one non-empty list.
 **Q:** Why `%=($ l (tail l))`
 
 **A:** Because at this point, we need to look at the rest of the list.
+
+**Q:** What about the `!!` 
+
+**A:** `!!` (pronounced 'zapzap') is a command that causes the program
+to crash.
+
+**Q:** Why do we want the program to crash?!
+
+**A:** We don't!  When you are developing a program, you can use `!!`
+as shorthand for "fill in this part of the program later".
+
+Since `!!` is valid Hoon, you can test out a program that is 
+only partially finished.  If you get to an unfinished part, the program
+stops.
 
 **Q:** Keeping in mind the definition of `+firsts l`  
 what is the typical element of the value of `+firsts l`  
@@ -3274,7 +3325,8 @@ to yourself or whoever else might read your code
 
 **Q:** What does `+firsts l` do
 ```
-|=  l=list
+|=  l=(list (lest))
+^-  (list)
 |-
 ?:  .=(~ l)
   !!
@@ -3351,12 +3403,9 @@ where
 
 > Remember the Law of Colhep.
 
-KM: The law of colhep is true, but only if you're working with lists.
-To make a list with colhep the second argument must be another list.
-Fix this in chap 1.
+**Q:** For the purposes of 'cons'-ing, what value can we give when  
 
-**Q:** For the purposes of 'cons'-ing, what value can we give when `.=(~
-l)` is true?
+> `.=(~ l)` is true?
 
 **A:** Since the final value must be a list, we cannot use `%.y` or
 `%.n`.  Let's try `~`.
@@ -4063,7 +4112,6 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 
 
-
 ### TODO
 
 - Right now this is a Markdown file. It'd be pretty sweet to make some
@@ -4148,6 +4196,24 @@ version, because this matches the data as it is.
   of doing it, might switch to `?=(^ c)`. Or better yet, do `?=(@ a)`,
   since this matches the book.  It's a bit more mental overhead, but this 
   is the more general purpose way of doing it.
+
+- [1] TLS notes that the list argument only contains non-empty lists.
+If you tried with something like:
+The code for firsts would not work on something like:
+```
+[~ ~ %atom ~ ~]
+```
+Even though Hoon calls this a valid list.
+
+(For that matter, none of the previous examples would work with this.)
+
+Once you know what you're doing, it's pretty straightforward to work
+with these kinds of lists, possibly using the `i` and `t` faces.  The 
+problem is, this is written for people who don't know what they're 
+doing.
+
+Anyway, should consider probably noting that any list with a null
+anywhere but the end is going to cause problems.
 
 - Call functions with %-
 
