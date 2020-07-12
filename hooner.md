@@ -3473,7 +3473,7 @@ where
 
 and
 
-> `lat` is `[%a %b %c %d %e %f %g %d %h ~]`
+> `lat` is `[%a %b %c %d %f %g %d %h ~]`
 
 **A:** `[%a %b %c %d %e %f %g %d %h ~]`
 
@@ -3482,18 +3482,17 @@ and
 
 **A:** In our words:
 
-> "It takes three arguments: the atoms `new` and `old`, and a lat.  The
-> generator `+insert-r` builds a lat with `new` inserted to the right of
-> the first occurrence of `old`."
+> "`+insert-r` takes three arguments: the atoms `new` and `old`, and a lat.  
+> It builds a lat with `new` inserted to the right of the first occurrence 
+> of `old`."
 
-**Q:** See if you can write the first two lines of the function
-`insert-r`
+**Q:** See if you can write the first three lines of `insert-r.hoon`
 
 **A:**
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
-
 ```
 
 **Q:** Which argument changes when we recur with `insert-r`
@@ -3514,18 +3513,15 @@ and
 
 **A:** We know that `lat` has at least one element.
 
-KM: `?~` actually uses the type for null, i.e. `$~`.  As such, `.=(~
-lat)` is not exactly the same a `?~`.  Although there might be a better
-place for a deep dive into types.
-
 **Q:** Which questions do we ask about the first element?
 
-**A:** We ask `.=(~ (car lat) old)`.  Then we continue because there are
+**A:** We ask `.=((head lat) old)`.  Then we continue because there are
 no other interesting case.
 
 **Q:** Now see if you can write the code for `insert-r.hoon`
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  !!
   !!
@@ -3534,11 +3530,12 @@ no other interesting case.
 !!
 ```
 
-Replacing `!!` with actual code.
+Replacing `!!` with code.
 
 **A:** Here's our first attempt.
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -3547,8 +3544,6 @@ Replacing `!!` with actual code.
 :-  (head lat)
 %=($ lat (tail lat))
 ```
-
-KM: This needs to use 'tape' otherwise, we can't inspect the results!
 
 **Q:** What is the value of the generator
 
@@ -3590,6 +3585,7 @@ to the right.
 **Q:** Now we have
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -3637,6 +3633,7 @@ before the atom `new`.
 **A:** 
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -3664,6 +3661,7 @@ occurrence of the atom `old` in `lat`
 **A:** This much is easy, right?
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -3719,6 +3717,7 @@ same as `lat`.
 **A:** Obviously,
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -3763,6 +3762,7 @@ This is the same as one of our incorrect attempts at `+insert-r`
 **A:** 
 ```
 |=  [new=@ o1=@ o2=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -3793,8 +3793,6 @@ with
   .=((head lat) o1)
   .=((head lat) o2)
 ==
-  :-  new
-  (tail lat)
 ```
 
 If you do this, you `subst2.hoon` will look like this:
@@ -3817,7 +3815,8 @@ If you do this, you `subst2.hoon` will look like this:
 
 ---
 
-<center>**If you got the last function, go and repeat the cake-consing.**</center>
+<center>**If you got the last function, go and repeat the cake-consing.**
+</center>
 
 ---
 
@@ -3834,6 +3833,7 @@ returned is the original lat, with only that occurrence of `a` removed.
 value the lat with all occurrences of `a` removed.
 ```
 |=  [a=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  !!
   !!
@@ -3894,7 +3894,9 @@ at the value
 ```
 
 **A:** Save `(head lat)`&mdash;`%coffee`&mdash;to be 'cons'-ed onto the
-result when we return to our restart point with `lat` set to `(tail lat)`.  
+result when we call `$` and return to our restart point with `lat` set to 
+`(tail lat)`.  
+
 Now determine
 
 > `%=($ lat (tail lat))`
@@ -3922,7 +3924,7 @@ Now determine
 %=($ lat (tail lat))
 ```
 
-**A:** Save `(head lat)`&mdash;`'tea'`&mdash;to be 'cons'-ed onto the
+**A:** Save `(head lat)`&mdash;`%tea`&mdash;to be 'cons'-ed onto the
 result when we return to our restart point with `lat` set to `(tail lat)`.  
 Now determine
 
@@ -4018,6 +4020,7 @@ have&mdash;`%hick`&mdash;onto `~`.
 **Q:** Write the generator `+multiinsert-r`
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  !!
   !!
@@ -4029,6 +4032,7 @@ have&mdash;`%hick`&mdash;onto `~`.
 **A:** 
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -4043,9 +4047,10 @@ have&mdash;`%hick`&mdash;onto `~`.
 It would also be correct to use `old` in place of `(head lat)` in the
 first `:-` on line 6 because we know that `.=((car lat) old)`
 
-**Q:** Write the generator `+multiinsert-l`:
+**Q:** Now try writing the generator `+multiinsert-l`:
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  !!
   !!
@@ -4057,6 +4062,7 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 **A:** 
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
@@ -4077,10 +4083,10 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 ---
 
-
 **Q:** Now write the generator `multisubst`
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  !!
   !!
@@ -4092,6 +4098,7 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 **A:** 
 ```
 |=  [new=@ old=@ lat=(list @)]
+^-  (list @)
 |-
 ?:  .=(~ lat)
   ~
