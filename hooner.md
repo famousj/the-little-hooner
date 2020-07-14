@@ -1389,11 +1389,14 @@ where
 
 > `l` is the argument `[%bacon %and %eggs ~]`
 
-<sup>1</sup> Add this code to a file called `gen/is-lat.hoon` inside your
-`home` directory.  Then run the following in the dojo:
+<sup>1</sup> Try adding the code to a file called `gen/is-lat.hoon`.  Then try 
+running it in the dojo.
 ```
-|commit %home
+> |commit %home
+> =l [%bacon %and %eggs ~]
+> +is-lat l
 ```
+
 
 JL: The original version in the book was not tall-recursive.  This
 one is.  I don't know if I'll explain what "tail-recursion" is here, but
@@ -2668,23 +2671,56 @@ and
 **A:** It takes an atom and a lat as its arguments, and makes a new lat
 with the first occurrence of the atom in the old lat removed.
 
-**Q:** What steps should we use to do this?
+**Q:** What is the the type symbol for an atom?
+
+**A:** `@`
+
+**Q:** What is `@t`
+
+**A:** This is the type symbol for an atom that is text.
+
+**Q:** Is a `'cord'` an atom that is text?
+
+**A:** Yes
+
+**Q:** Is a `%term` an atom that is text?
+
+**A:** Yes
+
+**Q:** What is 
+
+> `[%a %list %of %terms ~]`
+
+**A:** This is a list of text 
+
+**Q:** What is 
+
+> `<|a list of terms|>`
+
+**A:** This is how 
+
+> `[%a %list %of %terms ~]`
+
+is printed out if its type is set to (list @t)
+
+**Q:** What steps should we use to write `rember` if we are using lists
+of text?
 
 **A:** First we need to declare a function with two arguments, `a`,
-which is an atom, and `lat`, which is a list of atoms.
+which is a text atom, and `lat`, which is a list of text atoms.
 
 **Q:** How would we do that?
 
-**A:** `|=  [a=@ lat=(list @)]`
+**A:** `|=  [a=@t lat=(list @t)]`
 
 **Q:** Then what?
 
 **A:** We use `^-` to specify that the type of value we will return is a
-list of atoms.
+list of text atoms.
 
 **Q:** How would we do that?
 
-**A:** `^-  (list @)`
+**A:** `^-  (list @t)`
 
 **Q:** What is the first question?
 
@@ -2743,8 +2779,8 @@ questions.
 **Q:** Now, let's write down what we have so far<sup>1</sup>:
 
 ```
-|=  [a=@ lat=(list @)]
-^-  (list @)
+|=  [a=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -2752,7 +2788,6 @@ questions.
   (tail lat)
 %=($ lat (tail lat))
 ```
-
 
 What is the value of `+rember [a lat]` where  
 
@@ -2765,14 +2800,11 @@ and
 <sup>1</sup> You can put this code in a file `gen/rember.hoon` in your home
 directory to try it out (don't forget to `|commit %home`).  
 
-KM: Serious complication: The default for atoms is @ud, the unsigned
-integer.  So running the above example in the dojo gives you
-`~[28.538.328.763.884.908 6.581.857 122.545.641.451.380]`
-This is not good.  The solution is, instead of just using any atom, we
-use @tas, which is the type for a term.  Or we use numbers, which is not
-nearly as engaging as using %bacon, %lettuce, and %tomato
-
 **A:** `[%lettuce %and %tomato ~]`
+
+or
+
+> `<|lettuce and tomato|>`
 
 > Hint: write down the code for `+rember` and its arguments, and refer
 > to them as you go through the next sequence of questions.
@@ -2824,6 +2856,10 @@ and
 > `lat` is `[%bacon %lettuce %and %tomato ~]`
 
 **A:** `[%bacon %lettuce %tomato ~]`
+
+or
+
+> `<|bacon lettuce tomato|>`
 
 **Q:** Let us see if our function `rember` works.  
 What is the first question asked by `rember`?
@@ -2900,8 +2936,8 @@ with just `a`&mdash;`%and`&mdash;removed.
 
 **Q:** Let's see what happens when we use `:-`
 ```
-|=  [a=@ lat=(list @)]
-^-  (list @)
+|=  [a=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -2917,11 +2953,14 @@ and
 
 > `lat` is `[%bacon %lettuce %and %tomato ~]`
 
-KM: If you fix the @ to be @tas, do so here too.
 KM: Make code files so they can be opened in another tab/window or
 something.  This isn't a book and we have options.
 
 **A:** `[%bacon %lettuce %tomato ~]`
+
+or 
+
+> `<|bacon lettuce tomato|>`
 
 **Q:** What is the first question?
 
@@ -2983,9 +3022,6 @@ we must find out before we can 'cons' `(tail lat)` onto it.
 
 But since we don't know the value of `$` using `(tail lat)` yet,
 we must find out before we can 'cons' `(tail lat)` onto it.
-
-KM: Is this actually true?  Can you start the 'cons' with a promise that
-you'll fill in the details at some point?
 
 **Q:** What is the meaning of `%=($ lat (tail lat))`
 
@@ -3488,10 +3524,12 @@ and
 
 **Q:** See if you can write the first three lines of `insert-r.hoon`
 
+Note: We will only use lists of text.
+
 **A:**
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ```
 
@@ -3520,8 +3558,8 @@ no other interesting case.
 
 **Q:** Now see if you can write the code for `insert-r.hoon`
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  !!
   !!
@@ -3534,8 +3572,8 @@ Replacing `!!` with code.
 
 **A:** Here's our first attempt.
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3559,18 +3597,6 @@ and
 
 > `lat` is `[%ice %cream %with %fudge %for %dessert ~]`
 
-Hint: Try adding the code to `gen/insert-r.hoon`.  Then `|commit %home`
-and try running it in the dojo.
-```
-> =new %topping
-> =old %fudge
-> =lat [%ice %cream %with %fudge %for %dessert ~] 
-> +insert-r [new old lat]
-```
-
-KM: verify that insert-r.hoon works as expected.
-KM: make a dojo helper description above when we first do a generator.
-
 **A:** `[%ice %cream %with %for %dessert ~]`
 
 **Q:** So far this is the same as `rember`  What do we do in `insert-r` when `.=((head lat) old)` is true?
@@ -3584,8 +3610,8 @@ to the right.
 
 **Q:** Now we have
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3632,8 +3658,8 @@ before the atom `new`.
 
 **A:** 
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3660,8 +3686,8 @@ occurrence of the atom `old` in `lat`
 
 **A:** This much is easy, right?
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3716,8 +3742,8 @@ same as `lat`.
 
 **A:** Obviously,
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3761,8 +3787,8 @@ This is the same as one of our incorrect attempts at `+insert-r`
 
 **A:** 
 ```
-|=  [new=@ o1=@ o2=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t o1=@t o2=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3798,7 +3824,8 @@ with
 If you do this, you `subst2.hoon` will look like this:
 
 ```
-|=  [new=@ o1=@ o2=@ lat=(list @)]
+|=  [new=@t o1=@t o2=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -3832,8 +3859,8 @@ returned is the original lat, with only that occurrence of `a` removed.
 **Q:** Write the generator `multirember.hoon` which gives as its final
 value the lat with all occurrences of `a` removed.
 ```
-|=  [a=@ lat=(list @)]
-^-  (list @)
+|=  [a=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  !!
   !!
@@ -3855,7 +3882,8 @@ and
 
 **A:** 
 ```
-|=  [a=@ lat=(list @)]
+|=  [a=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -4019,8 +4047,8 @@ have&mdash;`%hick`&mdash;onto `~`.
 
 **Q:** Write the generator `+multiinsert-r`
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  !!
   !!
@@ -4031,8 +4059,8 @@ have&mdash;`%hick`&mdash;onto `~`.
 
 **A:** 
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -4049,8 +4077,8 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 **Q:** Now try writing the generator `+multiinsert-l`:
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  !!
   !!
@@ -4061,8 +4089,8 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 **A:** 
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -4085,8 +4113,8 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 **Q:** Now write the generator `multisubst`
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  !!
   !!
@@ -4097,8 +4125,8 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 **A:** 
 ```
-|=  [new=@ old=@ lat=(list @)]
-^-  (list @)
+|=  [new=@t old=@t lat=(list @t)]
+^-  (list @t)
 |-
 ?:  .=(~ lat)
   ~
@@ -4113,11 +4141,11 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 ## 4. Numbers Game
 
-**A:** 
-
 **Q:** 
 
+>
 
+**A:** 
 
 ### TODO
 
@@ -4125,40 +4153,14 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
   kind of interactive version where it doesn't give the answer until you
   hit the spacebar or something.
 
-- Make a chapter describing the aura type system.  Or add this to
-  chapter 1, although that's already lengthy.  We might, in chapter
-  1, mention that most of the atoms discussed here are "cords" or
-  "terms".
-
-- Instead of cords, use terms.  (This will basically involve redoing
-  every bit of code in here, but do it anyway.)
-
 - Introduce tree addressing at some point.  Possibly a new, original
   chapter, since Scheme doesn't have anything like that.
-
-- At some point I might introduce the `:~` rune and discuss that this is a 
-  way to construct a null-terminated list. 
 
 - In re: The Law of Null?, Hoon doesn't exactly have a function `null?`.
   What it does have is `?~`, but this has a built in if-then-else
   structure.  We get into the if-then-else in chapter 2.  In chapter 4,
   we start using numbers, so it'll be important to distinguish between 0
   and ~, so introduce it then.
-
-- Gently introduce types in terms of `~`. Then `?=`, to do a type check,
-  then `?~` to test if something is null.  (Possibly skip step 2 here).
-
-- TLS uses a scaled-down superset of Scheme.  I'm kind of doing the same
-  thing here with Hoon, but need to be a bit more transparent about what 
-  you can and can't do in Hoon.
-
-- Introduce the term "gate" and "trap" for functions?  Maybe in the
-  future.
-
-- For |- use %= to show what's actually happening, i.e. we are calling
-  the function `$` with changes (running style).
-
-- Cast the result!  This is good style
 
 - Introduce more tall form
 
@@ -4167,18 +4169,7 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 - Come up with an entirely new non-food-based theme and rewrite the
   whole thing.
 
-- What about a gate that is not recursive?  Just pairs?  Ease into the
-  idea of how functions work in hoon
-
-- Special format for list of cords: <|this is a list|>
-
-- `lest` is a non-null list
-
 - Add a discussion about faces?
-
-- `%-` is the rune to call functions. Considering whether to add
-  this to the discussion of `head` in chapter 1 or to do it somewhere
-  else.
 
 - There are two ways to enter a null-terminated list.  You can either do 
 
@@ -4199,11 +4190,6 @@ I note the latest dojo is returning the later version, so to avoid
 confusion, I should make sure I mention this.  I'll keep using the long
 version, because this matches the data as it is.
 
-- Instead of `.?(c)` to look for cells (which is a perfectly cromulent way
-  of doing it, might switch to `?=(^ c)`. Or better yet, do `?=(@ a)`,
-  since this matches the book.  It's a bit more mental overhead, but this 
-  is the more general purpose way of doing it.
-
 - [1] TLS notes that the list argument only contains non-empty lists.
 If you tried with something like:
 The code for firsts would not work on something like:
@@ -4222,9 +4208,18 @@ doing.
 Anyway, should consider probably noting that any list with a null
 anywhere but the end is going to cause problems.
 
-- Call functions with %-
+
+- I've tried to avoid irregular forms, but I've also decided that %-
+  (the rune for calling functions like `head`) makes things too wordy
+  for my taste.  (Maybe it's reading a book on Scheme, but this is how
+  function calls are _supposed_ to look.)
 
 - Tidy up terminology.  Make sure we don't refer to a "function" when we
   should be referring to a "gate" or maybe a "trap".
 
 - Review the original TLS preface and pull in ideas, etc.
+
+- Scheme has no types.  Hoon has types.  I've shoehorned types in where
+  it makes sense, but this could probably be improved.  There are two books 
+  to look into: Little MLer (since ML has types) and Little Typer (which is 
+  all about tpes).
