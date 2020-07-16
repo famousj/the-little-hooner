@@ -110,7 +110,7 @@ you might be used to.
 
 This book is an adaptation of the book The Little Schemer, which uses
 the language Scheme, another Lisp and therefore a cousin of Hoon.  It goes 
-very slowly, using very small program to introduce and illustrate concepts 
+very slowly, using very small programs to introduce and illustrate concepts 
 that you'll need to understand to do programming in Hoon.
 
 I assume zero experience in Hoon, or in any other programming
@@ -2064,13 +2064,6 @@ and
 > Hint: Write down the contents of `is-member.hoon` and refer to
 > it while you work on the next group of questions.
 
-**Q:** What does the next line do?
-
-> `^-  ?`
-
-**A:** The `^-` rune says that the result of this gate will be `?`, which is the 
-type symbol for a loobean, i.e. an answer to a question.
-
 **Q:** What does the first line of `+is-member` do?
 
 > `|=  [a=@ lat=(list @)]`
@@ -2099,7 +2092,14 @@ and
 
 **A:** The second argument is named `lat`. `(list @)` means its type is a lat or list of atoms.
 
-**Q:** What does the second line do?
+**Q:** What does the next line do?
+
+> `^-  ?`
+
+**A:** The `^-` rune says that the result of this gate will be `?`, which is the 
+type symbol for a loobean, i.e. an answer to a question.
+
+**Q:** What does the third line do?
 
 > `|-`
 
