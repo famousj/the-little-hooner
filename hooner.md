@@ -5,7 +5,9 @@
 
 ## The Ten Commandments
 
-KM First commandment
+###  The First Commandment
+> When recurring on a list of atoms, always ask if a list is null as the first question in expressing any function.  
+> When recurring on a number, ask if the number is zero.
 
 ###  The Second Commandment
 > Use `:-` to build lists.
@@ -14,6 +16,11 @@ KM First commandment
 > When building a list, describe the first typical element, then 'cons' it onto the natural recursion.
 
 KM Fourth commandment
+###  The Fourth Commandment
+> Always change one argument when recurring.  It must be changed to be closer to termination.  The changing argument must be tested in the termination condition:  
+> when using `tail`, test termination with `.=(~ l)  
+> when using `sub1`, test termination with `.=(0 l)  
+
 
 ## The <strike>Five</strike> Four Rules
 
@@ -4141,11 +4148,773 @@ first `:-` on line 6 because we know that `.=((car lat) old)`
 
 ## 4. Numbers Game
 
-**Q:** 
+JL: This section is under construction!
 
->
+**Q:** Is `14` an atom?
+
+**A:** Yes, because all numbers are atoms.
+
+**Q:** is `?=(@ n)` true or false  
+where
+
+> `n` is `14`
+
+**A:** True  
+because `?=(@ n)` tests if `n` is an atom.
+
+**Q:** Is `14` of type `@ud`
+
+**A:** Yes  
+because `@ud` is the type for "unsigned decimal"
+
+**Q:** Is `-3` of type `@ud`
+
+**A:** No,  
+because it's not unsigned
+
+KM: Show the very baroque way of doing floats in Urbit.
+
+**Q:** Is `0xbeef` of type `@ud`
+
+**A:** No,  
+it's not a decimal.  Its type is `@ux`
+
+**Q:** What is `(add1 n)`<sup>1</sup>
+where `n` is `67`
+
+<sup>1</sup> Run this in the dojo:
+```
+=add1 |=(n=@ud +(n))
+```
+
+KM: We can either introduce the idea of a core here (which will
+seriously complicate things) or just assign these things in the dojo.
+Let's try creating add1 and sub1 in the dojo and see how far that takes
+us.
+
+**A:** `68`
+
+**Q:** What is `(add1 67)`
+
+**A:** Also `68`,  
+
+> because we don't need to say "where `n` is `67`" when the argument is a
+> number.
+
+**Q:** What is `(sub1 n)`<sup>1</sup>  
+where `n` is `5`
+
+<sup>1</sup> Run this in the dojo:
+```
+=sub1 |=(n=@ud (sub n 1))
+```
+
+KM: Okay, here's what we're going to do:
+We're going to make a core in the `lib` directory in a file called
+`math.hoon`.  We will make generators, and as we're done, we'll add them
+to the core in `math.hoon`
+KM: Also, let's create `sub1` from `add1`.  The classic "decrement by
+increment".
+
+**A:** `4`
+
+**Q:** What is `(sub1 0)`
+
+**A:** No answer.  `sub1` will only work with unsigned decimals (`@ud`)
+
+**Q:** Is `.=(0 n)` true or false  
+when `n` is `0`?
+
+**A:** True
+
+**Q:** Is `.=(0 n)` true or false  
+when `n` is `1066`?
+
+**A:** False
+
+**Q:** What is +plus [46 12]
+
+**A:** `58`
+
+**Q:** Try to write the generator `plus.hoon`
+
+> Hint: It uses `.=(0 n)`, `add1`, and `sub1`
+
+KM: Some description of using a `lib` file here
 
 **A:** 
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  n
+(add1 %=($ m (sub1 m)))
+```
+
+Wasn't that easy?
+
+**Q:** But didn't we just violate The First Commandment?
+
+**A:** Yes, but we can treat `.=(0 n)` like `.=(~ n)` since the former
+asks if a number is empty and the latter asks if a list is empty.
+
+**Q:** If `.=(0 n)` is like `.=(~ n)`  
+is `add1` like `:=`
+
+**A:** Yes! `:=` builds lists and `add1` builds numbers.
+
+**Q:** What is `+minus [14 3]`
+
+**A:** 11
+
+**Q:** What is `+minus [17 9]`
+
+**A:** 8
+
+**Q:** What is `+minus [18 25]`
+
+**A:** No answer.  We are not using negative numbers here.
+
+**Q:** Try to write the generator `minus.hoon`
+
+> Hint: Use `sub1`
+
+**A:** How about this:
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  n
+(sub1 %=($ m (sub1 m)))
+```
+
+KM: At this point, we should instruct the reader to put `plus` and
+`minus` into `math.hoon` in `lib`.
+
+KM: Note somewhere in chapter 2 that generators can only accept one
+argument.
+
+**Q:** Can you describe how `+minus [n m]` works?
+
+**A:** It takes two numbers as arguments, and reduces the second until
+it hits zero.  It subtracts one from the result as many times as it did
+to cause the second one to reach zero.
+
+JL: TLS introduces the term 'tup' here, which is short for "tuple" which
+is a list of numbers.  I'm not doing that.  I believe `(list @ud)` is
+clear enough, given that we've used `(list @)` above.
+
+**Q:** What is `+add-numbers l`  
+where
+
+> `l` is `[3 5 2 8 ~]`
+
+**A:** 18
+
+**Q:** What is `+add-numbers l`  
+where
+
+> `l` is `[15 6 7 12 3 ~]`
+
+**A:** 43
+
+**Q:** What does `+add-numbers l` do?
+
+**A:** It builds a number by totaling all the numbers in its argument.
+
+**Q:** What is the natural way to build numbers from a list?
+
+**A:** Use `plus` in place of `:=`  
+`plus` builds numbers in the same way that `:=` builds lists.
+
+**Q:** When buidling with `:=` the value of the terminal condition is
+`~`  
+What should be the value of the terminal condition when building numbers
+with `plus`
+
+**A:** 0
+
+**Q:** What is the natural terminal condition for a list?
+
+**A:** `.=(~ l)`
+
+KM: This is about where I was considering mentioning that `~` is a type.
+Might not be necessary.
+
+**Q:** When we build a number from a list of numbers, what should the
+terminal condition look like?
+
+**A:** 
+```
+?:  .=(~ l)
+  0
+```
+
+just as
+```
+?:  .=(~ l)
+  ~
+```
+
+is often the terminal condition line for lists.
+
+**Q:** What is the terminal condition of `+add-numbers`
+
+**A:** 
+```
+?:  .=(~ l)
+  0
+```
+
+**Q:** What is the type for `l` in `+add-numbers`
+
+**A:** `(list @ud)`
+
+**Q:** What type of value will `+add-numbers` return?
+
+**A:** `@ud`
+
+**Q:** How is `l` defined, where `l` is of type `(list @ud)`?
+
+**A:** It is either an empty list, or it contains an unsigned decimal,
+`(head l)`, and a rest, `(tail l)`, that is also a `(list @ud)`
+
+**Q:** What is used in the natural recursion on a list?
+
+**A:** `(tail l)`
+
+**Q:** How many questions do we need to ask about a list?
+
+**A:** One.  It is either the empty list `~` or it is not.
+
+**Q:** How is a number defined?
+
+**A:** It is either zero or it is one added to a rest, where rest is
+again a number.
+
+**Q:** What is the natural terminal condition for numbers?
+
+**A:** `.=(0 n)`
+
+**Q:** What is the natural recursion on a number?
+
+**A:** `(sub1 n)`
+
+**Q:** How many questions do we need to ask about a number?
+
+**A:** One.
+
+---
+
+###  The First Commandment
+##### (first revisions)
+#### When recurring on a list of atoms, always ask if a list is null as the first question in expressing any function.  
+#### When recurring on a number, ask if the number is zero.
+
+---
+
+**Q:** What does `:-` do?
+
+**A:** It builds lists
+
+**Q:** What does `+add-numbers` do?
+
+**A:** It buidls a number by totalling all the numbers in a list.
+
+**Q:** What is the terminal condition of `+add-numbers`
+
+**A:**
+```
+?:  .=(~ l)
+  0
+```
+
+**Q:** What is the natural recursion for `+add-numbers`
+
+**A:** `%=($ l (tail l))`
+
+**Q:** What does `+add-numbers` use to build a number?
+
+**A:** It uses `plus`, because `plus` builds numbers too!
+
+**Q:** Replace the `!!` in the following definition:
+```
+/+  math
+=,  math
+
+|=  l=(list @ud)
+^-  @ud
+|-
+?:  .=(~ l)
+  0
+!!
+```
+
+**A:** Here is what we filled in:
+```
+(plus (head l) %=($ l (tail l))
+```
+
+Notice the similarity between this line, and the last line of the
+generator `rember`:
+```
+:-  (head lat)
+%=($ lat (tail lat))
+```
+
+KM: There's a lot of stuff shoehorned into the `plus` line.  Consider tall
+form to help it breathe a bit.
+
+KM: Note we should plonk this in `math.hoon`
+
+**Q:** What is `+times [5 3]`
+
+**A:** 15
+
+**Q:** What is `+times [13 4]`
+
+**A:** 52
+
+**Q:** What does `+times [13 4]` do?
+
+**A:** It builds up a number by adding `n` up `m` times.
+
+**Q:** What is the terminal condition for `+times`
+
+**A:** 
+```
+?:  .=(0 m)
+  0
+```
+
+because n * 0 = 0
+
+**Q:** Since `.=(0 m)` is the terminal condition, `m` must eventually be
+reduced to zero.  What function is used to do this?
+
+**A:** `sub1`
+
+---
+
+###  The Fourth Commandment
+##### (first revision)
+#### Always change one argument when recurring.  It must be changed to be closer to termination.  The changing argument must be tested in the termination condition:
+#### when using `tail`, test termination with `.=(~ l)
+#### when using `sub1`, test termination with `.=(0 l)
+
+---
+
+**Q:** What is another name for
+```
+%=($ m (sub1 m))
+```
+
+in this case?
+
+**A:** It is the natural recursion.
+
+**Q:** Try to write the code for `times.hoon`
+
+**A:** 
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  0
+(plus n %=($ m (sub1 m)))
+```
+
+**Q:** What is `+times [12 3]`
+
+**A:** `36`,
+
+> but let's follow through the function one time to see how we get this
+> value.
+
+**Q:** `.=(0 m)`
+
+**A:** No.
+
+**Q:** What is the meaning of 
+```
+(plus n %=($ m (sub1 m)))
+```
+
+**A:** It adds `n` (where `n` = 12) to the natural recursion.  If this
+is correct, then `$` where `m` is set to `(sub1 3)` should be `12`.
+
+**Q:** What are the new values for `n` and `m`
+
+**A:** `n` is still `12` and `m` is now `2`
+
+**Q:** `.=(0 m)`
+
+**A:** No.
+
+**Q:** What is the meaning of 
+```
+(plus n %=($ m (sub1 m)))
+```
+
+**A:** It adds `n` (where `n` = 12) to  `$` where `m` is set to `(sub1 m)`
+
+**Q:** What is the new value for `m`
+
+**A:** `m` is now 1
+
+**Q:** `.=(0 m)`
+
+**A:** No.
+
+**Q:** What is the meaning of 
+```
+(plus n %=($ m (sub1 m)))
+```
+
+**A:** It adds `n` (where `n` = 12) to  `$` where `m` is set to `(sub1 m)`
+
+**Q:** `.=(0 m)`
+
+**A:** Yes, so return `0`
+
+**Q:** Are we finished yet?
+
+**A:** No.
+
+**Q:** Why not?
+
+**A:** Because we still have three `$`s to pick up.
+
+**Q:** What is the value of the original application?
+
+**A:** Add `12` to `12` to `12` to `0` yielding `36`,
+
+> Notice that `n` has been `plus`-ed `m` times.
+
+**Q:** Argue, using equations, that `+times` is the conventional
+multiplication of nonnegative integers, where `n` is `12` and `m` is
+`3`.
+
+**A:** 
+```
++times [12 3] = 12 + (+times [12 2])
+              = 12 + 12 + (+times [12 1])
+              = 12 + 12 + 12 + (+times [12 0])
+              = 12 + 12 + 12 + 12 + 0
+```
+which is as we expected.  This technique works for all recursive
+functions, not just those that use numbers.  You can use this approach
+to write functions as well as to argue their correctness.
+
+**Q:** Again, why is `0` the value for the terminal condition line in
+`+times`
+
+**A:** Because `0` will not affect `+plus`.  That is, `n` + 0 = `n`
+
+---
+
+###  The Fifth Commandment
+#### When building a value with `plus`, always use `0` for the terminating value, for adding `0` does not change the value of an addition.
+#### When building a value with `times`, always use `1` for the terminating value, for multiplying by `1` does not change the value of a multiplication.
+#### When building a value with `cons`, always consider `~` for the terminating value.
+
+---
+
+**Q:** What is `+add-number-lists l1 l2`  
+where  
+
+> `l1` is `~[3 6 9 11 4]`
+
+and
+
+> `l2` is `~[8 5 2 0 7]`
+
+**A:** `~[11 11 11 11 11]`
+
+**Q:** What is `+add-number-lists  [l1 l2]`
+where  
+
+> `l1` is `~[2 3]`
+
+and
+
+> `l2` is `~[4 6]`
+
+**A:**  `~[6 9]`
+
+**Q:** What does `+add-number-lists [l1 l2]` do?
+
+**A:** It adds the first number of `l1` to the first number of `l2`,
+then it adds the second number of `l1` to the second number of `l2`, and
+so on, building a list of the answers, for two lists of the same length.
+
+**Q:** What is unusual about `+add-number-lists`
+
+**A:** It looks at each element of two lists at the same time, or in
+other words, it recurs on two lists.
+
+**Q:** If you recur on one list, how many questions do you have to ask?
+
+**A:** One.  `.=(~ l)`
+
+**Q:** When recurring on two lists, how many questiosn need to be asked?
+
+
+**A:** Three: both lists are empty, if only the first list is empty, if
+only the second list is empty.
+
+**Q:** Do you mean the questions:
+
+> `?&(.=(~ l1) .=(~ l2))`
+> `.=(~ l1)`
+> `.=(~ l2)`
+
+KM: We have not introduced `AND` until now.  Break this one out.
+
+**A:** Yes.
+
+**Q:** Can the first list be `~` at the same time as the second is other
+than `~`
+
+**A:** No, because the lists must have the same length
+
+**:** Does this mean
+
+> `?&(.=(~ l1) .=(~ l2))`
+
+is the only question we need to ask?
+
+**A:** Yes,
+
+> because `.=(~ l1)` is true exactly when `.=(~ l2)` is true.
+
+KM: Break down how to change two parameters for `$`
+
+**Q:** Write the code for `add-number-lists.hoon`.
+
+**A:** 
+```
+/+  math
+=,  math
+
+|=  [l1=(list @ud) l2=(list @ud)]
+^-  (list @ud)
+|-
+?:  ?&(.=(~ l1) .=(~ l2))
+  ~
+:-  (plus (head l1) (head l2))
+%=  $
+  l1  (tail l1)
+  l2  (tail l2)
+==
+```
+
+**Q:** What are the arguments for `plus`?
+
+**A:** `(head l1)` and `(head l2)`
+
+**Q:** What are the arguments for `:-`
+
+**A:** `(plus (head l1) (head l2)`  
+and  
+the result of calling `$` with `l1` set to `(tail l2)` and `l2` set to
+`(tail l2)`
+
+**Q:** What is `+add-number-lists [l1 l2]`  
+where  
+
+> `l1` is `~[3 7]`
+
+and
+
+> `l2` is `~[4 6]`
+
+**A:** `~[7 13]`
+
+> But let's see how it works.
+
+**Q:** `.=(~ l1)`
+
+**A:** No.
+
+**Q:** 
+```
+:-  (plus (head l1) (head l2))
+%=  $
+  l1  (tail l1)
+  l2  (tail l2)
+==
+```
+
+**A:** 'cons' `7` onto the natural recursion: 
+
+> `$` with `l1` set to `(tail l1)` and `l2` set to `(tail l2)`.
+
+**Q:** Why does the natural recursion include the `tail` of both
+arguments?
+
+**A:** Because the typical element of the final value uses the `head` of
+both lists, so now we are ready to consider the rest of both lists.
+
+**Q:** `.=(~ l1)`  
+where
+
+> `l1` is now `~[7]`
+
+and
+
+> `l2` is now `~[6]`
+
+**A:** No
+
+**Q:** 
+```
+:-  (plus (head l1) (head l2))
+%=  $
+  l1  (tail l1)
+  l2  (tail l2)
+==
+```
+
+**A:** 'cons' `13` onto the natural recursion.
+
+**Q:** `.=(~ l1)`
+
+**A:** Yes.
+
+**Q:** Then, what must be the value?
+
+**A:** `~` because `.=(~ l2)` must be true.
+
+**Q:** What is the value of the application?
+
+**A:** `~[7 13]`.  That is, the 'cons' of `7` onto the 'cons' of `13`
+onto `~`.
+
+**Q:** What problem arises when we want  
+`+add-number-lists [l1 l2]`  
+where
+
+> `l1` is `~[3 7]`
+
+and
+
+> `l2` is `~[4 6 8 1]`
+
+KM: Double-check that we've introduced the short form of lists before
+now.
+
+**A:** No answer, since `l1` will become null before `l2`.
+
+> See The First Commandment: We did not ask all the necessary questions!
+
+But, we would like the final value to be
+
+> `~[7 13 8 1]`
+
+**Q:** Can we still write `+add-number-lists` if the lists are not the
+same length?
+
+**A:** Yes!
+
+**Q:** What new terminal condition can we add to get the correct final
+value?
+
+**A:** Add
+```
+?:  .=(~ l1)
+  l2
+```
+
+**Q:** What is `+add-number-lists [l1 l2]`  
+where  
+
+> `l1` is `~[3 7 8 1]
+
+and
+
+> `l21 is `~[4 6]`
+
+**A:** No answer, since `l2` will become `~` before `l1`.
+
+> See The First Commandment: We did not ask all the necessary questions!
+
+**Q:** What do we need to include in our function?
+
+**A:** We need to ask two more questions:
+
+> `.=(~ l1)` and `.=(~ l2)`
+
+**Q:** What does the second new question look like?
+
+**A:**
+```
+?:  =.(~ l2)
+  l1
+```
+
+**Q:** Here is code for `add-number-lists.hoon` that works for any two
+lists.
+```
+/+  math
+=,  math
+
+|=  [l1=(list @ud) l2=(list @ud)]
+^-  (list @ud)
+|-
+?:  ?&(.=(~ l1) .=(~ l2))
+  ~
+?:  .=(~ l1)
+  l2
+?:  .=(~ l2)
+  l1
+:-  (plus (head l1) (head l2))
+%=  $
+  l1  (tail l1)
+  l2  (tail l2)
+==
+```
+
+Can you simplify it?
+
+**A:** 
+```
+/+  math
+=,  math
+
+|=  [l1=(list @ud) l2=(list @ud)]
+^-  (list @ud)
+|-
+?:  .=(~ l1)
+  l2
+?:  .=(~ l2)
+  l1
+:-  (plus (head l1) (head l2))
+%=  $
+  l1  (tail l1)
+  l2  (tail l2)
+==
+```
+
+**Q:** Does the order of the two terminal conditions matter?
+
+**A:** No.
+
+**Q:** Are those the only two questions we need to ask?
+
+**A:** Yes, because if neither `.=(~ l1)` nor `.=(~ l2)` is true, then both lists contain at least one number.
 
 ### TODO
 
@@ -4223,3 +4992,13 @@ anywhere but the end is going to cause problems.
   it makes sense, but this could probably be improved.  There are two books 
   to look into: Little MLer (since ML has types) and Little Typer (which is 
   all about tpes).
+
+- Actually make some exercises at the end of chapters!  It's easy enough
+  to follow along with someone and assume you "get" it, only to struggle
+  when you actually have to do something yourself.
+
+- Terms can be used as types, and I ought to mention this somewhere.
+
+- Scheme has seven primitives: `quote`, `atom`, `eq , `car`, `cdr`,
+  `cons`, and `cond`.  Hoon doesn't really have the concept of a
+  "primitive".  Ought to remove that term.
