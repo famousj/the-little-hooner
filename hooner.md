@@ -4312,6 +4312,8 @@ JL: TLS introduces the term 'tup' here, which is short for "tuple" which
 is a list of numbers.  I'm not doing that.  I believe `(list @ud)` is
 clear enough, given that we've used `(list @)` above.
 
+KM: Add this to `lib/math.hoon`
+
 **Q:** What is `+add-numbers l`  
 where
 
@@ -4632,6 +4634,9 @@ to write functions as well as to argue their correctness.
 
 ---
 
+
+KM: Note that we need to move `+times` into the math lib.
+
 **Q:** What is `+add-number-lists l1 l2`  
 where  
 
@@ -4916,6 +4921,530 @@ Can you simplify it?
 
 **A:** Yes, because if neither `.=(~ l1)` nor `.=(~ l2)` is true, then both lists contain at least one number.
 
+**Q:** What is `+gt [12 133]`
+
+> Note: `gt` is short for "greater than"
+
+**A:** `%.n`&mdash;false.
+
+**Q:** What is `+gt [120 11]`
+
+**A:** `%.y`&mdash;true.
+
+**Q:** On how many numbers do we have to recur?
+
+**A:** Two, `n` and `m`.
+
+**Q:** How do we recur?
+
+**A:** With `(sub1 n)` and `(sub1 m)`.
+
+**Q:** When do we recur?
+
+**A:**When we know neither number is equal to 0.
+
+**Q:** How many questions do we have to ask about `n` and `m`
+
+**A:** Two: `.=(0 n)` and `.=(0 m)` 
+
+**Q:** Can you write the code for the generator `gt.hoon`
+
+**A:** How about
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  %.y
+?:  .=(0 n)
+  %.n
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+**Q:** Is the way we wrote `gt.hoon` correct?
+
+**A:** No, try `+gt [n m]` when `n` and `m` are the same number.  Let
+`n` and `m` be `3`.
+
+**Q:** `.=(0 3)`
+
+**A:** No, skip `%.y`
+
+**Q:** `.=(0 3)`
+
+**A:** No, skip `%.n`
+
+**Q:** What is the meaning of
+```
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+**A:** Recur, but with both arguments reduced by one.
+
+**Q:** `.=(0 2)`
+
+**A:** No, skip `%.y`
+
+**Q:** `.=(0 2)`
+
+**A:** No, skip `%.n`
+
+**Q:** What is the meaning of
+```
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+**A:** Recur, but with both arguments reduced by one.
+
+**Q:** `.=(0 1)`
+
+**A:** No, skip `%.y`
+
+**Q:** `.=(0 1)`
+
+**A:** No, skip `%.n`
+
+**Q:** What is the meaning of
+```
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+**A:** Recur, but with both arguments reduced by one.
+
+**Q:** `.=(0 0)`
+
+**A:** Yes, so the value of `+gt [n m]` is `%.y`
+
+**Q:** Is that correct?
+
+**A:** No, because `3` is not greater than `3`
+
+**Q:** Does the order of the two terminal conditions matter?
+
+**A:** Think about it.
+
+**Q:** Does the order of the two terminal conditions matter?
+
+**A:** Try it out!
+
+**Q:** Does the order of the two terminal conditions matter?
+
+**A:** Yes.  Think first, then try.
+
+**Q:** How can we change the code for `gt.hoon` to take care of this
+subtle problem?
+
+**A:** Switch the first two tests
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 n)
+  %.n
+?:  .=(0 m)
+  %.y
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+**Q:** What is `+lt [4 6]`
+
+> Note: `lt` is short for, you guessed it, "less than"
+
+**A:** `%.y`
+
+**Q:** `+lt [8 3]`
+
+**A:** `%.n`
+
+**Q:** `+lt [ 6 6]`
+
+**A:** `%.n`
+
+**Q:** Now try to write `lt.hoon`
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  %.n
+?:  .=(0 n)
+  %.y
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+**Q:** Here is the code for `eq.hoon`
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  .=(0 n)
+?:  .=(0 n)
+  %.n
+%=  $
+  n  (sub1 n)
+  m  (sub1 m)
+==
+```
+
+Rewrite `eq.hoon` using `lt` and `gt`
+
+KM: Move `lt` and `gt` to `lib/math.hoon`
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  (gt n m)
+  %.n
+?:  (lt n m)
+  %.n
+%.y
+```
+
+**Q:** Do we need another function for testing equality?
+
+**A:** No, but it's a good exercise to write one.
+
+KM: Do we even want this?  I think this part was included in TLS because 
+Scheme treats numbers and non-numbers differently.  
+
+**Q:** `+exp [1 1]`
+
+KM: Almost alll the functions we're creating here have stdlib equivalents.  
+Make an appendix to this chapter saying what the real versions are
+
+**A:** `1`
+
+**Q:** `+exp [2 3]`
+
+**A:** `8`
+
+**Q:** `+exp [5 3]`
+
+**A:** `125`
+
+**Q:** Now write the code for `exp.hoon`
+
+> Hint: see The First and Fifth Commandments.
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  .=(0 m)
+  1
+(times n %=($ m (sub1 m)))
+```
+
+KM: This last line is pretty tricky.  Consider rewriting it with `%-`
+```
+%-  times
+[n %=($ m (sub1 m))]
+```
+
+**Q:** What is a good name for this?
+```
+/+  math
+=,  math
+
+|=  [n=@ud m=@ud]
+^-  @ud
+|-
+?:  (lt n m)
+  0
+(add1 %=($ n (minus n m)))
+```
+
+**A:** We have never seen this kind of definition before; the natural
+recursion also looks strange.
+
+**Q:** What does the first question check?
+
+**A:** It determines whether the first argument is less than the second
+one.
+
+**Q:** And what happens if it is not?
+
+**A:** We recur with the first argument from which we subtract the
+second argument.  When the function returns, we add `1` to the result.
+
+**Q:** So what does the function do?
+
+**A:** It counts how many times the second argument fits into the first
+one.
+
+**Q:** And what do we call this?
+
+**A:** Division.
+
+
+**Q:** If we add this code to a generator, `divide.hoon`, what is
+
+>  `+divide [ 15 4]`
+
+**A:** Easy, it is `3`.
+
+**Q:** How do we get there?
+
+**A:** Easy, too:
+
+> +divide [15 4] = 1 + (+divide [11 4])
+>                = 1 + (1 + (+divide [7 4]))
+>                = 1 + (1 + (1 + (+divide [3 4])))
+>                = 1 + (1 + (1 + 0))
+
+KM: Copy this to `lib/math.hoon`
+
+---
+
+<center>Wouldn't a `~[ham and cheese on rye]` be good right now?</center>
+<center>Don't forget the mustard!</center>
+
+---
+
+**Q:** What is the value of `+length l`  
+where
+
+> `l` is `~[%hotdogs %with %mustard %sauerkraut %and %pickles]`
+
+**A:** `6`
+
+**Q:** What is `+length l`  
+where
+
+> `l` is `~[%ham %and %cheese %on %rye]`
+
+**A:** `5`
+
+**Q:** Now try to write the code for `length.hoon`
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  l=list
+^-  @ud
+|-
+?:  .=(~ l)
+  0
+(add1 %=($ l (tail l)))
+```
+
+KM: Instead of cluttering up all the code with the "import math" and
+"add math to namespace", possibly add that to a preface to this chapter.
+
+**Q:** What is `+pick [n l]`  
+where `n` is `4`  
+and 
+
+> `l` is `~[%lasagna %spaghetti %ravioli %macaroni %meatball]`
+
+**A:** `%meatball`
+
+JL: TLS does 1-based indexing.  Since Hoon is not FORTRAN, I'm going
+with 0-based indexing.
+
+**Q:** What is `+pick [0 l]`  
+where `l` is `~[%a]`
+
+**A:** `%a`
+
+**Q:** Try to write the code for `pick.hoon`
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [n=@ud l=(list @t)]
+^-  @t
+|-
+?:  .=(0 n)
+  (head l)
+%=  $ 
+  n  (sub1 n)
+  l  (tail l)
+==
+```
+
+**Q:** What is `+rempick [n l]`  
+where `n` is `3`  
+and
+
+> `l` is `~[%hotdogs %with %hot %mustard]`
+
+**A:** `~[%hotdogs %with %mustard]`
+
+**Q:** Now try to write the code for `rempick.hoon`
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [n=@ud l=(list @t)]
+^-  (list @t)
+|-
+?:  .=(0 n)
+  (tail l)
+:-  (head l)
+%=  $
+  n  (sub1 n)
+  l  (tail l)
+==
+```
+
+**Q:** What is the type for an unsigned decimal?
+
+**A:** `@ud`
+
+KM: TLS at this point does something called "no-nums" which removes all
+the numbers from a list.  Again, this is possible in Scheme because
+numbers are different from non-numbers.  In Hoon, everything is a
+number.  Something like this is possibly possible with a wet gate.  I
+need to investigate.
+
+(And then once I decide if it's possible, I should decide if I want to
+introduce the idea of a wet gate now or ever.)
+
+KM: And also TLS has `eqan` which does something special based on
+whether the parameters are numbes.  Again, Hoon doesn't doesn't do this.
+
+**Q:** Now write the code for `occur.hoon` which counts the number of
+times an atom `a` appears in a list `l`
+```
+/+  math
+=,  math
+
+|=  [a=!! l=!!]
+^-  !!
+|-
+?:  !!
+  !!
+?:  !!
+  !!
+!!
+```
+
+(Replace the `!!`s with your code.)
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [a=@ l=(list @)]
+^-  @ud
+|-
+?:  .=(~ n)
+  0
+?:  .=((head l) a)
+  (add1 %=($ l (tail l)))
+%=($ l (tail l))
+```
+
+**Q:** Write the code for `is-zero.hoon` where `+zero n` is `%.y` if `n` is
+`0` and `%.n` (i.e. false) otherwise.
+
+**A:**
+```
+|=  n=@ud
+^-  ?
+?:  .=(1 n)
+  %.y
+%.n
+```
+
+**Q:** Guess how we can further simplify this, making it a one-liner.
+
+**A:** By removing the `?:`
+```
+|=(n=@ud ^-(? .=(1 n)))`
+```
+
+We could also remove the `^-` and make it even simpler:
+
+```
+|=(n=@ud .=(1 n))`
+```
+
+**Q:** Now rewrite the code for `rempick.hoon` that removes the
+n<sup>th</sup> atom from a list (starting at `0`).  For example,  
+where  
+
+> `n` is `2`
+
+and
+
+> `l` is `~[%lemon %meringue %salty %pie]`
+
+the value of `+rempick [n l]` is
+
+> `~[%lemon %meringue %pie]`
+
+Use the function `is-zero` in your answer.
+
+KM: Add `is-zero` to `lib/math.hoon`
+
+**A:**
+```
+/+  math
+=,  math
+
+|=  [n=@ud l=(list @t)]
+^-  (list @t)
+|-
+?:  (is-zero n)
+  (tail l)
+:-  (head l)
+%=  $
+  n  (sub1 n)
+  l  (tail l)
+==
+```
+
 ### TODO
 
 - Right now this is a Markdown file. It'd be pretty sweet to make some
@@ -5002,3 +5531,6 @@ anywhere but the end is going to cause problems.
 - Scheme has seven primitives: `quote`, `atom`, `eq , `car`, `cdr`,
   `cons`, and `cond`.  Hoon doesn't really have the concept of a
   "primitive".  Ought to remove that term.
+
+- I'm using generators that expect only one argument.  This simplifies
+  things, but we might want generators a bit more explicit.
