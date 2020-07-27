@@ -1404,7 +1404,6 @@ running it in the dojo.
 > +is-lat l
 ```
 
-
 JL: The original version in the book was not tall-recursive.  This
 one is.  I don't know if I'll explain what "tail-recursion" is here, but
 I thought I'd write it this way to demonstrate good style.
@@ -2275,8 +2274,7 @@ of the `tail` of `lat` by calling `$` and returning to the restart point.
 
 **Q:** What do we do now?
 
-**A:** Call `$` to return to our restart point, with new
-arguments.
+**A:** Recur&mdash;call `$` with new arguments.
 
 **Q:** What are the new arguments?
 
@@ -2383,8 +2381,7 @@ and
 
 **Q:** What next?
 
-**A:** Call `$` to return to the restart point `|-` using `(tail lat)`
-for `lat`
+**A:** Recur using `(tail lat)` for `lat`
 
 So `a` is `%meat`  
 
@@ -2406,7 +2403,7 @@ and
 
 **A:** `.=((head lat) a)` is false.
 
-Call `$` to return to `|-`  with `(tail lat)`  
+Recur using `(tail lat)` for `lat` 
 
 > So now `lat` is `[%and %meat %gravy ~]`
 
@@ -2424,7 +2421,7 @@ Call `$` to return to `|-`  with `(tail lat)`
 
 **A:** `.=((head lat) a)` is false.
 
-Call `$` to return to `|-`  with `(tail lat)`  
+Recur using `(tail lat)` for `lat` 
 
 > So now `lat` is `[%meat %gravy ~]`
 
@@ -2505,7 +2502,7 @@ and
 
 **A:** `.=((head lat) a)` is false.
 
-> Call `$` and return to the `|-`  with `(tail lat)`  
+> Recur with `(tail lat)`
 
 > > So now `lat` is `[%and %lox ~]`
 
@@ -2523,7 +2520,8 @@ and
 
 **A:** `.=((head lat) a)` is false.
 
-> Call `$` and return to the `|-`  `(tail lat)`  
+> Recur with `(tail lat)`
+
 > > So now `lat` is `[%lox ~]`
 
 **Q:** `?:  .=(~ lat)`
@@ -2540,7 +2538,8 @@ and
 
 **A:** `.=((head lat) a)` is false.
 
-> Call `$` and return to the `|-`  with `(tail lat)`  
+> Recur with `(tail lat)`
+
 > > So now `lat` is `~`
 
 **Q:** `?:  .=(~ lat)`
@@ -2900,8 +2899,6 @@ What is the first question asked by `rember`?
 
 **A:** Recur  
 setting `lat` to `(tail lat)` or `[%and %tomato ~]`
-
-KM: Use the word "recur" more in chapter 2
 
 **Q:** `?:  .=(~ lat)`
 
