@@ -15,7 +15,6 @@
 ###  The Third Commandment
 > When building a list, describe the first typical element, then 'cons' it onto the natural recursion.
 
-KM Fourth commandment
 ###  The Fourth Commandment
 > Always change one argument when recurring.  It must be changed to be closer to termination.  The changing argument must be tested in the termination condition:  
 > when using `tail`, test termination with `.=(~ l)  
@@ -2957,9 +2956,6 @@ and
 
 > `lat` is `[%bacon %lettuce %and %tomato ~]`
 
-KM: Make code files so they can be opened in another tab/window or
-something.  This isn't a book and we have options.
-
 **A:** `[%bacon %lettuce %tomato ~]`
 
 or 
@@ -4167,14 +4163,21 @@ because `@ud` is the type for "unsigned decimal"
 **Q:** Is `-3` of type `@ud`
 
 **A:** No,  
-because it's not unsigned
+because it's a signed decimal, whose type is `@sd`
 
-KM: Show the very baroque way of doing floats in Urbit.
+**Q:** What is `.~3.14159`
+
+**A:** This is a way to write the number `3.14159` in Hoon
+
+**Q:** Is `.~3.14159` of type `@ud`
+
+**A:** No,  
+because it's a floating-point number, whose type is `@rd`
 
 **Q:** Is `0xbeef` of type `@ud`
 
 **A:** No,  
-it's not a decimal.  Its type is `@ux`
+because it's a hexidecimal number.  Its type is `@ux`
 
 **Q:** What is `(add1 n)`<sup>1</sup>
 where `n` is `67`
