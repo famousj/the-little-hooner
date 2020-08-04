@@ -4179,8 +4179,9 @@ because it's a floating-point number, whose type is `@rd`
 **A:** No,  
 because it's a hexidecimal number.  Its type is `@ux`
 
-**Q:** What is `(add1 n)`<sup>1</sup>
+**Q:** What is `+add1 n`<sup>1</sup>
 where `n` is `67`
+
 
 <sup>1</sup> Run this in the dojo:
 ```
@@ -4194,33 +4195,128 @@ us.
 
 **A:** `68`
 
-**Q:** What is `(add1 67)`
+**Q:** What is `+add1 67`
 
 **A:** Also `68`,  
 
 > because we don't need to say "where `n` is `67`" when the argument is a
 > number.
 
-**Q:** What is `(sub1 n)`<sup>1</sup>  
+**Q:** What is the code for `add1.hoon`
+
+**A:**
+```
+|=  n=@ud
+^-  @ud
+.+(n)
+```
+
+**Q:** What does the rune `.+` do?
+
+**A:** `.+` (pronounced 'dotlus') increments a number, i.e. it add one.
+
+**Q:** What is `+sub1 n`<sup>1</sup>  
 where `n` is `5`
-
-<sup>1</sup> Run this in the dojo:
-```
-=sub1 |=(n=@ud (sub n 1))
-```
-
-KM: Okay, here's what we're going to do:
-We're going to make a core in the `lib` directory in a file called
-`math.hoon`.  We will make generators, and as we're done, we'll add them
-to the core in `math.hoon`
-KM: Also, let's create `sub1` from `add1`.  The classic "decrement by
-increment".
 
 **A:** `4`
 
-**Q:** What is `(sub1 0)`
+**Q:** What is `+sub1 0`
 
-**A:** No answer.  `sub1` will only work with unsigned decimals (`@ud`)
+**A:** No answer.  `+sub1` will only work for unsigned decimals (`@ud`s)
+
+**Q:** What is the code for `sub1.hoon`
+
+**A:**
+```
+|=  n=@ud
+^-  @ud
+(sub n 1)
+```
+
+Note: `sub` here is from the Hoon standard library.  There's a way to
+write `sub1` using only `add1`.  We will do that, but not right now.
+
+## A brief digression about cores and libraries
+
+**Q:** What is a library?
+
+**A:** It's a place to keep handy pieces of code.
+
+**Q:** Would you say that `add1` and `sub1` are handy?
+
+**A:** They look handy to me.
+
+**Q:** How would we create a library math operations?
+
+**A:** Let's make a file in our `home` called `lib/math.hoon`
+
+**Q:** What are the contents of `lib/math.hoon` that let us reuse
+`add1` and `sub1`
+
+**A:**
+```
+|%
+++  add1
+  |=  n=@ud
+  ^-  @ud
+  .+(n)
+++  sub1
+  |=  n=@ud
+  ^-  @ud
+  (sub n 1)
+--
+```
+
+**Q:** What does the first rune, `|%` do?
+
+**A:** `|%` (pronounced 'barcen')  makes a 'core'.
+
+**Q:** What is a core?
+
+**A:** A core is a structure that has 'legs' (i.e. data) and/or
+'arms' (i.e. code that we can run).  
+
+In this case, we are making a core that has one arm.
+
+**Q:** What does the next line do:
+```
+++  add1
+```
+
+**A:** `++` (pronounced 'luslus') defines an arm named `add1`
+
+**Q:** What's between
+```
+++  add1
+```
+
+and
+
+```
+++  sub1
+```
+
+**A:** The code from our `+add1` generator.
+
+**Q:** What's between
+```
+++  sub1
+```
+
+and
+
+```
+--
+```
+
+**A:** The code from our `+sub1` generator.
+
+**Q:** What does `--` do?
+
+**A:** `--` (pronounced 'hephep') indicates that we are finished making
+our core.
+
+## Plus and Minus
 
 **Q:** Is `.=(0 n)` true or false  
 when `n` is `0`?
@@ -4257,7 +4353,43 @@ KM: Some description of using a `lib` file here
 
 Wasn't that easy?
 
-**Q:** But didn't we just violate The First Commandment?
+**Q:** Let's break this down.  What does the first line do:
+```
+/+  math
+```
+
+**A:** The rune `/+` (pronounced 'faslus') imports `math.hoon` from the
+`lib` directory.
+
+So if we want to run `add1` on `n` we can call
+
+> `(add1.math n)`
+
+
+**Q:** What does `add1.math` mean?
+
+**A:** It means "Call `add1` inside `math`".
+
+**Q:** What does the next line do:
+```
+=,  math
+```
+
+**A:** The rune `=,` imports the namespace `math`.
+
+If we do this, instead of writing
+
+> `(add1.math n)`
+
+we can just write
+
+> `(add1 n)`
+
+**Q:** What the first line after our recursion point `|-`?
+
+**A:** `?:  .=(0 m)`
+
+**Q:** Doesn't that violate The First Commandment?
 
 **A:** Yes, but we can treat `.=(0 n)` like `.=(~ n)` since the former
 asks if a number is empty and the latter asks if a list is empty.
@@ -4296,35 +4428,39 @@ is `add1` like `:=`
 (sub1 %=($ m (sub1 m)))
 ```
 
-KM: At this point, we should instruct the reader to put `plus` and
-`minus` into `math.hoon` in `lib`.
-
-KM: Note somewhere in chapter 2 that generators can only accept one
-argument.
-
 **Q:** Can you describe how `+minus [n m]` works?
 
 **A:** It takes two numbers as arguments, and reduces the second until
 it hits zero.  It subtracts one from the result as many times as it did
 to cause the second one to reach zero.
 
-JL: TLS introduces the term 'tup' here, which is short for "tuple" which
-is a list of numbers.  I'm not doing that.  I believe `(list @ud)` is
-clear enough, given that we've used `(list @)` above.
+Note: Add `plus` and `minus` to `lib/math.hoon` because we'll use these
+to create more math operations.  So you'll have two new arms:
+> `++  plus`
 
-KM: Add this to `lib/math.hoon`
+and 
+
+> `++  minus`
+
+Only add code from `|=` to the end.  Don't add the lines
+```
+/+  math
+=,  math
+```
 
 **Q:** What is `+add-numbers l`  
 where
 
-> `l` is `[3 5 2 8 ~]`
+> `l` is `~[3 5 2 8]`
+
+Reminder: `~[3 5 2 8]` is another way to write the list `[3 5 2 8 ~]`
 
 **A:** 18
 
 **Q:** What is `+add-numbers l`  
 where
 
-> `l` is `[15 6 7 12 3 ~]`
+> `l` is `~[15 6 7 12 3]`
 
 **A:** 43
 
@@ -4337,7 +4473,7 @@ where
 **A:** Use `plus` in place of `:=`  
 `plus` builds numbers in the same way that `:=` builds lists.
 
-**Q:** When buidling with `:=` the value of the terminal condition is
+**Q:** When building with `:=` the value of the terminal condition is
 `~`  
 What should be the value of the terminal condition when building numbers
 with `plus`
@@ -4349,7 +4485,8 @@ with `plus`
 **A:** `.=(~ l)`
 
 KM: This is about where I was considering mentioning that `~` is a type.
-Might not be necessary.
+However `0` (even if it's a `@ud`) fits this type, so this isn't as useful 
+as one might hope.
 
 **Q:** When we build a number from a list of numbers, what should the
 terminal condition look like?
@@ -4387,7 +4524,7 @@ is often the terminal condition line for lists.
 **Q:** How is `l` defined, where `l` is of type `(list @ud)`?
 
 **A:** It is either an empty list, or it contains an unsigned decimal,
-`(head l)`, and a rest, `(tail l)`, that is also a `(list @ud)`
+`(head l)`, and the rest, `(tail l)`, that is also a `(list @ud)`
 
 **Q:** What is used in the natural recursion on a list?
 
@@ -4399,7 +4536,7 @@ is often the terminal condition line for lists.
 
 **Q:** How is a number defined?
 
-**A:** It is either zero or it is one added to a rest, where rest is
+**A:** It is either zero or it is one added to the rest, where the rest is
 again a number.
 
 **Q:** What is the natural terminal condition for numbers?
@@ -4417,7 +4554,7 @@ again a number.
 ---
 
 ###  The First Commandment
-##### (first revisions)
+##### (first revision)
 #### When recurring on a list of atoms, always ask if a list is null as the first question in expressing any function.  
 #### When recurring on a number, ask if the number is zero.
 
@@ -4429,7 +4566,7 @@ again a number.
 
 **Q:** What does `+add-numbers` do?
 
-**A:** It buidls a number by totalling all the numbers in a list.
+**A:** It builds a number by totalling all the numbers in a list.
 
 **Q:** What is the terminal condition of `+add-numbers`
 
@@ -4465,17 +4602,12 @@ again a number.
 (plus (head l) %=($ l (tail l))
 ```
 
-Notice the similarity between this line, and the last line of the
+Notice the similarity between this line, and the last lines of the
 generator `rember`:
 ```
 :-  (head lat)
 %=($ lat (tail lat))
 ```
-
-KM: There's a lot of stuff shoehorned into the `plus` line.  Consider tall
-form to help it breathe a bit.
-
-KM: Note we should plonk this in `math.hoon`
 
 **Q:** What is `+times [5 3]`
 
@@ -4485,7 +4617,7 @@ KM: Note we should plonk this in `math.hoon`
 
 **A:** 52
 
-**Q:** What does `+times [13 4]` do?
+**Q:** What does `+times [n m]` do?
 
 **A:** It builds up a number by adding `n` up `m` times.
 
@@ -4555,7 +4687,7 @@ in this case?
 ```
 
 **A:** It adds `n` (where `n` = 12) to the natural recursion.  If this
-is correct, then `$` where `m` is set to `(sub1 3)` should be `12`.
+is correct, then `$` where `m` is set to `(sub1 3)` should be `24`.
 
 **Q:** What are the new values for `n` and `m`
 
@@ -4634,8 +4766,8 @@ to write functions as well as to argue their correctness.
 
 ---
 
-
-KM: Note that we need to move `+times` into the math lib.
+Note: make another arm called `times` in `lib/math.hoon` and add your
+code to it.  
 
 **Q:** What is `+add-number-lists l1 l2`  
 where  
@@ -4674,8 +4806,7 @@ other words, it recurs on two lists.
 
 **A:** One.  `.=(~ l)`
 
-**Q:** When recurring on two lists, how many questiosn need to be asked?
-
+**Q:** When recurring on two lists, how many questions need to be asked?
 
 **A:** Three: both lists are empty, if only the first list is empty, if
 only the second list is empty.
@@ -4686,12 +4817,22 @@ only the second list is empty.
 > `.=(~ l1)`
 > `.=(~ l2)`
 
-KM: We have not introduced `AND` until now.  Break this one out.
-
 **A:** Yes.
 
-**Q:** Can the first list be `~` at the same time as the second is other
-than `~`
+**Q:** What does the `?&` in first question mean?
+> `?&(.=(~ l1) .=(~ l2))`
+
+**A:** The `?&` rune (pronounced 'wutpam') asks questions.  If any of
+the questions have the answer `%.n`&mdash;false&mdash;then the result is
+`%.n`.  Otherwise, the result is `%.y`.
+
+This is sometimes called the 'AND' operation.  If you recall `?|` (or
+'wutbar') this works similarly to that.
+
+**Q:** Can the answer to this question
+> `?&(.=(~ l1) .=(~ l2))`
+
+be `~` at the same time as the second is other than `~`.
 
 **A:** No, because the lists must have the same length
 
@@ -4705,9 +4846,23 @@ is the only question we need to ask?
 
 > because `.=(~ l1)` is true exactly when `.=(~ l2)` is true.
 
-KM: Break down how to change two parameters for `$`
+**Q:** How do we recur on two lists at the same time?
 
-**Q:** Write the code for `add-number-lists.hoon`.
+**A:** The `%=` rune can take several updates:
+
+> `%=(% l1 (tail l1), l2 (tail l2))`
+
+**Q:** That's short form.  How would that look in tall form?
+
+**A:**
+```
+%=  $
+  l1  (tail l1)
+  l2  (tail l2)
+==
+```
+
+**Q:** Now write the code for `add-number-lists.hoon`.
 
 **A:** 
 ```
@@ -4817,9 +4972,6 @@ where
 and
 
 > `l2` is `~[4 6 8 1]`
-
-KM: Double-check that we've introduced the short form of lists before
-now.
 
 **A:** No answer, since `l1` will become null before `l2`.
 
@@ -4941,7 +5093,7 @@ Can you simplify it?
 
 **Q:** When do we recur?
 
-**A:**When we know neither number is equal to 0.
+**A:** When we know neither number is equal to 0.
 
 **Q:** How many questions do we have to ask about `n` and `m`
 
@@ -5101,6 +5253,9 @@ subtle problem?
 ==
 ```
 
+Note: you will need to move the code for `lt.hoon` and `gt.hoon` into
+`lib/math.hoon` for this next question.
+
 **Q:** Here is the code for `eq.hoon`
 ```
 /+  math
@@ -5121,8 +5276,6 @@ subtle problem?
 
 Rewrite `eq.hoon` using `lt` and `gt`
 
-KM: Move `lt` and `gt` to `lib/math.hoon`
-
 **A:**
 ```
 /+  math
@@ -5141,9 +5294,6 @@ KM: Move `lt` and `gt` to `lib/math.hoon`
 **Q:** Do we need another function for testing equality?
 
 **A:** No, but it's a good exercise to write one.
-
-KM: Do we even want this?  I think this part was included in TLS because 
-Scheme treats numbers and non-numbers differently.  
 
 **Q:** `+exp [1 1]`
 
@@ -5175,12 +5325,6 @@ Make an appendix to this chapter saying what the real versions are
 ?:  .=(0 m)
   1
 (times n %=($ m (sub1 m)))
-```
-
-KM: This last line is pretty tricky.  Consider rewriting it with `%-`
-```
-%-  times
-[n %=($ m (sub1 m))]
 ```
 
 **Q:** What is a good name for this?
@@ -5218,10 +5362,9 @@ one.
 
 **A:** Division.
 
-
 **Q:** If we add this code to a generator, `divide.hoon`, what is
 
->  `+divide [ 15 4]`
+>  `+divide [15 4]`
 
 **A:** Easy, it is `3`.
 
@@ -5234,7 +5377,7 @@ one.
 >                = 1 + (1 + (1 + (+divide [3 4])))
 >                = 1 + (1 + (1 + 0))
 
-KM: Copy this to `lib/math.hoon`
+Note: Add the code for `divide.hoon` to `lib/math.hoon`
 
 ---
 
@@ -5272,9 +5415,6 @@ where
 (add1 %=($ l (tail l)))
 ```
 
-KM: Instead of cluttering up all the code with the "import math" and
-"add math to namespace", possibly add that to a preface to this chapter.
-
 **Q:** What is `+pick [n l]`  
 where `n` is `4`  
 and 
@@ -5310,7 +5450,7 @@ where `l` is `~[%a]`
 ```
 
 **Q:** What is `+rempick [n l]`  
-where `n` is `3`  
+where `n` is `2`  
 and
 
 > `l` is `~[%hotdogs %with %hot %mustard]`
@@ -5385,7 +5525,7 @@ times an atom `a` appears in a list `l`
 %=($ l (tail l))
 ```
 
-**Q:** Write the code for `is-zero.hoon` where `+zero n` is `%.y` if `n` is
+**Q:** Write the code for `is-zero.hoon` where `+is-zero n` is `%.y` if `n` is
 `0` and `%.n` (i.e. false) otherwise.
 
 **A:**
@@ -5424,9 +5564,7 @@ the value of `+rempick [n l]` is
 
 > `~[%lemon %meringue %pie]`
 
-Use the function `is-zero` in your answer.
-
-KM: Add `is-zero` to `lib/math.hoon`
+Add the code for `is-zero` to `lib/math.hoon` and use it in your answer.
 
 **A:**
 ```
@@ -5489,7 +5627,7 @@ confusion, I should make sure I mention this.  I'll keep using the long
 version, because this matches the data as it is.
 
 - [1] TLS notes that the list argument only contains non-empty lists.
-If you tried with something like:
+
 The code for firsts would not work on something like:
 ```
 [~ ~ %atom ~ ~]
@@ -5505,7 +5643,6 @@ doing.
 
 Anyway, should consider probably noting that any list with a null
 anywhere but the end is going to cause problems.
-
 
 - I've tried to avoid irregular forms, but I've also decided that %-
   (the rune for calling functions like `head`) makes things too wordy
@@ -5534,3 +5671,19 @@ anywhere but the end is going to cause problems.
 
 - I'm using generators that expect only one argument.  This simplifies
   things, but we might want generators a bit more explicit.
+
+- Make code files so they can be opened in another tab/window or
+something.  This isn't a book and we have options.
+
+- As an exercise, do the classic "decrement using increment".  The first
+  question for that breaks The First Commandment so do that a bit later.
+
+- You can call functions like so:
+```
+%-  times
+[n %=($ m (sub1 m))]
+```
+
+It's a bit more clear what's going on done this way and chap 4 might
+benefit from that.
+
