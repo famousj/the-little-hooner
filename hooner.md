@@ -176,22 +176,6 @@ requests are welcome!
 - This has taken a non-trivial amount of time, and will require much more
 time before it's done.
 
-If you get anything out of it, if you'd like to show your appreciation,
-and encourage me to keep at it until we get to the part where you
-write the Y combinator in Hoon, feel free to drop a tip in the tip jar.
-
-Bitcoin:
-
-![bitcoin wallet](wallet.png)
-
-1Lp2hDwt4xBvySUyFSNA56w95dAaCYDZry
-
-Cash app: [cash.app/$jleblanc](https://cash.app/$jleblanc)
-
-Venmo: [venmo.com/jrl314](https://venmo.com/jrl314)
-
-PayPal: [paypal.me/jleblanc314](https://www.paypal.me/jleblanc314)
-
 
 ### How to Read This Book
 
@@ -5686,4 +5670,20 @@ something.  This isn't a book and we have options.
 
 It's a bit more clear what's going on done this way and chap 4 might
 benefit from that.
+
+If you get anything out of it, if you'd like to show your appreciation,
+and encourage me to keep at it until we get to the part where you
+write the Y combinator in Hoon, feel free to drop a tip in the tip jar.
+
+Bitcoin:
+
+![bitcoin wallet](wallet.png)
+
+1Lp2hDwt4xBvySUyFSNA56w95dAaCYDZry
+
+Cash app: [cash.app/$jleblanc](https://cash.app/$jleblanc)
+
+Venmo: [venmo.com/jrl314](https://venmo.com/jrl314)
+
+PayPal: [paypal.me/jleblanc314](https://www.paypal.me/jleblanc314)
 
